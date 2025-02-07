@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,33 +7,41 @@ public class PlayerControl : MonoBehaviour
     public float playerMovementSpeed;
     public InputActionReference playerAction;
     public Camera mainCamera;
-    public float rotationSpeed = 360f; // Degrees per second
     public float cooldownTime = 2f; // Cooldown in seconds
 
     private Vector3 playerMovement;
     private bool isRotating = false;
     private float cooldownTimer = 0f;
+    public Animator animator; // Reference to Animator on a separate GameObject
+
+    void Start()
+    {
+        if (animator != null)
+        {
+            animator.enabled = false; // Disable Animator initially
+        }
+    }
 
     void Update()
     {
         playerMovement = playerAction.action.ReadValue<Vector3>();
 
-        // Rotate toward the mouse cursor if not in cooldown
+        // Rotate toward the mouse cursor ONLY if not rotating (animation playing)
         if (!isRotating)
         {
             RotateTowardsMouse();
         }
 
-        // Check for 360-degree rotation if not on cooldown
+        // If left mouse button is clicked & cooldown is over, trigger the animation
         if (Mouse.current.leftButton.wasPressedThisFrame && cooldownTimer <= 0f)
         {
-            StartCoroutine(Rotate360());
+            TriggerRotationAnimation();
         }
 
-        // Cooldown timer countdown
+        // Handle cooldown timer
         if (cooldownTimer > 0f)
         {
-            cooldownTimer -= Time.deltaTime; // Decrease the cooldown over time
+            cooldownTimer -= Time.deltaTime;
         }
     }
 
@@ -67,22 +74,26 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    private IEnumerator Rotate360()
+    public void TriggerRotationAnimation()
     {
-        isRotating = true;
-        float rotatedAngle = 0f;
-
-        while (rotatedAngle < 360f)
+        if (animator != null)
         {
-            float rotationStep = rotationSpeed * Time.deltaTime;
-            transform.Rotate(Vector3.up, rotationStep);
-            rotatedAngle += rotationStep;
-            yield return null; // Wait for the next frame
+            animator.enabled = true; // Enable Animator before playing animation
+            animator.SetTrigger("Spin"); // Replace with your actual animation trigger
         }
 
-        // Start cooldown after rotation
-        cooldownTimer = cooldownTime;
+        isRotating = true; // Stop the player from following the mouse during animation
+        cooldownTimer = cooldownTime; // Start cooldown
+    }
 
-        isRotating = false;
+    // This function should be called at the end of the animation
+    public void StopAnimation()
+    {
+        isRotating = false; // Allow mouse rotation again
+
+        if (animator != null)
+        {
+            animator.enabled = false; // Disable Animator after animation finishes
+        }
     }
 }
