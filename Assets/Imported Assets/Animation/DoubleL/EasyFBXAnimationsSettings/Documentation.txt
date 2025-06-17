@@ -1,0 +1,13 @@
+Get started
+
+1. From the top menu
+Tools -> DoubleL -> Easy FBX Animations Settings Modifier
+
+2. Set your desired settings.
+Select the FBX files you want to change. You can select multiple files.
+
+3. To change the settings, click the "Apply settings" button.
+
+4. To duplicate a clip file, click the "Animation Duplication" button.
+
+thank you
