@@ -49,7 +49,11 @@ namespace PhysicsCharacterController
             if (lockRotationOnWall) characterManager.SetLockRotation(characterManager.GetTouchingWall());
 
             anim.SetBool("isClimb", characterManager.GetTouchingWall() && rigidbodyCharacter.velocity.y > climbThreshold);
-
+            
+            if (characterManager.GetAttacking())
+            {
+                anim.SetTrigger("attack");
+            }
             anim.SetBool("isCrouch", characterManager.GetCrouching());
         }
 

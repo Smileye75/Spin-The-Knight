@@ -155,6 +155,7 @@ namespace PhysicsCharacterController
         [SerializeField] UnityEvent OnCrouch;
         [Space(15)]
 
+        private bool spinAttack;
 
 
         private Vector3 forward;
@@ -198,6 +199,7 @@ namespace PhysicsCharacterController
         private bool lockRotation = false;
         private bool lockToCamera = false;
 
+        public event System.Action OnAttackPerformed;
 
         /**/
 
@@ -221,6 +223,7 @@ namespace PhysicsCharacterController
             jumpHold = input.jumpHold;
             sprint = input.sprint;
             crouch = input.crouch;
+            spinAttack = input.attack;
         }
 
 
@@ -246,6 +249,12 @@ namespace PhysicsCharacterController
 
             //events
             UpdateEvents();
+
+            if (spinAttack && isGrounded && !isJumping)
+            {
+                // This is where you could play sound, trigger effects, or limit attack frequency
+                spinAttack = false; // Reset after processing to avoid multiple triggers
+            }
         }
 
 
@@ -631,6 +640,7 @@ namespace PhysicsCharacterController
         public bool GetTouchingWall() { return isTouchingWall; }
         public bool GetJumping() { return isJumping; }
         public bool GetCrouching() { return isCrouch; }
+        public bool GetAttacking() { return spinAttack; }
         public float GetOriginalColliderHeight() { return originalColliderHeight; }
 
         public void SetLockRotation(bool _lock) { lockRotation = _lock; }

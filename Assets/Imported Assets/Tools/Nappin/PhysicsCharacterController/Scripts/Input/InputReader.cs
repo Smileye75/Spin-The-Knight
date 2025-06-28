@@ -29,6 +29,8 @@ namespace PhysicsCharacterController
         public bool sprint;
         [HideInInspector]
         public bool crouch;
+        [HideInInspector]
+        public bool attack;
 
 
         private bool hasJumped = false;
@@ -60,6 +62,9 @@ namespace PhysicsCharacterController
 
             movementActions.Gameplay.Crouch.performed += ctx => OnCrouch(ctx);
             movementActions.Gameplay.Crouch.canceled += ctx => CrouchEnded(ctx);
+
+            movementActions.Gameplay.Attack.performed += ctx => OnAttack();
+            movementActions.Gameplay.Attack.canceled += ctx => AttackEnded();
         }
 
 
@@ -190,6 +195,16 @@ namespace PhysicsCharacterController
         public void CrouchEnded(InputAction.CallbackContext ctx)
         {
             crouch = false;
+        }
+
+        public void OnAttack()
+        {
+            attack = true;
+        }
+
+        public void AttackEnded()
+        {
+            attack = false;
         }
 
         #endregion

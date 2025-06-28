@@ -45,7 +45,16 @@
                     "name": "Crouch",
                     "type": "Button",
                     "id": "74f5759e-e5ac-4210-8db2-9d512e6f664d",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "df3e712e-5482-4214-bf18-2c170450930f",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -401,6 +410,17 @@
                     "processors": "",
                     "groups": "GamePad",
                     "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "529a69c8-0024-4a49-8a45-8c2bf11020b1",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
