@@ -1,0 +1,20 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class EnemyDamageTrigger : MonoBehaviour
+{
+    [SerializeField] private int damageAmount = 1;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // Check if the player was hit
+        if (!other.CompareTag("Player")) return;
+
+        if (other.TryGetComponent<Health>(out Health playerHealth))
+        {
+            playerHealth.DamageManager(damageAmount);
+        }
+    }
+
+}

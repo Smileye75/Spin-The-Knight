@@ -38,7 +38,7 @@ public class PlayerAnimation : MonoBehaviour
         float verticalVelocity = controller.velocity.y;
 
         // Ground check
-        bool isGrounded = Physics.Raycast(transform.position, Vector3.down, movementScript.playerHeight * 0.5f + 0.3f, movementScript.whatIsGround);
+        bool isGrounded = controller.isGrounded;
 
         // Set airborne states
         animator.SetBool("IsJumping", !isGrounded && verticalVelocity > jumpThreshold);
