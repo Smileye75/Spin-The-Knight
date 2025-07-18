@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Health : MonoBehaviour
+public class HealthSystem : MonoBehaviour
 {
     public int maxHealth = 3;
     private int health;
@@ -23,6 +23,10 @@ public class Health : MonoBehaviour
         else 
         {
             Debug.Log("I'm Dead");
+            if(CompareTag("Enemy"))
+            {
+                Destroy(gameObject);
+            }
         }
 
 

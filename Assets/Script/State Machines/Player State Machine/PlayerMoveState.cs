@@ -17,12 +17,18 @@ public class PlayerMoveState : PlayerBaseMachine
     public override void Enter()
     {
         stateMachine.inputReader.isAttacking += OnAttack;
+        stateMachine.inputReader.jumpEvent += OnJump;
+
     }
 
     public override void Tick(float deltaTime)
     {
         Vector3 movement = CalculateMovement();
 
+        if (stateMachine.characterController.isGrounded)
+        {
+            stateMachine.lastGroundedTime = Time.time;
+        }
 
         Move(movement * stateMachine.movementSpeed, deltaTime);
 
@@ -33,6 +39,8 @@ public class PlayerMoveState : PlayerBaseMachine
             return;
 
         }
+
+
 
         stateMachine.animator.SetFloat(animationSpeed, 1, animTransitionSpeed, deltaTime);
        
@@ -50,26 +58,7 @@ public class PlayerMoveState : PlayerBaseMachine
     public override void Exit()
     {
         stateMachine.inputReader.isAttacking -= OnAttack;
-    }
-
-    private void FaceMovementDirection(Vector3 movement)
-    {
-        stateMachine.transform.rotation =Quaternion.Lerp(stateMachine.transform.rotation, Quaternion.LookRotation(movement), stateMachine.rotationSpeed * Time.deltaTime);
-    }
-
-    private Vector3 CalculateMovement()
-    {
-        Vector3 forward = stateMachine.mainCamera.forward;
-        Vector3 right = stateMachine.mainCamera.right;
-
-        forward.y = 0f;
-        right.y = 0f;
-
-        forward.Normalize();
-        right.Normalize();
-
-        return forward * stateMachine.inputReader.movementValue.y + right * stateMachine.inputReader.movementValue.x;
-
+        stateMachine.inputReader.jumpEvent -= OnJump;
     }
 
     private void OnAttack()
@@ -77,6 +66,11 @@ public class PlayerMoveState : PlayerBaseMachine
         if (attackTimer > 0) { return; } 
         stateMachine.animator.SetTrigger("Attack");
         attackTimer = stateMachine.attackCooldown;
+    }
+    
+    private void OnJump()
+    {
+        stateMachine.SwitchState(new PlayerJumpState(stateMachine));
     }
 
 }

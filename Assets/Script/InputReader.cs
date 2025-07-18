@@ -10,6 +10,7 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
 
     public event Action jumpEvent;
     public event Action isAttacking;
+    public event Action jumpCanceled;
 
     private Controls controls;
 
@@ -27,16 +28,20 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (!context.performed) 
-        { 
-            return; 
-        }
-
-        if (jumpEvent != null)
+        if (context.performed)
         {
-            jumpEvent.Invoke();
+            jumpEvent?.Invoke();
+
+            if (TryGetComponent<PlayerStateMachine>(out var stateMachine))
+            {
+                stateMachine.lastJumpPressedTime = Time.time;
+            }
         }
 
+        if (context.canceled)
+        {
+            jumpCanceled?.Invoke();
+        }
     }
 
     public void OnMovement(InputAction.CallbackContext context)

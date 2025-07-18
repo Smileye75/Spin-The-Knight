@@ -21,7 +21,7 @@ public class WeaponDamage : MonoBehaviour
 
         alreadyCollidedWith.Add(other);
 
-        if (other.TryGetComponent<Health>(out Health health))
+        if (other.TryGetComponent<HealthSystem>(out HealthSystem health))
         {
             health.DamageManager(1);
         }

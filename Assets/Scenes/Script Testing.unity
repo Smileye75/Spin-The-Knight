@@ -843,7 +843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a77abd0ac4e675f478df62a075303c34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 3
 --- !u!114 &1392882344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1045,6 +1045,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterController: {fileID: 1759521204}
+  fallMultiplier: 1.8
 --- !u!114 &1759521206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1078,6 +1079,13 @@ MonoBehaviour:
   movementSpeed: 6
   rotationSpeed: 20
   attackCooldown: 0
+  jumpBufferTime: 0.1
+  jumpHeight: 4
+  timeToApex: 0.4
+  coyoteTime: 0.1
+  lastGroundedTime: 0
+  jumpForce: 5
+  lastJumpPressedTime: 0
 --- !u!114 &1759521208
 MonoBehaviour:
   m_ObjectHideFlags: 0
