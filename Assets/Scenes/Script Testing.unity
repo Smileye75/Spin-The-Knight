@@ -521,10 +521,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1851240427}
-  - component: {fileID: 1851240424}
   - component: {fileID: 1851240428}
   - component: {fileID: 1851240429}
   - component: {fileID: 1851240430}
+  - component: {fileID: 1851240431}
   m_Layer: 7
   m_Name: Enemy Test
   m_TagString: Enemy
@@ -532,29 +532,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!136 &1851240424
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1851240423}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.9332217
-  m_Height: 2.9876237
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.49381185, z: 0.031043172}
 --- !u!4 &1851240427
 Transform:
   m_ObjectHideFlags: 0
@@ -590,8 +567,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.4647818, y: 2.991448, z: 2.4532065}
-  m_Center: {x: -0.20202947, y: 0.7957239, z: 0.12563396}
+  m_Size: {x: 1.8606284, y: 2.692897, z: 2.212495}
+  m_Center: {x: 0.10004723, y: 0.6464485, z: 0.06976879}
 --- !u!114 &1851240429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -618,6 +595,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 3
+--- !u!114 &1851240431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851240423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c38f5f44397257b409fcd8b9cd0a9955, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!137 &40858347654828026
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
@@ -9391,6 +9380,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Camera System
       objectReference: {fileID: 0}
+    - target: {fileID: 4482596506941351753, guid: 7d3a0b06058704746aeb0da3978c1eb8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4482596506941351753, guid: 7d3a0b06058704746aeb0da3978c1eb8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.305183
+      objectReference: {fileID: 0}
+    - target: {fileID: 4482596506941351753, guid: 7d3a0b06058704746aeb0da3978c1eb8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9.063078
+      objectReference: {fileID: 0}
     - target: {fileID: 5362774193495443474, guid: 7d3a0b06058704746aeb0da3978c1eb8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -9430,6 +9431,18 @@ PrefabInstance:
     - target: {fileID: 5362774193495443474, guid: 7d3a0b06058704746aeb0da3978c1eb8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6861255810178399523, guid: 7d3a0b06058704746aeb0da3978c1eb8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6861255810178399523, guid: 7d3a0b06058704746aeb0da3978c1eb8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.305183
+      objectReference: {fileID: 0}
+    - target: {fileID: 6861255810178399523, guid: 7d3a0b06058704746aeb0da3978c1eb8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9.063078
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

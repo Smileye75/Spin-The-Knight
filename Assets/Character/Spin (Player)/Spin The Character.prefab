@@ -1561,6 +1561,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterController: {fileID: 620612723560486721}
   fallMultiplier: 1.8
+  knockbackSmoothTime: 0.2
+  knockbackStrength: 15
+  upwardForce: 6
 --- !u!114 &5679899499254720469
 MonoBehaviour:
   m_ObjectHideFlags: 0

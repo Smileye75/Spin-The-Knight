@@ -6,12 +6,17 @@ public class ForceReceiver : MonoBehaviour
 {
     [SerializeField] private CharacterController characterController;
     [SerializeField] private float fallMultiplier = 2.5f;
+    [SerializeField] private float knockbackSmoothTime = 0.3f;
+    [SerializeField] private float knockbackStrength = 5f;
+    [SerializeField] private float upwardForce = 6f;
 
 
     private float verticalVelocity;
     private float gravity;
+    private Vector3 impact;
+    private Vector3 dampingVelocity;
 
-    public Vector3 movement => Vector3.up * verticalVelocity;
+    public Vector3 movement => impact + Vector3.up * verticalVelocity;
 
     void Update()
     {
@@ -27,6 +32,8 @@ public class ForceReceiver : MonoBehaviour
         {
             verticalVelocity += gravity * Time.deltaTime;
         }
+
+        impact = Vector3.SmoothDamp(impact, Vector3.zero, ref dampingVelocity, knockbackSmoothTime);
     }
 
     public void CancelJump()
@@ -44,6 +51,14 @@ public class ForceReceiver : MonoBehaviour
     public void SetGravity(float gravityValue)
     {
         gravity = gravityValue;
+    }
+    public void ApplyKnockback(Vector3 sourcePosition)
+    {
+        Vector3 direction = (transform.position - sourcePosition).normalized;
+        direction.y = 0f;
+
+        impact += direction * knockbackStrength;
+        verticalVelocity = upwardForce;
     }
 
 }
