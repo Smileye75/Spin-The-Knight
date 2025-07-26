@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GoblinArcherUpperBody
+  m_Mask: 00000000010000000100000000000000000000000100000001000000010000000100000000000000000000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton
+    m_Weight: 0
+  - m_Path: Goblin_Skeleton/Root
+    m_Weight: 0
+  - m_Path: Goblin_Skeleton/Root/Hips
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Neck
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Neck/Head
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Neck/Head/Eye_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Neck/Head/Eye_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Neck/Head/Jaw
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Neck/Head/Jaw/JawEnd
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Neck/Head/TopHead
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Index_Proximal_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Index_Proximal_L/Index_Intermediate_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Index_Proximal_L/Index_Intermediate_L/Index_Distal_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Middle_Proximal_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Middle_Proximal_L/Middle_Intermediate_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Middle_Proximal_L/Middle_Intermediate_L/Middle_Distal_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Ring_Proximal_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Ring_Proximal_L/Ring_Intermediate_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Ring_Proximal_L/Ring_Intermediate_L/Ring_Distal_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Thumb_Proximal_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Thumb_Proximal_L/Thumb_Intermediate_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_L/UpperArm_L/LowerArm_L/Hand_L/Thumb_Proximal_L/Thumb_Intermediate_L/Thumb_Distal_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Index_Proximal_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Index_Proximal_R/Index_Intermediate_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Index_Proximal_R/Index_Intermediate_R/Index_Distal_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Middle_Proximal_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Middle_Proximal_R/Middle_Intermediate_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Middle_Proximal_R/Middle_Intermediate_R/Middle_Distal_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Ring_Proximal_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Ring_Proximal_R/Ring_Intermediate_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Ring_Proximal_R/Ring_Intermediate_R/Ring_Distal_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Thumb_Proximal_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Thumb_Proximal_R/Thumb_Intermediate_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/Spine/Chest/UpperChest/Shoulder_R/UpperArm_R/LowerArm_R/Hand_R/Thumb_Proximal_R/Thumb_Intermediate_R/Thumb_Distal_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/UpperLeg_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/UpperLeg_L/LowerLeg_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/UpperLeg_L/LowerLeg_L/Foot_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/UpperLeg_L/LowerLeg_L/Foot_L/Toes_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/UpperLeg_L/LowerLeg_L/Foot_L/Toes_L/ToesEnd_L
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/UpperLeg_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/UpperLeg_R/LowerLeg_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/UpperLeg_R/LowerLeg_R/Foot_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/UpperLeg_R/LowerLeg_R/Foot_R/Toes_R
+    m_Weight: 1
+  - m_Path: Goblin_Skeleton/Root/Hips/UpperLeg_R/LowerLeg_R/Foot_R/Toes_R/ToesEnd_R
+    m_Weight: 1
+  - m_Path: GoblinV1
+    m_Weight: 0
+  - m_Path: GoblinV1/V1_Body
+    m_Weight: 1
+  - m_Path: GoblinV1/V1_Eyes
+    m_Weight: 1
+  - m_Path: GoblinV1/V1_Skin
+    m_Weight: 1

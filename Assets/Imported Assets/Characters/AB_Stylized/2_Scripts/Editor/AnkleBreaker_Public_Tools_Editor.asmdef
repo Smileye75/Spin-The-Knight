@@ -1,0 +1,31 @@
+{
+    "name": "AnkleBreakerPublicToolsEditor",
+    "rootNamespace": "",
+    "references": [
+"Unity.RenderPipelines.Core.Editor",
+    "Unity.RenderPipelines.Universal.Editor",
+    "Unity.RenderPipelines.HighDefinition.Editor"
+  ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "",
+            "define": "USING_URP"
+        },
+        {
+            "name": "com.unity.render-pipelines.high-definition",
+            "expression": "",
+            "define": "USING_HDRP"
+        }
+    ],
+    "noEngineReferences": false
+}

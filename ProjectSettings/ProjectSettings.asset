@@ -162,7 +162,8 @@ PlayerSettings:
   resetResolutionOnWindowResize: 0
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
-  applicationIdentifier: {}
+  applicationIdentifier:
+    Standalone: com.DefaultCompany.Spin-The-Knight
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -743,19 +744,23 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: UNITY_POST_PROCESSING_STACK_V2
-    EmbeddedLinux: UNITY_POST_PROCESSING_STACK_V2
+    Android: UNITY_POST_PROCESSING_STACK_V2;UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI;USE_NEW_INPUT
+    EmbeddedLinux: UNITY_POST_PROCESSING_STACK_V2;UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
     GameCoreXboxOne: UNITY_POST_PROCESSING_STACK_V2
-    Nintendo Switch: UNITY_POST_PROCESSING_STACK_V2
-    PS4: UNITY_POST_PROCESSING_STACK_V2
+    LinuxHeadlessSimulation: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
+    Nintendo Switch: UNITY_POST_PROCESSING_STACK_V2;UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
+    PS4: UNITY_POST_PROCESSING_STACK_V2;UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
     PS5: UNITY_POST_PROCESSING_STACK_V2
-    QNX: UNITY_POST_PROCESSING_STACK_V2
+    QNX: UNITY_POST_PROCESSING_STACK_V2;UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
+    Server: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
     Stadia: UNITY_POST_PROCESSING_STACK_V2
-    Standalone: UNITY_POST_PROCESSING_STACK_V2
-    VisionOS: UNITY_POST_PROCESSING_STACK_V2
-    WebGL: UNITY_POST_PROCESSING_STACK_V2
-    XboxOne: UNITY_POST_PROCESSING_STACK_V2
-    tvOS: UNITY_POST_PROCESSING_STACK_V2
+    Standalone: UNITY_POST_PROCESSING_STACK_V2;MOREMOUNTAINS_NICEVIBRATIONS_INSTALLED;ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI;USE_NEW_INPUT
+    VisionOS: UNITY_POST_PROCESSING_STACK_V2;UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
+    WebGL: UNITY_POST_PROCESSING_STACK_V2;UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
+    Windows Store Apps: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI;USE_NEW_INPUT
+    XboxOne: UNITY_POST_PROCESSING_STACK_V2;UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
+    iPhone: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
+    tvOS: UNITY_POST_PROCESSING_STACK_V2;UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}
@@ -788,7 +793,7 @@ PlayerSettings:
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: Spin-The-Knight
-  metroPackageVersion: 
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -796,7 +801,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: Spin-The-Knight
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: Spin-The-Knight
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
