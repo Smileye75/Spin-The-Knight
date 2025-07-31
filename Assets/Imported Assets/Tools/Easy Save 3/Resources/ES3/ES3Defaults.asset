@@ -47,6 +47,7 @@ MonoBehaviour:
     - MoreMountains.Tools
     - ToonyColorsPro.Runtime
     - ToonyColorsPro2.Demo
+    - UnityUIExtensions
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1

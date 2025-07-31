@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2687704172601399254}
   - component: {fileID: 5374105412027027916}
   - component: {fileID: 7298497510145888456}
-  - component: {fileID: 6198485445627102010}
   - component: {fileID: 8475857077879013060}
   m_Layer: 0
   m_Name: Ham
@@ -85,29 +84,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &6198485445627102010
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5777528369000325955}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.35379505
-  m_Height: 0.7075901
-  m_Direction: 1
-  m_Center: {x: -0.0047546327, y: 0.21118867, z: 0.029716492}
 --- !u!95 &8475857077879013060
 Animator:
   serializedVersion: 5
@@ -139,6 +115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6522233874202082973}
   - component: {fileID: 651262984317755966}
+  - component: {fileID: 2951686144178333302}
   m_Layer: 0
   m_Name: Ham Collectable
   m_TagString: Untagged
@@ -175,3 +152,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healAmount: 1
+--- !u!65 &2951686144178333302
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8091758813614305398}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 3839
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.83708, y: 0.59657586, z: 0.96960783}
+  m_Center: {x: 0.029383183, y: 0.008210078, z: 0.015196085}

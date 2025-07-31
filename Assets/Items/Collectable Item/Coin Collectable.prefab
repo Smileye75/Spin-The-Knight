@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3969900259109767539}
   - component: {fileID: 1341600108531501571}
+  - component: {fileID: 2065883149286172154}
   m_Layer: 0
   m_Name: Coin Collectable
   m_TagString: Untagged
@@ -45,6 +46,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d56b828b9445f47a0289a911c07405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &2065883149286172154
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910419942694860952}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 3839
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.6030426, y: 0.74062467, z: 0.61883116}
+  m_Center: {x: -0.0022554398, y: -0.0033831, z: -0.007893801}
 --- !u!1 &8245247455184665084
 GameObject:
   m_ObjectHideFlags: 0
@@ -56,7 +78,6 @@ GameObject:
   - component: {fileID: 6337515041705647545}
   - component: {fileID: 5296018929206414242}
   - component: {fileID: 6569213274265576675}
-  - component: {fileID: 3637226181040506488}
   - component: {fileID: 613169447749708204}
   m_Layer: 0
   m_Name: Coin Model
@@ -130,27 +151,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3637226181040506488
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8245247455184665084}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2.1015167, y: 2.174483, z: 3.1345673}
-  m_Center: {x: -0.012464523, y: -0.00000019868214, z: -0.00000024835262}
 --- !u!95 &613169447749708204
 Animator:
   serializedVersion: 5
@@ -161,7 +161,7 @@ Animator:
   m_GameObject: {fileID: 8245247455184665084}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 3d52b0db4f736264c95ee47d6fbb748c, type: 2}
+  m_Controller: {fileID: 9100000, guid: 342c1fe1248e7f14eaed19db44c4e10a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

@@ -1,11 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-
+﻿
+using static System.Net.Mime.MediaTypeNames;
 /// Credit NemoKrad (aka Charles Humphrey) / valtain
 /// Sourced from - http://www.randomchaos.co.uk/SoftAlphaUIMask.aspx
 /// Updated by valtain - https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/pull-requests/33
 
-namespace Synty.UIExtensions
+namespace UnityEngine.UI.Extensions
 {
     [ExecuteInEditMode]
     [AddComponentMenu("UI/Effects/Extensions/SoftMaskScript")]

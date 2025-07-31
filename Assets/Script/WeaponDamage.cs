@@ -21,10 +21,7 @@ public class WeaponDamage : MonoBehaviour
 
         alreadyCollidedWith.Add(other);
 
-        //if (other.TryGetComponent<HealthSystem>(out HealthSystem health))
-        //{
-          //  health.DamageManager(1);
-        //}
+        Destroy(other.gameObject);
 
     }
 

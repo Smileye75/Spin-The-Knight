@@ -1,10 +1,8 @@
-using UnityEngine;
-using UnityEngine.UI;
 /// Credit glennpow, Zarlang
 /// Sourced from - http://forum.unity3d.com/threads/free-script-particle-systems-in-ui-screen-space-overlay.406862/
 /// Updated by Zarlang with a more robust implementation, including TextureSheet animation support
 
-namespace Synty.UIExtensions
+namespace UnityEngine.UI.Extensions
 {
 #if UNITY_5_3_OR_NEWER
     [ExecuteInEditMode]
