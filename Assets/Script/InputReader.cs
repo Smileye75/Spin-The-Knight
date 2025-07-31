@@ -78,4 +78,13 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
         // Raise attack event
         isAttacking?.Invoke();
     }
+
+    /// <summary>
+    /// Handles the jump input state for PlayerStomping Script.
+    /// Returns true if the jump button is pressed.
+    /// </summary>
+    public bool IsJumpPressed()
+    {
+        return controls != null && controls.Player.Jump.ReadValue<float>() > 0f;
+    }
 }

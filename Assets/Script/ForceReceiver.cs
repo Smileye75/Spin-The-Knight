@@ -72,7 +72,7 @@ public class ForceReceiver : MonoBehaviour
     /// </summary>
     public void Jump(float jumpForce)
     {
-        verticalVelocity += jumpForce;
+        verticalVelocity = jumpForce;
     }
 
     /// <summary>

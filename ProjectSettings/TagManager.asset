@@ -8,6 +8,8 @@ TagManager:
   - Weapon
   - Wall
   - CameraZone
+  - MovingPlatform
+  - JumpPad
   layers:
   - Default
   - TransparentFX
@@ -20,7 +22,7 @@ TagManager:
   - Player
   - Wall
   - CameraZone
-  - 
+  - PlayerStomping
   - 
   - 
   - 

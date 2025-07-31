@@ -35,6 +35,10 @@ public class PlayerMoveState : PlayerBaseMachine
         if (stateMachine.characterController.isGrounded)
         {
             stateMachine.lastGroundedTime = Time.time;
+
+            // Stop jump animation when grounded
+            if (stateMachine.animator != null)
+                stateMachine.animator.SetBool("IsJumping", false);
         }
 
         // Move the player using input and external forces

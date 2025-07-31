@@ -16,10 +16,32 @@ public abstract class PlayerBaseMachine : State
     /// <summary>
     /// Moves the character using input and external forces (like gravity/knockback).
     /// </summary>
-    protected void Move(Vector3 move, float deltaTime)
+protected void Move(Vector3 move, float deltaTime)
+{
+    Vector3 platformVelocity = Vector3.zero;
+
+    if (stateMachine.characterController.isGrounded)
     {
-        stateMachine.characterController.Move((move + stateMachine.forceReceiver.movement) * deltaTime);
+        if (Physics.Raycast(stateMachine.transform.position, Vector3.down, out RaycastHit hit, 2f))
+        {
+            if (hit.collider.CompareTag("MovingPlatform"))
+            {
+                if (hit.collider.TryGetComponent<MovingPlatform>(out var platform))
+                {
+                    // Only apply platform velocity if it's actually moving
+                    if (platform.Velocity.magnitude > 0.01f)
+                    {
+                        platformVelocity = platform.Velocity;
+                    }
+                }
+            }
+        }
     }
+
+    // Only add platform velocity if it's not zero
+    Vector3 finalMove = move + platformVelocity + stateMachine.forceReceiver.movement;
+    stateMachine.characterController.Move(finalMove * deltaTime);
+}
 
     /// <summary>
     /// Rotates the character to face the movement direction.
