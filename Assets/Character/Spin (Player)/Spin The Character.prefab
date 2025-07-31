@@ -584,10 +584,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8418224753667172559}
   - component: {fileID: 3304100007169745559}
+  - component: {fileID: 2785541806474376067}
   - component: {fileID: 3844559076078744936}
   - component: {fileID: 5090649720945410026}
   - component: {fileID: 5021424612424910076}
-  - component: {fileID: 8882719379328465307}
   m_Layer: 8
   m_Name: Spin The Character
   m_TagString: Player
@@ -639,6 +639,22 @@ CharacterController:
   m_SkinWidth: 0.025
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0.84, z: 0.05}
+--- !u!114 &2785541806474376067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3425659186483330848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f08537f6deb1f9c419a68a9550505373, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 3
+  currentHealth: 0
+  coins: 0
+  lives: 3
 --- !u!114 &3844559076078744936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -651,6 +667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2644404cf64d30b4b9325b3a455809f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerStats: {fileID: 0}
   inputReader: {fileID: 5090649720945410026}
   characterController: {fileID: 3304100007169745559}
   animator: {fileID: 7229903642971907458}
@@ -696,19 +713,6 @@ MonoBehaviour:
   knockbackSmoothTime: 0.2
   knockbackStrength: 15
   upwardForce: 6
---- !u!114 &8882719379328465307
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3425659186483330848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a77abd0ac4e675f478df62a075303c34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 3
 --- !u!1 &3612372121674239673
 GameObject:
   m_ObjectHideFlags: 0

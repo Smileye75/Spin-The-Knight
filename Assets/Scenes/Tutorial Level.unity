@@ -4192,17 +4192,9 @@ MonoBehaviour:
   m_Mesh: {fileID: 2059457010}
   m_VersionIndex: 8392
   m_IsSelectable: 1
-  m_SelectedFaces: 0d000000
-  m_SelectedEdges:
-  - a: 52
-    b: 53
-  - a: 54
-    b: 52
-  - a: 53
-    b: 55
-  - a: 55
-    b: 54
-  m_SelectedVertices: 34000000350000003600000037000000
+  m_SelectedFaces: 
+  m_SelectedEdges: []
+  m_SelectedVertices: 
 --- !u!4 &388314192
 Transform:
   m_ObjectHideFlags: 0
@@ -20799,17 +20791,9 @@ PrefabInstance:
       value: Spin The Character
       objectReference: {fileID: 0}
     - target: {fileID: 3844559076078744936, guid: 44987c33bfb292045926d5f71dda2d44, type: 3}
-      propertyPath: jumpHeight
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3844559076078744936, guid: 44987c33bfb292045926d5f71dda2d44, type: 3}
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 3991716475260724442}
-    - target: {fileID: 5021424612424910076, guid: 44987c33bfb292045926d5f71dda2d44, type: 3}
-      propertyPath: fallMultiplier
-      value: 1.2
-      objectReference: {fileID: 0}
     - target: {fileID: 8418224753667172559, guid: 44987c33bfb292045926d5f71dda2d44, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.7599983
@@ -20850,7 +20834,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7144286364999834999, guid: 44987c33bfb292045926d5f71dda2d44, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

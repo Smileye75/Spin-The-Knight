@@ -22,9 +22,9 @@ public class EnemyDamageTrigger : MonoBehaviour
         if (!other.CompareTag("Player")) return;
 
         // Try to get the player's health system and apply damage
-        if (other.TryGetComponent<HealthSystem>(out HealthSystem playerHealth))
+        if (other.TryGetComponent<PlayerStats>(out PlayerStats playerStats))
         {
-            playerHealth.DamageManager(damageAmount);
+            playerStats.TakeDamage(damageAmount);
 
             // Try to apply knockback to the player
             if (other.TryGetComponent(out ForceReceiver receiver))

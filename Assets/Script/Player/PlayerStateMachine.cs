@@ -8,6 +8,10 @@ using UnityEngine;
 /// </summary>
 public class PlayerStateMachine : StateMachine
 {
+
+    [Header("Player Stats")]
+    public PlayerStats playerStats; // Reference to player stats for health, coins, and lives
+
     [Header("Component References")]
     [Tooltip("Handles player input.")]
     public InputReader inputReader; // Reads and processes player input
@@ -55,6 +59,8 @@ public class PlayerStateMachine : StateMachine
 
     private void Start()
     {
+
+        playerStats = GetComponent<PlayerStats>();
         // Cache main camera transform for movement calculations
         mainCamera = Camera.main.transform;
 
