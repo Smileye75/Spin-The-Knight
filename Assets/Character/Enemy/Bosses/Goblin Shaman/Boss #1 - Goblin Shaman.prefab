@@ -1030,7 +1030,6 @@ GameObject:
   - component: {fileID: 8463168700292716383}
   - component: {fileID: 3751656607651750516}
   - component: {fileID: 6265406096568915976}
-  - component: {fileID: 526938510721981076}
   m_Layer: 7
   m_Name: Boss #1 - Goblin Shaman
   m_TagString: Enemy
@@ -1088,19 +1087,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 1
---- !u!114 &526938510721981076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4029182223944182041}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a77abd0ac4e675f478df62a075303c34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 3
 --- !u!1 &4170786180048623877
 GameObject:
   m_ObjectHideFlags: 0
