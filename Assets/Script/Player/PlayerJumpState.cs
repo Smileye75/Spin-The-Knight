@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Handles player behavior while jumping.
-/// Transitions to fall state when jump duration ends or upward velocity stops.
+/// Handles player jumping logic, including animation and applying jump force.
+/// Accepts a custom jump force for stomps and jump pads.
 /// </summary>
 public class PlayerJumpState : PlayerBaseMachine
 {
-    private float jumpDuration = 0.2f; // Minimum time to stay in jump state
-    private float elapsedTime = 0f;    // Tracks time spent in jump state
+    private float customJumpForce = -1f;
 
-    // Constructor: passes state machine reference to base class
-    public PlayerJumpState(PlayerStateMachine playerState) : base(playerState) { }
+    public PlayerJumpState(PlayerStateMachine stateMachine, float customJumpForce = -1f) : base(stateMachine)
+    {
+        this.customJumpForce = customJumpForce;
+    }
 
     /// <summary>
     /// Called when entering the jump state.
@@ -20,20 +21,17 @@ public class PlayerJumpState : PlayerBaseMachine
     /// </summary>
     public override void Enter()
     {
+        // Use custom force if provided, otherwise use default jump force
+        float force = customJumpForce > 0 ? customJumpForce : stateMachine.jumpForce;
+        stateMachine.forceReceiver.Jump(force);
+
+        // Set jump animation
+        if (stateMachine.animator != null)
+            stateMachine.animator.SetBool("IsJumping", true);
+
         // Subscribe to jump cancel event for variable jump height
         stateMachine.inputReader.jumpCanceled += OnJumpCanceled;
         stateMachine.inputReader.isAttacking += OnAttack; 
-        // Check for coyote time (grace period after leaving ground)
-        if (Time.time - stateMachine.lastGroundedTime <= stateMachine.coyoteTime)
-        {
-            stateMachine.forceReceiver.Jump(stateMachine.jumpForce);
-            stateMachine.animator.SetBool("IsJumping", true);
-        }
-        else
-        {
-            // If coyote time expired, switch to fall state
-            stateMachine.SwitchState(new PlayerFallState(stateMachine));
-        }
     }
 
     /// <summary>
@@ -42,15 +40,13 @@ public class PlayerJumpState : PlayerBaseMachine
     /// </summary>
     public override void Tick(float deltaTime)
     {
-        elapsedTime += Time.deltaTime;
-
         // Calculate movement direction and apply movement/rotation
         Vector3 movement = CalculateMovement();
         Move(movement * stateMachine.movementSpeed, deltaTime);
         FaceMovementDirection(movement);
 
         // Switch to fall state after jump duration or when upward velocity stops
-        if (elapsedTime >= jumpDuration && stateMachine.characterController.velocity.y <= 0f)
+        if (stateMachine.characterController.velocity.y <= 0f)
         {
             stateMachine.SwitchState(new PlayerFallState(stateMachine));
         }
@@ -64,7 +60,10 @@ public class PlayerJumpState : PlayerBaseMachine
     {
         stateMachine.inputReader.jumpCanceled -= OnJumpCanceled;
         stateMachine.inputReader.isAttacking -= OnAttack;
-        stateMachine.animator.SetBool("IsJumping", false);
+        
+        // Reset jump animation when exiting jump state
+        if (stateMachine.animator != null)
+            stateMachine.animator.SetBool("IsJumping", false);
     }
 
     /// <summary>

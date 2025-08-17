@@ -52,10 +52,24 @@ public class PlayerStateMachine : StateMachine
     [Tooltip("Coyote time after leaving ground.")]
     public float coyoteTime = 0.1f; // Grace period for jumping after leaving ground
 
+    [Header("Roll Settings")]
+    [Tooltip("Distance the player travels during a roll (units).")]
+    public float rollDistance = 3f;
+
+    [Tooltip("Time to complete the roll (seconds).")]
+    public float rollDuration = 0.5f;
+
+    [Tooltip("Cooldown between rolls in seconds.")]
+    public float rollCooldown = 0.75f;
+
+    // Calculated roll speed (hidden from Inspector)
+    [HideInInspector] public float rollSpeed;
+
     [Header("Runtime Values")]
     [HideInInspector] public float lastGroundedTime; // Last time player was grounded
     [HideInInspector] public float jumpForce; // Calculated jump force
     [HideInInspector] public float lastJumpPressedTime; // Last time jump was pressed
+    [HideInInspector] public float lastRollTime = -Mathf.Infinity; // Last time player rolled
 
     private void Start()
     {
@@ -69,6 +83,9 @@ public class PlayerStateMachine : StateMachine
         jumpForce = Mathf.Abs(gravity) * timeToApex;
         forceReceiver.SetGravity(gravity);
 
+        // Calculate roll speed based on distance and duration
+        rollSpeed = rollDistance / rollDuration;
+
         // Lock and hide cursor for gameplay
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -76,5 +93,6 @@ public class PlayerStateMachine : StateMachine
         // Start in movement state
         SwitchState(new PlayerMoveState(this));
     }
+
 
 }

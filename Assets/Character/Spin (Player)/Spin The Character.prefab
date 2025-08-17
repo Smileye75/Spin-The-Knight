@@ -655,6 +655,7 @@ MonoBehaviour:
   currentHealth: 0
   coins: 0
   lives: 3
+  playerUI: {fileID: 0}
 --- !u!114 &3844559076078744936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -680,9 +681,14 @@ MonoBehaviour:
   jumpHeight: 3
   timeToApex: 0.4
   coyoteTime: 0.1
+  rollDistance: 6
+  rollDuration: 0.5
+  rollCooldown: 0.75
+  rollSpeed: 0
   lastGroundedTime: 0
   jumpForce: 5
   lastJumpPressedTime: 0
+  lastRollTime: -Infinity
 --- !u!114 &5090649720945410026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -757,7 +763,7 @@ GameObject:
   - component: {fileID: 3421111401020304439}
   - component: {fileID: 3574751523315454837}
   - component: {fileID: 7912837768323841695}
-  m_Layer: 8
+  m_Layer: 3
   m_Name: Weapon Handler
   m_TagString: Weapon
   m_Icon: {fileID: 0}
@@ -790,10 +796,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 3967
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -816,6 +822,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myCollider: {fileID: 3304100007169745559}
+  damageAmount: 1
 --- !u!54 &7912837768323841695
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1591,7 +1598,7 @@ GameObject:
   - component: {fileID: 2135012298886384434}
   - component: {fileID: 4652017066281589616}
   - component: {fileID: 4702387314806702168}
-  m_Layer: 8
+  m_Layer: 3
   m_Name: Log Weapon
   m_TagString: Weapon
   m_Icon: {fileID: 0}

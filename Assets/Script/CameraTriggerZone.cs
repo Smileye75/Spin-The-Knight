@@ -13,7 +13,7 @@ public class CameraTriggerZone : MonoBehaviour
     [Tooltip("Should revert to main camera on exit?")]
     [SerializeField] private bool revertToMainCamera = true;
 
-    private int activePriority = 20;
+    private int activePriority = 30;
     private int inactivePriority = 5;
 
     /// <summary>

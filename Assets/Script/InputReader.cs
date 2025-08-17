@@ -18,6 +18,8 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
     public event Action isAttacking;    // Raised when attack is performed
     public event Action jumpCanceled;   // Raised when jump is canceled
 
+    public event Action dodgeRollEvent; 
+
     private Controls controls; // Input system controls asset
 
     private void Start()
@@ -86,5 +88,14 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
     public bool IsJumpPressed()
     {
         return controls != null && controls.Player.Jump.ReadValue<float>() > 0f;
+    }
+
+    public void OnDodgeRoll(InputAction.CallbackContext context)
+    {
+        if (!context.performed)
+            return;
+
+        // Raise dodge roll event
+        dodgeRollEvent?.Invoke();
     }
 }

@@ -10,6 +10,8 @@ TagManager:
   - CameraZone
   - MovingPlatform
   - JumpPad
+  - Checkpoint
+  - Camera
   layers:
   - Default
   - TransparentFX
@@ -23,7 +25,7 @@ TagManager:
   - Wall
   - CameraZone
   - PlayerStomping
-  - 
+  - Camera
   - 
   - 
   - 

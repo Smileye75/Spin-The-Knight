@@ -96,4 +96,23 @@ public class ForceReceiver : MonoBehaviour
         impact += direction * knockbackStrength;
         verticalVelocity = upwardForce;
     }
+
+    /// <summary>
+    /// Resets all external forces and vertical velocity.
+    /// </summary>
+    public void ResetForces()
+    {
+        impact = Vector3.zero;
+        dampingVelocity = Vector3.zero;
+        verticalVelocity = 0f;
+    }
+
+    /// <summary>
+    /// Clears horizontal components of the impact force.
+    /// </summary>
+    public void ClearHorizontal()
+    {
+        impact.x = 0f;
+        impact.z = 0f;
+    }
 }

@@ -45,6 +45,8 @@ MonoBehaviour:
     - Lofelt.NiceVibrations
     - Lofelt.NiceVibrations.Demo
     - MoreMountains.Tools
+    - SingularityGroup.HotReload.Runtime
+    - SingularityGroup.HotReload.Runtime.Public
     - ToonyColorsPro.Runtime
     - ToonyColorsPro2.Demo
     - UnityUIExtensions

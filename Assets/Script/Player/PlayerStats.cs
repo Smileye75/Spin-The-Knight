@@ -10,24 +10,26 @@ public class PlayerStats : MonoBehaviour
     public int coins = 0;
     public int lives = 3;
     [SerializeField] private PlayerUI playerUI;
+    [SerializeField] private GameObject deathMenuUI;
+    public static event System.Action<GameObject> OnPlayerLostLife;
 
     public void Awake()
     {
         currentHealth = maxHealth;
     }
 
-public void TakeDamage(int amount)
-{
-    currentHealth -= amount;
-    currentHealth = Mathf.Max(currentHealth, 0);
-
-    playerUI?.UpdateHearts(currentHealth);
-
-    if (currentHealth <= 0)
+    public void TakeDamage(int amount)
     {
-        LoseLife();
+        currentHealth -= amount;
+        currentHealth = Mathf.Max(currentHealth, 0);
+
+        playerUI?.UpdateHearts(currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            LoseLife();
+        }
     }
-}
 
     public void Heal(int amount)
     {
@@ -48,12 +50,16 @@ public void TakeDamage(int amount)
         playerUI?.UpdateCoins(coins);
     }
 
-    public void LoseLife()
+    private void LoseLife()
     {
         lives--;
         playerUI?.UpdateLives(lives);
-        if (lives <= 0)
+
+        if (lives < 0)
         {
+            MenuUI menuUI = FindObjectOfType<MenuUI>();
+            menuUI.TogglePause();
+            deathMenuUI.SetActive(true);
             Debug.Log("Game Over!");
             // Respawn or end game
         }
@@ -61,6 +67,9 @@ public void TakeDamage(int amount)
         {
             Debug.Log("Player Lost a Life! Respawn...");
             currentHealth = maxHealth;
+            playerUI?.UpdateHearts(currentHealth);
         }
+
+        OnPlayerLostLife?.Invoke(gameObject);
     }
 }

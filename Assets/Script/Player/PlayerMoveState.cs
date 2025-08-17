@@ -19,8 +19,9 @@ public class PlayerMoveState : PlayerBaseMachine
     /// </summary>
     public override void Enter()
     {
-        stateMachine.inputReader.isAttacking += OnAttack; 
+        stateMachine.inputReader.isAttacking += OnAttack;
         stateMachine.inputReader.jumpEvent += OnJump;
+        stateMachine.inputReader.dodgeRollEvent += OnDodgeRoll;
     }
 
     /// <summary>
@@ -38,7 +39,10 @@ public class PlayerMoveState : PlayerBaseMachine
 
             // Stop jump animation when grounded
             if (stateMachine.animator != null)
+            {
                 stateMachine.animator.SetBool("IsJumping", false);
+                
+            }
         }
 
         // Move the player using input and external forces
@@ -69,6 +73,7 @@ public class PlayerMoveState : PlayerBaseMachine
     {
         stateMachine.inputReader.isAttacking -= OnAttack;
         stateMachine.inputReader.jumpEvent -= OnJump;
+        stateMachine.inputReader.dodgeRollEvent -= OnDodgeRoll;
     }
 
     /// <summary>
@@ -79,4 +84,12 @@ public class PlayerMoveState : PlayerBaseMachine
     {
         stateMachine.SwitchState(new PlayerJumpState(stateMachine));
     }
+    private void OnDodgeRoll()
+{
+    // Only roll if grounded and cooldown passed
+    if (!stateMachine.characterController.isGrounded) return;
+    if (Time.time < stateMachine.lastRollTime + stateMachine.rollCooldown) return;
+
+    stateMachine.SwitchState(new PlayerRollState(stateMachine));
+}
 }
