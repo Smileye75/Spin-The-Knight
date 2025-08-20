@@ -50,26 +50,23 @@ public class PlayerStats : MonoBehaviour
         playerUI?.UpdateCoins(coins);
     }
 
-    private void LoseLife()
+private void LoseLife()
+{
+    lives--;
+    playerUI?.UpdateLives(lives);
+
+    if (lives < 0)
     {
-        lives--;
-        playerUI?.UpdateLives(lives);
-
-        if (lives < 0)
-        {
-            MenuUI menuUI = FindObjectOfType<MenuUI>();
-            menuUI.TogglePause();
-            deathMenuUI.SetActive(true);
-            Debug.Log("Game Over!");
-            // Respawn or end game
-        }
-        else
-        {
-            Debug.Log("Player Lost a Life! Respawn...");
-            currentHealth = maxHealth;
-            playerUI?.UpdateHearts(currentHealth);
-        }
-
-        OnPlayerLostLife?.Invoke(gameObject);
+        Debug.Log("Game Over!");
+        GameManager.Instance.GameOver();
     }
+    else
+    {
+        Debug.Log("Player Lost a Life! Respawn...");
+        currentHealth = maxHealth;
+        playerUI?.UpdateHearts(currentHealth);
+    }
+
+    OnPlayerLostLife?.Invoke(gameObject);
+}
 }

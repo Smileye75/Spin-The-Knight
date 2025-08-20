@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class RespawnManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnRespawn += HandleRespawn;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnRespawn -= HandleRespawn;
+    }
+
+    private void HandleRespawn(Vector3 position)
+    {
+        // Example: reset enemies, pickups, etc.
+        Debug.Log("Respawn event triggered at " + position);
     }
 }

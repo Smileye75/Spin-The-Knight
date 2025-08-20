@@ -32,36 +32,24 @@ public class PlayerMoveState : PlayerBaseMachine
     {
         Vector3 movement = CalculateMovement();
 
-        // Update last grounded time if player is grounded
         if (stateMachine.characterController.isGrounded)
         {
             stateMachine.lastGroundedTime = Time.time;
-
-            // Stop jump animation when grounded
             if (stateMachine.animator != null)
-            {
                 stateMachine.animator.SetBool("IsJumping", false);
-                
-            }
         }
 
-        // Move the player using input and external forces
         Move(movement * stateMachine.movementSpeed, deltaTime);
 
-        // If no movement input, set animator speed to 0
         if (stateMachine.inputReader.movementValue == Vector2.zero)
         {
-            stateMachine.animator.SetFloat(animationSpeed, 0, animTransitionSpeed, deltaTime);
+            stateMachine.animator.SetBool("IsMoving", false);
             return;
         }
 
-        // Set animator speed to 1 for movement
-        stateMachine.animator.SetFloat(animationSpeed, 1, animTransitionSpeed, deltaTime);
-
-        // Rotate player to face movement direction
+        stateMachine.animator.SetBool("IsMoving", true);
         FaceMovementDirection(movement);
 
-        // Handle attack cooldown timer (now managed in PlayerBaseMachine)
         UpdateAttackCooldown(deltaTime);
     }
 
@@ -85,11 +73,18 @@ public class PlayerMoveState : PlayerBaseMachine
         stateMachine.SwitchState(new PlayerJumpState(stateMachine));
     }
     private void OnDodgeRoll()
-{
-    // Only roll if grounded and cooldown passed
-    if (!stateMachine.characterController.isGrounded) return;
-    if (Time.time < stateMachine.lastRollTime + stateMachine.rollCooldown) return;
+    {
+        // Only roll if grounded and cooldown passed
+        if (!stateMachine.characterController.isGrounded) return;
+        if (Time.time < stateMachine.lastRollTime + stateMachine.rollCooldown) return;
 
-    stateMachine.SwitchState(new PlayerRollState(stateMachine));
+        stateMachine.SwitchState(new PlayerRollState(stateMachine));
+    }
+
+private void OnAttack()
+{
+    if (!TryConsumeAttackCooldown()) return; // from PlayerBaseMachine:contentReference[oaicite:4]{index=4}
+    stateMachine.SwitchState(new PlayerAttackState(stateMachine));
 }
+
 }

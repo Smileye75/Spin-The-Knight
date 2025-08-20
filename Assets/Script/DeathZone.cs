@@ -7,15 +7,17 @@ using UnityEngine;
 /// </summary>
 public class DeathZone : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider other)
+private void OnTriggerEnter(Collider other)
+{
+    if (other.CompareTag("Player"))
     {
-        if (other.CompareTag("Player"))
+        Debug.Log("Player fell into DeathZone!");
+
+        // Trigger life loss
+        if (other.TryGetComponent<PlayerStats>(out var stats))
         {
-            var playerStats = other.GetComponent<PlayerStats>();
-            if (playerStats != null)
-            {
-                playerStats.TakeDamage(playerStats.maxHealth);
-            }
+            stats.TakeDamage(stats.maxHealth); // Force death
         }
     }
+}
 }

@@ -12,6 +12,12 @@ public class BossCamera : MonoBehaviour
     private int activePriority = 20;
     private int inactivePriority = 5;
 
+private void Start()
+{
+    GameManager.Instance.OnBossSpawned += () => targetCamera.Priority = 20;
+    GameManager.Instance.OnBossDefeated += () => targetCamera.Priority = 5;
+}
+
     /// <summary>
     /// Raises the camera priority when the enemy enters the trigger zone.
     /// </summary>

@@ -8,6 +8,17 @@ using UnityEngine;
 /// </summary>
 public class PlayerStateMachine : StateMachine
 {
+    // ========== NEW: Spin event relay ==========
+    // The active attack state will set this when it enters, and clear it on exit.
+    [System.NonSerialized] public ISpinCounter spinCounter;
+
+    /// <summary>
+    /// Called by the Animator's AttackAnimEventProxy (on the Animator GameObject) once per spin loop.
+    /// Your Spinning clip should have a single Animation Event named "SpinCycle".
+    /// </summary>
+    public void SpinCycle() => spinCounter?.OnSpinCycle();
+    public void EndAttack() => spinCounter?.EndAttack();
+    // ===========================================
 
     [Header("Player Stats")]
     public PlayerStats playerStats; // Reference to player stats for health, coins, and lives
@@ -62,6 +73,13 @@ public class PlayerStateMachine : StateMachine
     [Tooltip("Cooldown between rolls in seconds.")]
     public float rollCooldown = 0.75f;
 
+    [Tooltip("How many times the player spins during the spinning attack animation.")]
+    public int attackSpinCount = 1; // Set in Inspector
+
+    [Header("Attack Spin Settings")]
+    [Tooltip("How long the spinning attack lasts (in seconds). (Optional; animator Exit Time now drives transitions.)")]
+    public float spinningDuration = 1f;
+
     // Calculated roll speed (hidden from Inspector)
     [HideInInspector] public float rollSpeed;
 
@@ -73,26 +91,26 @@ public class PlayerStateMachine : StateMachine
 
     private void Start()
     {
+        playerStats = GetComponent<PlayerStats>();                         // :contentReference[oaicite:1]{index=1}
+        mainCamera = Camera.main.transform;                                 // :contentReference[oaicite:2]{index=2}
 
-        playerStats = GetComponent<PlayerStats>();
-        // Cache main camera transform for movement calculations
-        mainCamera = Camera.main.transform;
+        // Automatically find Animator on child if not assigned in Inspector
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
 
         // Calculate gravity and jump force based on settings
-        float gravity = -(2 * jumpHeight) / (timeToApex * timeToApex);
-        jumpForce = Mathf.Abs(gravity) * timeToApex;
-        forceReceiver.SetGravity(gravity);
+        float gravity = -(2 * jumpHeight) / (timeToApex * timeToApex);      // :contentReference[oaicite:3]{index=3}
+        jumpForce = Mathf.Abs(gravity) * timeToApex;                        // :contentReference[oaicite:4]{index=4}
+        forceReceiver.SetGravity(gravity);                                  // :contentReference[oaicite:5]{index=5}
 
         // Calculate roll speed based on distance and duration
-        rollSpeed = rollDistance / rollDuration;
+        rollSpeed = rollDistance / rollDuration;                            // :contentReference[oaicite:6]{index=6}
 
         // Lock and hide cursor for gameplay
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;                           // :contentReference[oaicite:7]{index=7}
+        Cursor.visible = false;                                             // :contentReference[oaicite:8]{index=8}
 
         // Start in movement state
-        SwitchState(new PlayerMoveState(this));
+        SwitchState(new PlayerMoveState(this));                             // :contentReference[oaicite:9]{index=9}
     }
-
-
 }

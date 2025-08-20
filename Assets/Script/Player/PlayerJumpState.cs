@@ -31,7 +31,6 @@ public class PlayerJumpState : PlayerBaseMachine
 
         // Subscribe to jump cancel event for variable jump height
         stateMachine.inputReader.jumpCanceled += OnJumpCanceled;
-        stateMachine.inputReader.isAttacking += OnAttack; 
     }
 
     /// <summary>
@@ -58,9 +57,7 @@ public class PlayerJumpState : PlayerBaseMachine
     /// </summary>
     public override void Exit()
     {
-        stateMachine.inputReader.jumpCanceled -= OnJumpCanceled;
-        stateMachine.inputReader.isAttacking -= OnAttack;
-        
+        stateMachine.inputReader.jumpCanceled -= OnJumpCanceled;        
         // Reset jump animation when exiting jump state
         if (stateMachine.animator != null)
             stateMachine.animator.SetBool("IsJumping", false);

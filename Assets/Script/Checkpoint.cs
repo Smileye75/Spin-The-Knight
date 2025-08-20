@@ -29,17 +29,13 @@ public class Checkpoint : MonoBehaviour
         PlayerStats.OnPlayerLostLife -= RespawnPlayer;
     }
 
-    private void RespawnPlayer(GameObject player)
+private void RespawnPlayer(GameObject player)
+{
+    if (activeCheckpoint == this && respawnLocation != null && player != null)
     {
-        // Only respawn if this is the active checkpoint
-        if (activeCheckpoint == this && respawnLocation != null && player != null)
-        {
-            var cc = player.GetComponent<CharacterController>();
-            if (cc != null) cc.enabled = false;
-            player.transform.position = respawnLocation.position;
-            if (cc != null) cc.enabled = true;
-        }
+        GameManager.Instance.RespawnPlayer(respawnLocation.position);
     }
+}
 
     private void OnTriggerEnter(Collider other)
     {

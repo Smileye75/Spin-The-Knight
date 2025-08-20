@@ -60,11 +60,11 @@ public abstract class PlayerBaseMachine : State
     /// Handles attack input event.
     /// Triggers attack animation and sets cooldown.
     /// </summary>
-    protected void OnAttack()
+    protected bool TryConsumeAttackCooldown()
     {
-        if (attackTimer > 0) { return; }
-        stateMachine.animator.SetTrigger("Attack");
+        if (attackTimer > 0f) return false;
         attackTimer = stateMachine.attackCooldown;
+        return true;
     }
 
     /// <summary>

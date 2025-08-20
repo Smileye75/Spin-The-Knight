@@ -6,83 +6,66 @@ using UnityEngine.SceneManagement;
 public class MenuUI : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenuUI;
-    [SerializeField] private GameObject thePlayer;
     [SerializeField] private GameObject playerUI;
     [SerializeField] private GameObject victoryUI;
+    [SerializeField] private GameObject gameOverUI;
 
-
-
-    private bool isPaused = false;
-
-    void Update()
+    private void Start()
     {
-        // Only allow pause if player lives < 0
-        PlayerStats stats = FindObjectOfType<PlayerStats>();
-        if (victoryUI != null && victoryUI.activeSelf)
-        {
-            if (stats != null && stats.lives < 0 && Input.GetKeyDown(KeyCode.Escape))
-            {
-                TogglePause();
-            }
-        }
+        GameManager.Instance.OnPauseToggled += HandlePause;
+        GameManager.Instance.OnVictory += ShowVictoryUI;
+        GameManager.Instance.OnGameOver += ShowGameOverUI;
     }
 
-    public void TogglePause()
+    private void OnDestroy()
     {
-        isPaused = !isPaused;
-        pauseMenuUI.SetActive(isPaused);
-        Time.timeScale = isPaused ? 0f : 1f;
-
-        if (thePlayer != null)
-            thePlayer.SetActive(!isPaused);
-
-        if (playerUI != null)
-            playerUI.SetActive(!isPaused);
-
-        if (isPaused)
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else
-        {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
+        if (GameManager.Instance == null) return;
+        GameManager.Instance.OnPauseToggled -= HandlePause;
+        GameManager.Instance.OnVictory -= ShowVictoryUI;
+        GameManager.Instance.OnGameOver -= ShowGameOverUI;
     }
 
-    public void Play()
+    private void HandlePause(bool paused)
     {
-        SceneManager.LoadScene("Tutorial Level");
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        pauseMenuUI.SetActive(paused);
+        playerUI.SetActive(!paused);
+
+        // Hide victory/game over UI when resuming from pause
+        if (!paused)
+        {
+            HideVictoryUI();
+            HideGameOverUI();
+        }
+
+        Cursor.visible = paused;
+        Cursor.lockState = paused ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
     public void ShowVictoryUI()
     {
-        if (victoryUI != null)
-            victoryUI.SetActive(true);
-        TogglePause();
+        if (victoryUI != null) victoryUI.SetActive(true);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
     }
 
-    public void TryAgain()
+    public void ShowGameOverUI()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        Time.timeScale = 1f;
+        if (gameOverUI != null) gameOverUI.SetActive(true);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
     }
 
-    public void Quit()
+    public void HideVictoryUI()
     {
-        Application.Quit();
+        if (victoryUI != null) victoryUI.SetActive(false);
     }
 
-    public void MainMenu()
+    public void HideGameOverUI()
     {
-        SceneManager.LoadScene("Main Menu");
-        Time.timeScale = 1f;
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        if (gameOverUI != null) gameOverUI.SetActive(false);
     }
+
+    // Buttons now delegate to GameManager
+    public void Play() => GameManager.Instance.ReloadScene();
+    public void TryAgain() => GameManager.Instance.ReloadScene();
+    public void Quit() => Application.Quit();
+    public void MainMenu() => GameManager.Instance.LoadMainMenu();
 }

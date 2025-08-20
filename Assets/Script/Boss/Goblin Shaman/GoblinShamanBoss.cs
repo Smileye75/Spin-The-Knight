@@ -113,9 +113,7 @@ public class GoblinShamanBoss : MonoBehaviour
     void Die()
     {
         Destroy(gameObject);
-        MenuUI menuUI = FindObjectOfType<MenuUI>();
-        if (menuUI != null)
-            menuUI.ShowVictoryUI();
+        GameManager.Instance.BossDefeated();
     }
 
     public void ResetBoss()

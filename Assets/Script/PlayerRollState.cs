@@ -7,11 +7,25 @@ public class PlayerRollState : PlayerBaseMachine
     private Vector3 rollDirection;
     private float elapsed;
 
+    // Capsule adjustment fields
+    private CharacterController controller;
+    private float originalHeight;
+    private Vector3 originalCenter;
+    private float rollHeight = 0.8f; // Lower than standing height
+    private Vector3 rollCenter = new Vector3(0, 0.5f, 0); // Half of rollHeight
+
     public PlayerRollState(PlayerStateMachine stateMachine) : base(stateMachine) {}
 
     public override void Enter()
     {
         stateMachine.lastRollTime = Time.time;
+
+        // Capsule adjustment
+        controller = stateMachine.characterController;
+        originalHeight = controller.height;
+        originalCenter = controller.center;
+        controller.height = rollHeight;
+        controller.center = rollCenter;
 
         // Clear horizontal forces so knockback doesn't affect roll direction
         stateMachine.forceReceiver.ClearHorizontal();
@@ -34,9 +48,6 @@ public class PlayerRollState : PlayerBaseMachine
             stateMachine.animator.SetBool("IsRolling", true);
             stateMachine.animator.SetBool("IsJumping", false);
         }
-
-        // (Optional) Clear horizontal forces if you store any external impulses
-        // stateMachine.forceReceiver.ClearHorizontal(); // Only if you have such a method
     }
 
     public override void Tick(float deltaTime)
@@ -63,6 +74,10 @@ public class PlayerRollState : PlayerBaseMachine
 
     public override void Exit()
     {
+        // Reset capsule size
+        controller.height = originalHeight;
+        controller.center = originalCenter;
+
         if (stateMachine.animator != null)
             stateMachine.animator.SetBool("IsRolling", false);
     }

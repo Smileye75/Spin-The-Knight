@@ -18,7 +18,6 @@ public class PlayerFallState : PlayerBaseMachine
     public override void Enter()
     {
         stateMachine.animator.SetBool("IsFalling", true);
-        stateMachine.inputReader.isAttacking += OnAttack; 
     }
 
     /// <summary>
@@ -50,8 +49,7 @@ public class PlayerFallState : PlayerBaseMachine
     /// Called when exiting the fall state.
     /// </summary>
     public override void Exit()
-    { 
-        stateMachine.inputReader.isAttacking -= OnAttack;
+    {
         // No exit logic needed for now
     }
 
