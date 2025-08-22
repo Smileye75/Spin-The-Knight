@@ -12,18 +12,24 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private PlayerUI playerUI;
     [SerializeField] private GameObject deathMenuUI;
     public static event System.Action<GameObject> OnPlayerLostLife;
+    [SerializeField] private Animator animator; // Add this field
 
     public void Awake()
     {
         currentHealth = maxHealth;
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
     }
 
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;
         currentHealth = Mathf.Max(currentHealth, 0);
-
         playerUI?.UpdateHearts(currentHealth);
+
+        if (animator != null)
+            animator.SetTrigger("Hit"); // Play hit animation
 
         if (currentHealth <= 0)
         {

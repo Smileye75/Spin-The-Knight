@@ -6,6 +6,7 @@ public class PlayerRollState : PlayerBaseMachine
 {
     private Vector3 rollDirection;
     private float elapsed;
+    private float jumpLockTimer = 0.5f; // Lock jump for 0.5 seconds
 
     // Capsule adjustment fields
     private CharacterController controller;
@@ -48,28 +49,47 @@ public class PlayerRollState : PlayerBaseMachine
             stateMachine.animator.SetBool("IsRolling", true);
             stateMachine.animator.SetBool("IsJumping", false);
         }
+
+        elapsed = 0f;
+        jumpLockTimer = 0.2f; // Reset lock timer on enter
     }
 
     public override void Tick(float deltaTime)
     {
         elapsed += deltaTime;
 
-        // Apply roll movement (gravity handled separately by ForceReceiver)
+        // Decrease jump lock timer
+        if (jumpLockTimer > 0f)
+            jumpLockTimer -= deltaTime;
+
+        // Allow jump only after lock timer expires
+        if (jumpLockTimer <= 0f && stateMachine.inputReader.IsJumpPressed())
+        {
+            stateMachine.SwitchState(
+                new PlayerJumpState(
+                    stateMachine,
+                    -1f,                    // use default jump force
+                    rollDirection,          // direction
+                    stateMachine.rollSpeed, // speed
+                    true                    // <--- isRollingJump
+                )
+            );
+            return;
+        }
+
+        // Roll movement
         Vector3 move = rollDirection * stateMachine.rollSpeed;
         Move(move, deltaTime);
 
-        // Abort if we leave ground early (optional safeguard)
+        // Optional early abort if airborne too long
         if (!stateMachine.characterController.isGrounded && elapsed > 0.15f)
         {
             stateMachine.SwitchState(new PlayerMoveState(stateMachine));
             return;
         }
 
-        // End roll after duration
         if (elapsed >= stateMachine.rollDuration)
-        {
             stateMachine.SwitchState(new PlayerMoveState(stateMachine));
-        }
     }
 
     public override void Exit()

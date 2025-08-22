@@ -9,10 +9,22 @@ using UnityEngine;
 public class PlayerJumpState : PlayerBaseMachine
 {
     private float customJumpForce = -1f;
+    private Vector3 jumpDirection = Vector3.zero;
+    private float jumpSpeed = -1f;
+    private bool isRollingJump = false; // <--- Add this flag
 
-    public PlayerJumpState(PlayerStateMachine stateMachine, float customJumpForce = -1f) : base(stateMachine)
+    public PlayerJumpState(
+        PlayerStateMachine stateMachine,
+        float customJumpForce = -1f,
+        Vector3 jumpDirection = default,
+        float jumpSpeed = -1f,
+        bool isRollingJump = false // <--- Add this parameter
+    ) : base(stateMachine)
     {
         this.customJumpForce = customJumpForce;
+        this.jumpDirection = jumpDirection;
+        this.jumpSpeed = jumpSpeed;
+        this.isRollingJump = isRollingJump;
     }
 
     /// <summary>
@@ -29,8 +41,9 @@ public class PlayerJumpState : PlayerBaseMachine
         if (stateMachine.animator != null)
             stateMachine.animator.SetBool("IsJumping", true);
 
-        // Subscribe to jump cancel event for variable jump height
-        stateMachine.inputReader.jumpCanceled += OnJumpCanceled;
+        // Only subscribe to jumpCanceled for normal jumps
+        if (!isRollingJump)
+            stateMachine.inputReader.jumpCanceled += OnJumpCanceled;
     }
 
     /// <summary>
@@ -39,15 +52,20 @@ public class PlayerJumpState : PlayerBaseMachine
     /// </summary>
     public override void Tick(float deltaTime)
     {
-        // Calculate movement direction and apply movement/rotation
-        Vector3 movement = CalculateMovement();
-        Move(movement * stateMachine.movementSpeed, deltaTime);
+        Vector3 movement = jumpDirection != Vector3.zero
+            ? jumpDirection * (jumpSpeed > 0f ? jumpSpeed : stateMachine.movementSpeed)
+            : CalculateMovement() * stateMachine.movementSpeed;
+
+        Move(movement, deltaTime);
         FaceMovementDirection(movement);
 
-        // Switch to fall state after jump duration or when upward velocity stops
         if (stateMachine.characterController.velocity.y <= 0f)
         {
-            stateMachine.SwitchState(new PlayerFallState(stateMachine));
+            // For normal jumps, use input direction and movement speed
+            Vector3 direction = jumpDirection != Vector3.zero ? jumpDirection : CalculateMovement();
+            float speed = jumpSpeed > 0f ? jumpSpeed : stateMachine.movementSpeed;
+
+            stateMachine.SwitchState(new PlayerFallState(stateMachine, direction, speed));
         }
     }
 
@@ -57,8 +75,8 @@ public class PlayerJumpState : PlayerBaseMachine
     /// </summary>
     public override void Exit()
     {
-        stateMachine.inputReader.jumpCanceled -= OnJumpCanceled;        
-        // Reset jump animation when exiting jump state
+        if (!isRollingJump)
+            stateMachine.inputReader.jumpCanceled -= OnJumpCanceled;
         if (stateMachine.animator != null)
             stateMachine.animator.SetBool("IsJumping", false);
     }

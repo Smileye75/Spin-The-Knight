@@ -5,11 +5,19 @@ using UnityEngine;
 /// <summary>
 /// Handles player behavior while falling (in air, not grounded).
 /// Transitions to move state when grounded.
+/// Keeps initial air direction and speed (no air control).
 /// </summary>
 public class PlayerFallState : PlayerBaseMachine
 {
-    // Constructor: passes state machine reference to base class
-    public PlayerFallState(PlayerStateMachine playerState) : base(playerState) { }
+    private readonly Vector3 airMoveDirection;
+    private readonly float airMoveSpeed;
+
+    // Constructor: pass direction and speed from jump/roll
+    public PlayerFallState(PlayerStateMachine stateMachine, Vector3 airMoveDirection = default, float airMoveSpeed = -1f) : base(stateMachine)
+    {
+        this.airMoveDirection = airMoveDirection;
+        this.airMoveSpeed = airMoveSpeed;
+    }
 
     /// <summary>
     /// Called when entering the fall state.
@@ -26,15 +34,9 @@ public class PlayerFallState : PlayerBaseMachine
     /// </summary>
     public override void Tick(float deltaTime)
     {
-        // Update last grounded time if player is grounded
-        if (stateMachine.characterController.isGrounded)
-        {
-            stateMachine.lastGroundedTime = Time.time;
-        }
-
-        // Calculate movement direction and apply movement/rotation
-        Vector3 movement = CalculateMovement();
-        Move(movement * stateMachine.movementSpeed, deltaTime);
+        // No air control: always use initial direction and speed
+        Vector3 movement = airMoveDirection * (airMoveSpeed > 0f ? airMoveSpeed : stateMachine.movementSpeed);
+        Move(movement, deltaTime);
         FaceMovementDirection(movement);
 
         // If player lands, switch to move state and reset falling animation

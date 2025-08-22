@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EatFood : MonoBehaviour
 {
-    public int healAmount = 1;
+    public int healAmount = 3;
 
     private void OnTriggerEnter(Collider other)
     {

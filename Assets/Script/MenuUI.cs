@@ -62,10 +62,4 @@ public class MenuUI : MonoBehaviour
     {
         if (gameOverUI != null) gameOverUI.SetActive(false);
     }
-
-    // Buttons now delegate to GameManager
-    public void Play() => GameManager.Instance.ReloadScene();
-    public void TryAgain() => GameManager.Instance.ReloadScene();
-    public void Quit() => Application.Quit();
-    public void MainMenu() => GameManager.Instance.LoadMainMenu();
 }
