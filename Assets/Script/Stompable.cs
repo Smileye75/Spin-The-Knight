@@ -13,8 +13,15 @@ public class Stompable : MonoBehaviour
     public float bounceForce = 8f;
     public float jumpBoostMultiplier = 1.5f;
 
-    [Tooltip("Should this object be destroyed when stomped?")]
+    [SerializeField] private GameObject coinPrefab;
+
+    [Tooltip("Should this object be destroyed instantly when stomped?")]
     public bool destroyOnStomp = true;
+
+    [Tooltip("Should this object explode (destroy after delay) when stomped?")]
+    public bool explodeOnStomp = false;
+    [Tooltip("Delay before explosion (seconds).")]
+    public float explodeDelay = 3f;
 
     /// <summary>
     /// Called when the player stomps this object.
@@ -24,12 +31,29 @@ public class Stompable : MonoBehaviour
     {
         Debug.Log($"{name} was stomped!");
 
-        // Destroy the object if enabled
+
         if (destroyOnStomp)
         {
+            if (coinPrefab != null)
+            {
+                Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
+                Instantiate(coinPrefab, spawnPos, Quaternion.identity);
+            }
             Destroy(gameObject);
         }
 
+        else if (explodeOnStomp)
+        {
+            StartCoroutine(ExplodeAfterDelay());
+        }
+
         // Place for optional: trigger particles, animation, etc. here
+    }
+
+    private IEnumerator ExplodeAfterDelay()
+    {
+        // Optional: play explosion animation or effects here
+        yield return new WaitForSeconds(explodeDelay);
+        Destroy(gameObject);
     }
 }

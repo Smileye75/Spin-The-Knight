@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// Handles player stomping on enemies and interacting with jump pads.
@@ -12,11 +13,35 @@ public class PlayerStomping : MonoBehaviour
     private PlayerStateMachine stateMachine;
     private InputReader inputReader;
 
+    public Collider stompCollider;
+
     private void Start()
     {
         // Cache references from the parent object at startup
         stateMachine = GetComponentInParent<PlayerStateMachine>();
+
         inputReader = GetComponentInParent<InputReader>();
+
+        stompCollider = GetComponent<Collider>();
+
+        stompCollider.enabled = false;
+    }
+    public void EnableStompCollider()
+    {
+        if (stompCollider != null)
+        {
+            stompCollider.enabled = true;
+            Debug.Log("Stomp collider enabled!");
+        }
+    }
+
+    public void DisableStompCollider()
+    {
+        if (stompCollider != null)
+        {
+            stompCollider.enabled = false;
+            Debug.Log("Stomp collider disabled!");
+        }
     }
 
     /// <summary>
@@ -45,7 +70,7 @@ public class PlayerStomping : MonoBehaviour
             // Switch to jump state and pass the bounce force
             if (stateMachine != null)
             {
-                stateMachine.SwitchState(new PlayerJumpState(stateMachine, finalBounceForce));
+                stateMachine.SwitchState(new PlayerAirState(stateMachine, finalBounceForce));
             }
 
             // Trigger stomp behavior (destroy, effects, etc.)
@@ -61,4 +86,6 @@ public class PlayerStomping : MonoBehaviour
         component = GetComponentInParent<T>();
         return component != null;
     }
+
+
 }

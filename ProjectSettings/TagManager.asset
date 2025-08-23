@@ -12,6 +12,9 @@ TagManager:
   - JumpPad
   - Checkpoint
   - Camera
+  - Coin Crate
+  - Stompable
+  - Ground
   layers:
   - Default
   - TransparentFX

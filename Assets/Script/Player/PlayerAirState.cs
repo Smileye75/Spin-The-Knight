@@ -1,0 +1,157 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerAirState : PlayerBaseMachine
+{
+    private readonly Vector3 launchDirection;
+    private readonly float horizontalSpeed;
+    private readonly bool isRollingJump;
+
+    // Optional custom jump force (e.g., stomp or jump pad)
+    private readonly float customJumpForce;
+
+    // Stomp handling (armed externally via OnStomped)
+    private bool stomped = false;
+    private float stompBounceForce = 0f;
+    private Vector3 stompDirection = Vector3.zero;
+
+    public PlayerAirState(
+        PlayerStateMachine stateMachine,
+        float customJumpForce = -1f,
+        Vector3 launchDirection = default,
+        float horizontalSpeed = -1f,
+        bool isRollingJump = false
+    ) : base(stateMachine)
+    {
+        this.customJumpForce = customJumpForce;
+        this.launchDirection = launchDirection;
+        this.horizontalSpeed = horizontalSpeed;
+        this.isRollingJump = isRollingJump;
+    }
+
+    public override void Enter()
+    {
+        stateMachine.animator.SetBool("IsGrounded", false);
+
+
+        // Apply initial jump force now (normal jump or custom)
+        float force = customJumpForce > 0f ? customJumpForce : stateMachine.jumpForce;
+        stateMachine.forceReceiver.Jump(force); // reuses your existing jump force pipeline (gravity, etc.)
+
+        // Variable jump height: only for normal jumps
+        if (!isRollingJump)
+            stateMachine.inputReader.jumpCanceled += OnJumpCanceled;
+
+        // Initialize animator with current vertical velocity
+        UpdateAnimatorVelocityFloat();
+    }
+
+    public override void Tick(float deltaTime)
+    {
+        // Air control: blend between launch direction and live input
+        Vector3 inputDir = CalculateMovement();
+        Vector3 planarDir;
+        stateMachine.playerStomping?.EnableStompCollider();
+        if (launchDirection != Vector3.zero && inputDir != Vector3.zero)
+        {
+            // Blend: 80% launch, 20% input (tweak as needed)
+            planarDir = Vector3.Lerp(launchDirection, inputDir, 0.2f).normalized;
+        }
+        else if (inputDir != Vector3.zero)
+        {
+            planarDir = inputDir;
+        }
+        else
+        {
+            planarDir = launchDirection;
+        }
+
+        float speed = horizontalSpeed > 0f ? horizontalSpeed : stateMachine.movementSpeed;
+        Vector3 movement = planarDir * speed;
+        Move(movement, deltaTime);
+        FaceMovementDirection(movement);
+
+        UpdateAnimatorVelocityFloat();
+
+        // Movement detection for animator
+        if (stateMachine.inputReader.movementValue == Vector2.zero)
+        {
+            stateMachine.animator.SetBool("IsMoving", false);
+        }
+        else
+        {
+            stateMachine.animator.SetBool("IsMoving", true);
+        }
+
+
+        if (stateMachine.characterController.isGrounded &&
+            stateMachine.characterController.velocity.y <= 0f)
+        {
+            // Raycast down to check for "Ground" tag before switching state
+            RaycastHit hit;
+            Vector3 rayOrigin = stateMachine.transform.position + Vector3.up * 0.1f;
+            if (Physics.Raycast(rayOrigin, Vector3.down, out hit, 1f))
+            {
+                if (hit.collider.CompareTag("Ground") || hit.collider.CompareTag("MovingPlatform"))
+                {
+                    stateMachine.SwitchState(new PlayerMoveState(stateMachine));
+                }
+                else
+                {
+                    if (stomped)
+                    {
+                        PerformStompBounce();
+                        stomped = false;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    public override void Exit()
+    {
+        if (!isRollingJump)
+            stateMachine.inputReader.jumpCanceled -= OnJumpCanceled;
+        // No need to reset a bool; animator uses a float that will change automatically on next state
+    }
+
+    /// <summary>
+    /// External event: arm a stomp bounce that should trigger when we next hit the ground.
+    /// </summary>
+    public void OnStomped(float bounceForce, Vector3 direction)
+    {
+        stomped = true;
+        stompBounceForce = Mathf.Max(0f, bounceForce);
+        stompDirection = direction;
+    }
+
+    private void PerformStompBounce()
+    {
+        // Apply the bounce force and set a new horizontal launch
+        stateMachine.forceReceiver.Jump(stompBounceForce);
+
+        // Refresh the animator velocity right away
+        UpdateAnimatorVelocityFloat();
+    }
+
+    private void OnJumpCanceled()
+    {
+        stateMachine.forceReceiver.CancelJump();
+    }
+
+    private void UpdateAnimatorVelocityFloat()
+    {
+        if (stateMachine.animator == null) return;
+
+        // Vertical velocity drives a single float parameter:
+        // Positive while going up, negative while falling.
+        float vy = stateMachine.characterController.velocity.y;
+
+        // Optional: normalize by jumpForce to keep blendtree ranges consistent
+        float norm = stateMachine.jumpForce > 0f ? Mathf.Clamp(vy / stateMachine.jumpForce, -1f, 1f) : vy;
+
+        stateMachine.animator.SetFloat("VelocitySpeed", norm);
+    }
+}

@@ -80,6 +80,8 @@ public class PlayerStateMachine : StateMachine
     [Tooltip("How long the spinning attack lasts (in seconds). (Optional; animator Exit Time now drives transitions.)")]
     public float spinningDuration = 1f;
 
+    public PlayerStomping playerStomping; // Reference to PlayerStomping component
+
     // Calculated roll speed (hidden from Inspector)
     [HideInInspector] public float rollSpeed;
 
@@ -88,6 +90,8 @@ public class PlayerStateMachine : StateMachine
     [HideInInspector] public float jumpForce; // Calculated jump force
     [HideInInspector] public float lastJumpPressedTime; // Last time jump was pressed
     [HideInInspector] public float lastRollTime = -Mathf.Infinity; // Last time player rolled
+
+    public PlayerBaseMachine CurrentState { get; private set; } // <-- Add this property
 
     private void Start()
     {
@@ -103,6 +107,11 @@ public class PlayerStateMachine : StateMachine
         jumpForce = Mathf.Abs(gravity) * timeToApex;                        // :contentReference[oaicite:4]{index=4}
         forceReceiver.SetGravity(gravity);                                  // :contentReference[oaicite:5]{index=5}
 
+        if (playerStomping == null)
+        {
+            playerStomping = GetComponentInChildren<PlayerStomping>();
+        }
+
         // Calculate roll speed based on distance and duration
         rollSpeed = rollDistance / rollDuration;                            // :contentReference[oaicite:6]{index=6}
 
@@ -112,5 +121,12 @@ public class PlayerStateMachine : StateMachine
 
         // Start in movement state
         SwitchState(new PlayerMoveState(this));                             // :contentReference[oaicite:9]{index=9}
+    }
+
+    // Update SwitchState to set CurrentState
+    public void SwitchState(PlayerBaseMachine newState)
+    {
+        CurrentState = newState;
+        base.SwitchState(newState); // Call base logic if needed
     }
 }

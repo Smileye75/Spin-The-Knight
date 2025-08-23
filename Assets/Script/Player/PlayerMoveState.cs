@@ -7,8 +7,6 @@ using UnityEngine;
 /// </summary>
 public class PlayerMoveState : PlayerBaseMachine
 {
-    private readonly int animationSpeed = Animator.StringToHash("Speed"); // Animator parameter for movement speed
-    private const float animTransitionSpeed = 0.1f; // Smoothing for animation transitions
 
     // Constructor: passes state machine reference to base class
     public PlayerMoveState(PlayerStateMachine playerState) : base(playerState) { }
@@ -22,6 +20,10 @@ public class PlayerMoveState : PlayerBaseMachine
         stateMachine.inputReader.isAttacking += OnAttack;
         stateMachine.inputReader.jumpEvent += OnJump;
         stateMachine.inputReader.dodgeRollEvent += OnDodgeRoll;
+        stateMachine.animator.SetBool("IsGrounded", true);
+        stateMachine.playerStomping?.DisableStompCollider();
+
+
     }
 
     /// <summary>
@@ -31,12 +33,9 @@ public class PlayerMoveState : PlayerBaseMachine
     public override void Tick(float deltaTime)
     {
         Vector3 movement = CalculateMovement();
-
         if (stateMachine.characterController.isGrounded)
         {
             stateMachine.lastGroundedTime = Time.time;
-            if (stateMachine.animator != null)
-                stateMachine.animator.SetBool("IsJumping", false);
         }
 
         Move(movement * stateMachine.movementSpeed, deltaTime);
@@ -70,7 +69,15 @@ public class PlayerMoveState : PlayerBaseMachine
     /// </summary>
     private void OnJump()
     {
-        stateMachine.SwitchState(new PlayerJumpState(stateMachine));
+        // Calculate initial air velocity for a normal jump (no forward boost)
+        Vector3 airVelocity = Vector3.up * stateMachine.jumpForce;
+
+        stateMachine.SwitchState(
+            new PlayerAirState(
+                stateMachine,
+                airVelocity.y // pass only the Y component if AirState expects a float
+            )
+        );
     }
     private void OnDodgeRoll()
     {

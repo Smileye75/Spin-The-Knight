@@ -6,7 +6,6 @@ public class PlayerRollState : PlayerBaseMachine
 {
     private Vector3 rollDirection;
     private float elapsed;
-    private float jumpLockTimer = 0.5f; // Lock jump for 0.5 seconds
 
     // Capsule adjustment fields
     private CharacterController controller;
@@ -47,31 +46,25 @@ public class PlayerRollState : PlayerBaseMachine
         if (stateMachine.animator != null)
         {
             stateMachine.animator.SetBool("IsRolling", true);
-            stateMachine.animator.SetBool("IsJumping", false);
         }
 
         elapsed = 0f;
-        jumpLockTimer = 0.2f; // Reset lock timer on enter
     }
 
     public override void Tick(float deltaTime)
     {
         elapsed += deltaTime;
 
-        // Decrease jump lock timer
-        if (jumpLockTimer > 0f)
-            jumpLockTimer -= deltaTime;
-
-        // Allow jump only after lock timer expires
-        if (jumpLockTimer <= 0f && stateMachine.inputReader.IsJumpPressed())
+        // Allow jump at any time during roll
+        if (stateMachine.inputReader.IsJumpPressed())
         {
             stateMachine.SwitchState(
-                new PlayerJumpState(
+                new PlayerAirState(
                     stateMachine,
                     -1f,                    // use default jump force
                     rollDirection,          // direction
                     stateMachine.rollSpeed, // speed
-                    true                    // <--- isRollingJump
+                    true                    // isRollingJump
                 )
             );
             return;
