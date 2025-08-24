@@ -59,7 +59,6 @@ public class GameManager : MonoBehaviour
         CurrentState = pause ? GameState.Paused : GameState.Playing;
         Time.timeScale = pause ? 0 : 1; // Freezes/unfreezes game
         OnPauseToggled?.Invoke(pause);
-        // You can add more pause logic here (e.g., show/hide UI)
     }
 
     // Handles game over logic
@@ -68,8 +67,7 @@ public class GameManager : MonoBehaviour
         TogglePause();
         CurrentState = GameState.GameOver;
         OnGameOver?.Invoke();
-        menuUI?.ShowGameOverUI(); // Show game over UI
-        // You can add more game over logic here
+        menuUI?.ShowGameOverUI();
     }
 
     // Handles victory logic
@@ -79,10 +77,9 @@ public class GameManager : MonoBehaviour
         CurrentState = GameState.Victory;
         OnVictory?.Invoke();
         menuUI?.ShowVictoryUI();
-        // You can add more victory logic here
     }
 
-    // Respawns the player at a given position
+    // Respawns the player at a given position (instant teleport)
     public void RespawnPlayer(Vector3 position)
     {
         if (player != null)
@@ -94,8 +91,7 @@ public class GameManager : MonoBehaviour
 
             if (cc != null) cc.enabled = true;
         }
-        OnRespawn?.Invoke(position);
-        // You can add more respawn logic here (e.g., reset health)
+        OnRespawn?.Invoke(position); // Other systems (e.g., RespawnManager) listen here
     }
 
     // Reloads the current scene
@@ -103,7 +99,6 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1; // Ensure game is unpaused
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        // You can add logic to reset game state here
     }
 
     // Loads the main menu scene
@@ -111,7 +106,6 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1; // Ensure game is unpaused
         SceneManager.LoadScene("Main Menu");
-        // You can add logic to clean up game state here
     }
 
     // Handles boss defeat logic
@@ -120,6 +114,5 @@ public class GameManager : MonoBehaviour
         Debug.Log("Boss defeated!");
         OnBossDefeated?.Invoke();
         Victory(); // Triggers victory flow
-        // You can add more boss defeat logic here (e.g., drop loot, play cutscene)
     }
 }

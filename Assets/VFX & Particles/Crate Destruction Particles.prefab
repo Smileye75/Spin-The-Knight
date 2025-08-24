@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 198202731371243394}
   - component: {fileID: 199167055428053058}
   m_Layer: 0
-  m_Name: Create Destruction Particles
+  m_Name: Crate Destruction Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

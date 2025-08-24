@@ -13,6 +13,12 @@ public class Checkpoint : MonoBehaviour
     private Renderer checkpointRenderer;
     private bool activated = false;
 
+    // >>> ADD: public accessors used by GameManager <<<
+public static bool HasActive => activeCheckpoint != null && oldRespawnLocation != null;
+public static Vector3 ActiveRespawnPosition =>
+    oldRespawnLocation != null ? oldRespawnLocation.position : Vector3.zero;
+
+
     private void Awake()
     {
         checkpointRenderer = GetComponent<Renderer>();
@@ -31,10 +37,7 @@ public class Checkpoint : MonoBehaviour
 
     private void RespawnPlayer(GameObject player)
     {
-        if (activeCheckpoint == this && respawnLocation != null && player != null)
-        {
-            GameManager.Instance.RespawnPlayer(respawnLocation.position);
-        }
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -43,13 +46,11 @@ public class Checkpoint : MonoBehaviour
         {
             activated = true;
 
-            // Destroy old respawn object if it exists and is different from this one
             if (oldRespawnLocation != null && oldRespawnLocation != respawnLocation)
             {
                 Destroy(oldRespawnLocation.gameObject);
             }
 
-            // Set this checkpoint as the active one
             if (activeCheckpoint != null)
                 activeCheckpoint.SetMaterial(false);
 
@@ -66,4 +67,5 @@ public class Checkpoint : MonoBehaviour
             checkpointRenderer.material = isActive ? activeMaterial : inactiveMaterial;
         }
     }
-}
+}   
+

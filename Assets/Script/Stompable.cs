@@ -47,8 +47,7 @@ public class Stompable : MonoBehaviour
         stompFeedback?.PlayFeedbacks();
         if (destroyOnStomp)
         {
-
-            Destroy(gameObject, 0.1f);
+            Destroy(gameObject, 0.15f);
         }
 
         else if (explodeOnStomp)
@@ -112,6 +111,7 @@ public class Stompable : MonoBehaviour
         {
             ParticleSystem effect = Instantiate(explosionEffect, transform.position, Quaternion.identity);
             effect.Play();
+            Destroy(effect.gameObject, effect.main.duration);
         }
 
         if (explosionCollider != null)
@@ -140,13 +140,6 @@ public class Stompable : MonoBehaviour
                         Destroy(other.gameObject);
                     }
                 }
-                return;
-            }
-
-            if (other.CompareTag("Weapon"))
-            {
-                // Only trigger explosion on this object, do NOT destroy the weapon
-                TriggerExplosion();
                 return;
             }
 
