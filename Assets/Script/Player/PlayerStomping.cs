@@ -57,12 +57,9 @@ public class PlayerStomping : MonoBehaviour
             // Calculate bounce force
             float finalBounceForce = stompable.bounceForce;
 
-            // Check for jump buffering or held jump input
-            bool bufferedJump = stateMachine != null &&
-                                Time.time - stateMachine.lastJumpPressedTime <= stateMachine.jumpBufferTime;
             bool heldJump = inputReader != null && inputReader.IsJumpPressed();
 
-            if (bufferedJump || heldJump)
+            if (heldJump)
             {
                 finalBounceForce *= stompable.jumpBoostMultiplier;
             }

@@ -14,7 +14,7 @@ public class AnimationEventProxy : MonoBehaviour
     [Tooltip("The weapon collider (set to IsTrigger). Will be toggled on/off by events.")]
     [SerializeField] private Collider weapon;
 
-
+    
     private void Awake()
     {
         sm = GetComponentInParent<PlayerStateMachine>();

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 
 /// <summary>
@@ -11,6 +12,10 @@ public class PlayerStateMachine : StateMachine
     // ========== NEW: Spin event relay ==========
     // The active attack state will set this when it enters, and clear it on exit.
     [System.NonSerialized] public ISpinCounter spinCounter;
+        public MMF_Player landingFeedback;
+        public MMF_Player jumpingFeedback;
+
+        public ParticleSystem spinningParticles;
 
     /// <summary>
     /// Called by the Animator's AttackAnimEventProxy (on the Animator GameObject) once per spin loop.

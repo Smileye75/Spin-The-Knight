@@ -34,5 +34,16 @@ public class WeaponDamage : MonoBehaviour
         {
             Destroy(other.gameObject);
         }
+
+        if (other.CompareTag("Crates"))
+        {
+            // Try to trigger explosion on the crate's Stompable script
+            if (other.TryGetComponent<Stompable>(out Stompable crate))
+            {
+                crate.TriggerExplosion();
+            }
+            // Do NOT destroy the weapon
+            return;
+        }
     }
 }

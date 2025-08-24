@@ -29,13 +29,13 @@ public class Checkpoint : MonoBehaviour
         PlayerStats.OnPlayerLostLife -= RespawnPlayer;
     }
 
-private void RespawnPlayer(GameObject player)
-{
-    if (activeCheckpoint == this && respawnLocation != null && player != null)
+    private void RespawnPlayer(GameObject player)
     {
-        GameManager.Instance.RespawnPlayer(respawnLocation.position);
+        if (activeCheckpoint == this && respawnLocation != null && player != null)
+        {
+            GameManager.Instance.RespawnPlayer(respawnLocation.position);
+        }
     }
-}
 
     private void OnTriggerEnter(Collider other)
     {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 
 public class PlayerAirState : PlayerBaseMachine
@@ -34,6 +35,7 @@ public class PlayerAirState : PlayerBaseMachine
     {
         stateMachine.animator.SetBool("IsGrounded", false);
 
+        stateMachine.jumpingFeedback?.PlayFeedbacks();
 
         // Apply initial jump force now (normal jump or custom)
         float force = customJumpForce > 0f ? customJumpForce : stateMachine.jumpForce;
@@ -45,6 +47,7 @@ public class PlayerAirState : PlayerBaseMachine
 
         // Initialize animator with current vertical velocity
         UpdateAnimatorVelocityFloat();
+        stateMachine.playerStomping?.EnableStompCollider();
     }
 
     public override void Tick(float deltaTime)
@@ -52,7 +55,7 @@ public class PlayerAirState : PlayerBaseMachine
         // Air control: blend between launch direction and live input
         Vector3 inputDir = CalculateMovement();
         Vector3 planarDir;
-        stateMachine.playerStomping?.EnableStompCollider();
+
         if (launchDirection != Vector3.zero && inputDir != Vector3.zero)
         {
             // Blend: 80% launch, 20% input (tweak as needed)
@@ -88,6 +91,7 @@ public class PlayerAirState : PlayerBaseMachine
         if (stateMachine.characterController.isGrounded &&
             stateMachine.characterController.velocity.y <= 0f)
         {
+            stateMachine.landingFeedback?.PlayFeedbacks();
             // Raycast down to check for "Ground" tag before switching state
             RaycastHit hit;
             Vector3 rayOrigin = stateMachine.transform.position + Vector3.up * 0.1f;

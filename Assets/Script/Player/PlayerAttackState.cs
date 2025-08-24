@@ -57,17 +57,19 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
     public void OnSpinCycle()
     {
         currentSpins++;
-
+        stateMachine.spinningParticles?.Play();
         // Stop spinning when we hit the configured max (from PlayerStateMachine)
         if (currentSpins >= Mathf.Max(1, stateMachine.attackSpinCount))
         {
-            // Turning the bool OFF lets Animator leave Spinning (Exit Time) → End Attack
+            stateMachine.spinningParticles?.Stop();
             stateMachine.animator.SetBool(HashSpinning, false);
         }
     }
 
     public void EndAttack()
     {
+
+
         // Stop the attack and transition to the next state
     }
 }
