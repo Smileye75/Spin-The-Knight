@@ -8,7 +8,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Start Attack
-  m_Speed: 1
+  m_Speed: 1.5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -9073885627923115375}
@@ -45,10 +45,10 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.003535524
+  m_TransitionDuration: 0
   m_TransitionOffset: 0
-  m_ExitTime: 0.9899474
-  m_HasExitTime: 1
+  m_ExitTime: 3
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -892,10 +892,10 @@ AnimatorStateMachine:
     m_Position: {x: 650, y: 410, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -9200105755869312120}
-    m_Position: {x: -80, y: 580, z: 0}
+    m_Position: {x: -100, y: 590, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6412266373444560681}
-    m_Position: {x: -90, y: 420, z: 0}
+    m_Position: {x: -140, y: 430, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3611103748124441769}
     m_Position: {x: 190, y: 600, z: 0}
@@ -979,7 +979,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Spinning
-  m_Speed: 2
+  m_Speed: 1.5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -1375179595824002491}
@@ -995,7 +995,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 0415b8b471ee51f468b9f47c9570943f, type: 2}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: Speed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 

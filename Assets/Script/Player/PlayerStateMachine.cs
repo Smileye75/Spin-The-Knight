@@ -15,7 +15,6 @@ public class PlayerStateMachine : StateMachine
         public MMF_Player landingFeedback;
         public MMF_Player jumpingFeedback;
 
-        public ParticleSystem spinningParticles;
 
     /// <summary>
     /// Called by the Animator's AttackAnimEventProxy (on the Animator GameObject) once per spin loop.

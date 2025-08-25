@@ -32,18 +32,22 @@ public class WeaponDamage : MonoBehaviour
         // Destroy other objects with "Enemy" tag
         if (other.CompareTag("Enemy"))
         {
-            Destroy(other.gameObject);
+            other.GetComponent<MinionEnemy>()?.PlayDead();
         }
 
-        if (other.CompareTag("Crates"))
+        if (other.CompareTag("Explosives"))
         {
             // Try to trigger explosion on the crate's Stompable script
-            if (other.TryGetComponent<Stompable>(out Stompable crate))
+            if (other.TryGetComponent<StompableProps>(out StompableProps crate))
             {
                 crate.TriggerExplosion();
             }
             // Do NOT destroy the weapon
             return;
+        }
+        if (other.CompareTag("Crates"))
+        {
+            Destroy(other.gameObject);
         }
     }
 }

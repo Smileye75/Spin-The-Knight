@@ -13,6 +13,7 @@ public class AnimationEventProxy : MonoBehaviour
 
     [Tooltip("The weapon collider (set to IsTrigger). Will be toggled on/off by events.")]
     [SerializeField] private Collider weapon;
+    public ParticleSystem spinningParticles;
 
     
     private void Awake()
@@ -40,12 +41,14 @@ public class AnimationEventProxy : MonoBehaviour
     {
         if (weaponDamage != null) weaponDamage.ResetCollision();
         if (weapon != null) weapon.enabled = true;
+        spinningParticles?.Play();
     }
 
     // Call at the last active hit frame of the attack
     public void DisableWeapon()
     {
         if (weapon != null) weapon.enabled = false;
+        spinningParticles?.Stop();
     }
 
 }

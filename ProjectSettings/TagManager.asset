@@ -12,10 +12,12 @@ TagManager:
   - JumpPad
   - Checkpoint
   - Camera
-  - Coin Crate
   - Stompable
   - Ground
   - Crates
+  - Explosives
+  - Food
+  - Coins
   layers:
   - Default
   - TransparentFX

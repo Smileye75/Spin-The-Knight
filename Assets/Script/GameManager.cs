@@ -101,6 +101,17 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void PlayGame()
+    {
+        Time.timeScale = 1; // Ensure game is unpaused
+        SceneManager.LoadScene("Tutorial Level");
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+
     // Loads the main menu scene
     public void LoadMainMenu()
     {

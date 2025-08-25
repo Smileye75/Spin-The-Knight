@@ -8,7 +8,7 @@ using UnityEngine.ProBuilder.Shapes;
 /// Attach this script to any object that the player can stomp on.
 /// Handles bounce force and optional destruction when stomped.
 /// </summary>
-public class Stompable : MonoBehaviour
+public class StompableProps : MonoBehaviour
 {
     [Header("Stomp Settings")]
     [Tooltip("Force applied to the player when stomped.")]
@@ -21,7 +21,6 @@ public class Stompable : MonoBehaviour
     public MMF_Player explosionFeedback;
 
     public ParticleSystem crateFeedback;
-
     [SerializeField] private GameObject coinPrefab;
 
     [Tooltip("Should this object be destroyed instantly when stomped?")]
@@ -45,6 +44,7 @@ public class Stompable : MonoBehaviour
         Debug.Log($"{name} was stomped!");
 
         stompFeedback?.PlayFeedbacks();
+
         if (destroyOnStomp)
         {
             Destroy(gameObject, 0.15f);
@@ -60,41 +60,41 @@ public class Stompable : MonoBehaviour
 
     private IEnumerator ExplodeAfterDelay()
     {
-    float elapsedTime = 0f;
-    float interval = 0.5f; // starting interval
-    float timeSinceLastReduction = 0f;
+        float elapsedTime = 0f;
+        float interval = 0.5f; // starting interval
+        float timeSinceLastReduction = 0f;
 
-    while (elapsedTime <= explodeDelay)
-    {
-        // Play feedback
-        explosionFeedback?.PlayFeedbacks();
-
-        // Wait for the current interval
-        yield return new WaitForSeconds(interval);
-        elapsedTime += interval;
-        timeSinceLastReduction += interval;
-
-        // Every 1 second, reduce the interval by 0.2 (but don’t go below a minimum, e.g. 0.1s)
-        if (timeSinceLastReduction >= 1f)
+        while (elapsedTime <= explodeDelay)
         {
-            interval = Mathf.Max(0.1f, interval - 0.2f);
-            timeSinceLastReduction = 0f;
+            // Play feedback
+            explosionFeedback?.PlayFeedbacks();
+
+            // Wait for the current interval
+            yield return new WaitForSeconds(interval);
+            elapsedTime += interval;
+            timeSinceLastReduction += interval;
+
+            // Every 1 second, reduce the interval by 0.2 (but don’t go below a minimum, e.g. 0.1s)
+            if (timeSinceLastReduction >= 1f)
+            {
+                interval = Mathf.Max(0.1f, interval - 0.2f);
+                timeSinceLastReduction = 0f;
+            }
         }
-    }
 
-    // Spawn particle effect after delay
-    if (explosionEffect != null)
-    {
-        ParticleSystem effect = Instantiate(explosionEffect, transform.position, Quaternion.identity);
-        effect.Play();
-    }
+        // Spawn particle effect after delay
+        if (explosionEffect != null)
+        {
+            ParticleSystem effect = Instantiate(explosionEffect, transform.position, Quaternion.identity);
+            effect.Play();
+        }
 
-    if (explosionCollider != null)
-    {
-        explosionCollider.enabled = true;
-    }
+        if (explosionCollider != null)
+        {
+            explosionCollider.enabled = true;
+        }
 
-    Destroy(gameObject, 0.1f);
+        Destroy(gameObject, 0.1f);
     }
 
     public void TriggerExplosion()
@@ -126,12 +126,12 @@ public class Stompable : MonoBehaviour
     {
         if (explosionCollider != null && explosionCollider.enabled)
         {
-            if (other.CompareTag("Crates"))
+            if (other.CompareTag("Crates") || other.CompareTag("Explosives"))
             {
                 if (other.gameObject != gameObject)
                 {
                     // Try to trigger explosion on the other crate
-                    if (other.TryGetComponent<Stompable>(out Stompable otherStompable))
+                    if (other.TryGetComponent<StompableProps>(out StompableProps otherStompable))
                     {
                         otherStompable.TriggerExplosion();
                     }

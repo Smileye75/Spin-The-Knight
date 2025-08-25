@@ -2,17 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinCollect : MonoBehaviour
+public class Collectables : MonoBehaviour
 {
     private Transform targetPlayer;
     private bool moveToPlayer = false;
     public float moveSpeed = 8f;
 
+    public int healAmount = 3;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Weapon"))
         {
-            // Find the player (assumes PlayerStats is on the player GameObject or its parent)
             PlayerStats stats = other.GetComponentInParent<PlayerStats>();
             if (stats != null)
             {
@@ -22,8 +23,16 @@ public class CoinCollect : MonoBehaviour
         }
         else if (other.TryGetComponent<PlayerStats>(out PlayerStats stats))
         {
-            stats.AddCoin(1);
-            Debug.Log("Coins Collected: " + stats.coins);
+            if (gameObject.CompareTag("Coins"))
+            {
+                stats.AddCoin(1);
+                Debug.Log("Coins Collected: " + stats.coins);
+            }
+            if (gameObject.CompareTag("Food"))
+            {
+                stats.Heal(healAmount); // Or whatever heal amount you want
+                Debug.Log("Player Healed! Current Health: " + stats.currentHealth);
+            }
             Destroy(gameObject);
         }
     }
@@ -32,25 +41,12 @@ public class CoinCollect : MonoBehaviour
     {
         if (moveToPlayer && targetPlayer != null)
         {
-            // Ignore Y axis by matching Y position
             Vector3 coinPos = transform.position;
             Vector3 playerPos = targetPlayer.position;
             playerPos.y = coinPos.y;
 
-            // Move towards the player (XZ only)
             transform.position = Vector3.MoveTowards(coinPos, playerPos, moveSpeed * Time.deltaTime);
 
-            // If close enough (XZ only), collect the coin
-            if (Vector3.Distance(new Vector3(coinPos.x, 0, coinPos.z), new Vector3(playerPos.x, 0, playerPos.z)) < 1f)
-            {
-                PlayerStats stats = targetPlayer.GetComponent<PlayerStats>();
-                if (stats != null)
-                {
-                    stats.AddCoin(1);
-                    Debug.Log("Coins Collected: " + stats.coins);
-                }
-                Destroy(gameObject);
-            }
         }
     }
 }

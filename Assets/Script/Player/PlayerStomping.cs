@@ -9,7 +9,6 @@ using UnityEngine.UIElements;
 /// </summary>
 public class PlayerStomping : MonoBehaviour
 {
-    // Reference to the player's state machine and input reader
     private PlayerStateMachine stateMachine;
     private InputReader inputReader;
 
@@ -17,15 +16,12 @@ public class PlayerStomping : MonoBehaviour
 
     private void Start()
     {
-        // Cache references from the parent object at startup
         stateMachine = GetComponentInParent<PlayerStateMachine>();
-
         inputReader = GetComponentInParent<InputReader>();
-
         stompCollider = GetComponent<Collider>();
-
         stompCollider.enabled = false;
     }
+
     public void EnableStompCollider()
     {
         if (stompCollider != null)
@@ -46,43 +42,55 @@ public class PlayerStomping : MonoBehaviour
 
     /// <summary>
     /// Called when this trigger collider enters another collider.
-    /// Handles stomping logic if the other object is stompable.
+    /// Handles stomping logic if the other object is stompable or a minion enemy.
     /// </summary>
-    /// <param name="other">The collider that was entered.</param>
     private void OnTriggerEnter(Collider other)
     {
-        // Check if the collided object is stompable
-        if (other.TryGetComponent<Stompable>(out var stompable))
-        {
-            // Calculate bounce force
-            float finalBounceForce = stompable.bounceForce;
+        float bounceForce = 0f;
+        float jumpBoostMultiplier = 1f;
+        System.Action onStomped = null;
 
+        // Try to get StompableProps
+        if (TryGetComponentFromCollider<StompableProps>(other, out var stompable))
+        {
+            bounceForce = stompable.bounceForce;
+            jumpBoostMultiplier = stompable.jumpBoostMultiplier;
+            onStomped = stompable.OnStomped;
+        }
+        // Try to get MinionEnemy
+        else if (TryGetComponentFromCollider<MinionEnemy>(other, out var minion))
+        {
+            bounceForce = minion.bounceForce;
+            jumpBoostMultiplier = minion.jumpBoostMultiplier;
+            onStomped = minion.OnStomped;
+        }
+
+        // If we found a valid stompable or minion enemy
+        if (onStomped != null)
+        {
             bool heldJump = inputReader != null && inputReader.IsJumpPressed();
+            float finalBounceForce = bounceForce;
 
             if (heldJump)
             {
-                finalBounceForce *= stompable.jumpBoostMultiplier;
+                finalBounceForce *= jumpBoostMultiplier;
             }
 
-            // Switch to jump state and pass the bounce force
             if (stateMachine != null)
             {
                 stateMachine.SwitchState(new PlayerAirState(stateMachine, finalBounceForce));
             }
 
-            // Trigger stomp behavior (destroy, effects, etc.)
-            stompable.OnStomped();
+            onStomped.Invoke();
         }
     }
 
     /// <summary>
-    /// Helper method to safely get a component from the parent.
+    /// Helper method to safely get a component from a collider.
     /// </summary>
-    private bool TryGetComponentInParent<T>(out T component)
+    private bool TryGetComponentFromCollider<T>(Collider collider, out T component)
     {
-        component = GetComponentInParent<T>();
+        component = collider.GetComponent<T>();
         return component != null;
     }
-
-
 }

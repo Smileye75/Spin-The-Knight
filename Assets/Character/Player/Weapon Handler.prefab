@@ -43,8 +43,8 @@ GameObject:
   - component: {fileID: 6554511152388686066}
   - component: {fileID: 4538812362394756735}
   - component: {fileID: 3046540143091665140}
-  - component: {fileID: 4041760355180985795}
   - component: {fileID: 7847392520554076523}
+  - component: {fileID: 1955226148245304331}
   - component: {fileID: 1226482036035477167}
   m_Layer: 3
   m_Name: Tree Log
@@ -63,8 +63,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0}
-  m_LocalScale: {x: 100, y: 100, z: 166.69434}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1.6669433}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6352197250241363512}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -118,7 +118,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4041760355180985795
+--- !u!114 &7847392520554076523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7891476870954768674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e528d7dc02e473d4eb86ce39bf0748fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myCollider: {fileID: 0}
+  damageAmount: 1
+--- !u!65 &1955226148245304331
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,22 +151,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 0.001664735, y: 0.0016309813, z: 0.006643895}
-  m_Center: {x: -0.00048730065, y: 0.00010479611, z: 0.002975718}
---- !u!114 &7847392520554076523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7891476870954768674}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e528d7dc02e473d4eb86ce39bf0748fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myCollider: {fileID: 0}
-  damageAmount: 1
+  m_Size: {x: 0.1664732, y: 0.16309795, z: 0.6230904}
+  m_Center: {x: -0.04872864, y: 0.010478934, z: 0.31821886}
 --- !u!54 &1226482036035477167
 Rigidbody:
   m_ObjectHideFlags: 0
