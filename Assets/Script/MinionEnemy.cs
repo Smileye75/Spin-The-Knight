@@ -16,6 +16,7 @@ public class MinionEnemy : MonoBehaviour
 
     [SerializeField] private Collider triggerColliders;
     [SerializeField] private Collider attackCollider;
+    [SerializeField] private Collider detectionCollider;
 
     private bool isDead = false;
 
@@ -28,6 +29,15 @@ public class MinionEnemy : MonoBehaviour
     private int currentIndex = 0;
     private bool isPatrolling = true;
     private Coroutine patrolCoroutine;
+    private Transform detectedPlayer;
+
+    // Add this field near your other serialized fields
+    [SerializeField] private float attackRange = 3f;
+    [SerializeField] private float attackCooldown = 1.5f;
+    private float lastAttackTime = -Mathf.Infinity;
+    private bool isAttacking = false;
+
+    private float resumePatrolDelay = 1f; // Set this in Inspector or as needed
 
     private void Start()
     {
@@ -107,9 +117,23 @@ public class MinionEnemy : MonoBehaviour
         {
             StopCoroutine(patrolCoroutine); // Immediately stop patrolling
         }
-        triggerColliders.enabled = false;
-        attackCollider.enabled = false;
+        if(triggerColliders != null)
+            triggerColliders.enabled = false;
+        
+        if (attackCollider != null)
+            attackCollider.enabled = false;
+
+        if (detectionCollider != null)
+            detectionCollider.enabled = false;
+            
         enemyAnimator.SetTrigger("Death");
+       detectedPlayer = null;
+        if (coinPrefab != null)
+        {
+            Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
+            Instantiate(coinPrefab, spawnPos, Quaternion.identity);
+        }
+
         Destroy(gameObject, 1.5f); // Slight delay to allow animation to play
     }
 
@@ -119,14 +143,14 @@ public class MinionEnemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnDestroy()
-    {
-        if (coinPrefab != null)
-        {
-            Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
-            Instantiate(coinPrefab, spawnPos, Quaternion.identity);
-        }
-    }
+    // private void OnDestroy()
+    // {
+        // if (coinPrefab != null)
+        // {
+            // Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
+            // Instantiate(coinPrefab, spawnPos, Quaternion.identity);
+        // }
+    // }
     [Header("Damage Settings")]
     [Tooltip("Amount of damage dealt to the player.")]
     [SerializeField] private int damageAmount = 1;
@@ -153,5 +177,87 @@ public class MinionEnemy : MonoBehaviour
             }
         }
     }
-    
+
+    private void Update()
+    {
+        if (detectedPlayer != null)
+        {
+            if (isDead) return;
+            FacePlayer();
+
+            float distanceToPlayer = Vector3.Distance(transform.position, detectedPlayer.position);
+            if (distanceToPlayer <= attackRange)
+            {
+                // Check cooldown before attacking
+                if (Time.time >= lastAttackTime + attackCooldown)
+                {
+                    enemyAnimator.SetTrigger("PlayerInRange");
+                    lastAttackTime = Time.time;
+                    isAttacking = true;
+                }
+            }
+            else
+            {
+                isAttacking = false;
+            }
+        }
+    }
+
+    // Add this method to handle detection
+    private void OnTriggerStay(Collider other)
+    {
+        if(detectionCollider == null) return;
+        
+        // Only react if the collider is tagged "PlayerDetection"
+        if (other.CompareTag("PlayerDetection"))
+        {
+            // Stop patrolling and face the player detection object
+            if (isPatrolling)
+            {
+                isPatrolling = false;
+                if (patrolCoroutine != null)
+                {
+                    StopCoroutine(patrolCoroutine);
+                }
+            }
+            enemyAnimator.SetBool("IsWalking", false);
+            enemyAnimator.SetBool("PlayerDetected", true);
+            detectedPlayer = other.transform;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (detectionCollider == null) return;
+        enemyAnimator.SetBool("PlayerDetected", false);
+
+        // If the player detection object leaves, stop focusing
+        if (other.CompareTag("PlayerDetection") && detectedPlayer == other.transform)
+        {
+            detectedPlayer = null;
+            // Start timer before resuming patrol
+            StartCoroutine(ResumePatrolAfterDelay());
+        }
+        
+    }
+
+    private IEnumerator ResumePatrolAfterDelay()
+    {
+        yield return new WaitForSeconds(resumePatrolDelay);
+        isPatrolling = true;
+        patrolCoroutine = StartCoroutine(PatrolRoutine());
+    }
+
+    // Helper method to rotate towards the player
+    private void FacePlayer()
+    {
+        if (isDead) return;
+        Vector3 direction = detectedPlayer.position - transform.position;
+        direction.y = 0; // Keep only horizontal rotation
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, 10f * Time.deltaTime);
+        }
+    }
 }

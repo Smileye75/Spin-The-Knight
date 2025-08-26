@@ -47,6 +47,23 @@ public class StompableProps : MonoBehaviour
 
         if (destroyOnStomp)
         {
+            if (coinPrefab != null)
+            {
+                Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
+                Instantiate(coinPrefab, spawnPos, Quaternion.identity);
+             }
+
+            if (crateFeedback != null)
+        {
+            // Instantiate at position, not as child, so it survives after this object is destroyed
+            ParticleSystem create = Instantiate(crateFeedback, transform.position, Quaternion.identity);
+            create.Play();
+
+            // Optionally destroy the particle system after its duration
+            Destroy(create.gameObject, create.main.duration);
+        }
+
+
             Destroy(gameObject, 0.15f);
         }
 
@@ -158,26 +175,6 @@ public class StompableProps : MonoBehaviour
                 }
                 return;
             }
-        }
-    }
-
-
-    private void OnDestroy()
-    {
-        if (coinPrefab != null)
-        {
-            Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
-            Instantiate(coinPrefab, spawnPos, Quaternion.identity);
-        }
-
-        if (crateFeedback != null)
-        {
-            // Instantiate at position, not as child, so it survives after this object is destroyed
-            ParticleSystem create = Instantiate(crateFeedback, transform.position, Quaternion.identity);
-            create.Play();
-
-            // Optionally destroy the particle system after its duration
-            Destroy(create.gameObject, create.main.duration);
         }
     }
 

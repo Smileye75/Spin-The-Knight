@@ -54,6 +54,9 @@ public class PlayerStats : MonoBehaviour
 
         if (!playerController)
             playerController = GetComponent<CharacterController>();
+            
+        if (!inputReader)
+            inputReader = GetComponent<InputReader>();
 
         if (playerRenderer == null)
             playerRenderer = GetComponentInChildren<Renderer>();

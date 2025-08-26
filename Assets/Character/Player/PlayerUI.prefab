@@ -3952,7 +3952,7 @@ GameObject:
   - component: {fileID: 4243752780007115696}
   m_Layer: 5
   m_Name: PlayerUI
-  m_TagString: Untagged
+  m_TagString: Stompable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
