@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
     public GameObject player; // Assign your player GameObject here
     public MenuUI menuUI;     // Assign your MenuUI script here
 
+    [Header("Default Spawn")]
+    [SerializeField] private Transform defaultSpawnPoint; // Assign in Inspector
+
     // Events for UI and other systems to subscribe to
     public event Action OnGameOver;
     public event Action OnVictory;
@@ -36,6 +39,11 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject); // Keeps GameManager across scene loads
+    }
+
+    private void Start()
+    {
+        SetPlayerToDefaultSpawn();
     }
 
     // Handles pause input
@@ -79,7 +87,7 @@ public class GameManager : MonoBehaviour
         menuUI?.ShowVictoryUI();
     }
 
-    // Respawns the player at a given position (instant teleport)
+    // Respawns the player at a given position, or at default if position is Vector3.zero
     public void RespawnPlayer(Vector3 position)
     {
         if (player != null)
@@ -87,11 +95,26 @@ public class GameManager : MonoBehaviour
             CharacterController cc = player.GetComponent<CharacterController>();
             if (cc != null) cc.enabled = false;
 
-            player.transform.position = position;
+            Vector3 spawnPos = position;
+            if (spawnPos == Vector3.zero && defaultSpawnPoint != null)
+                spawnPos = defaultSpawnPoint.position;
+
+            player.transform.position = spawnPos;
 
             if (cc != null) cc.enabled = true;
         }
         OnRespawn?.Invoke(position); // Other systems (e.g., RespawnManager) listen here
+    }
+
+    private void SetPlayerToDefaultSpawn()
+    {
+        if (defaultSpawnPoint != null && player != null)
+        {
+            CharacterController cc = player.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+            player.transform.position = defaultSpawnPoint.position;
+            if (cc != null) cc.enabled = true;
+        }
     }
 
     // Reloads the current scene
@@ -99,12 +122,14 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1; // Ensure game is unpaused
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        StartCoroutine(WaitAndSetDefaultSpawn());
     }
 
     public void PlayGame()
     {
         Time.timeScale = 1; // Ensure game is unpaused
         SceneManager.LoadScene("Tutorial Level");
+        StartCoroutine(WaitAndSetDefaultSpawn());
     }
 
     public void ExitGame()
@@ -117,6 +142,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1; // Ensure game is unpaused
         SceneManager.LoadScene("Main Menu");
+        StartCoroutine(WaitAndSetDefaultSpawn());
     }
 
     // Handles boss defeat logic
@@ -125,5 +151,11 @@ public class GameManager : MonoBehaviour
         Debug.Log("Boss defeated!");
         OnBossDefeated?.Invoke();
         Victory(); // Triggers victory flow
+    }
+
+    private IEnumerator WaitAndSetDefaultSpawn()
+    {
+        yield return null; // Wait one frame for scene to load
+        SetPlayerToDefaultSpawn();
     }
 }

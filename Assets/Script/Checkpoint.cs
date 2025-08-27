@@ -1,71 +1,112 @@
 using UnityEngine;
 
-/// <summary>
-/// Multiple checkpoints: only the latest activated checkpoint respawns the player.
-/// </summary>
 public class Checkpoint : MonoBehaviour
 {
+    [Header("Setup")]
     [SerializeField] private Transform respawnLocation;
-    [SerializeField] private Material activeMaterial;
-    [SerializeField] private Material inactiveMaterial;
-    private static Checkpoint activeCheckpoint;
-    private static Transform oldRespawnLocation;
-    private Renderer checkpointRenderer;
-    private bool activated = false;
+    [SerializeField] private GameObject skull;
+    [SerializeField] private BoxCollider checkpointTrigger;
 
-    // >>> ADD: public accessors used by GameManager <<<
-public static bool HasActive => activeCheckpoint != null && oldRespawnLocation != null;
-public static Vector3 ActiveRespawnPosition =>
-    oldRespawnLocation != null ? oldRespawnLocation.position : Vector3.zero;
+    [Header("FX")]
+    [SerializeField] private ParticleSystem idleFire;
+    [SerializeField] private ParticleSystem activeFire;
 
+    private static Checkpoint s_active;
+    private static Transform s_respawn;
+
+    public static bool HasActive => s_active != null && s_respawn != null;
+    public static Vector3 ActiveRespawnPosition => HasActive ? s_respawn.position : Vector3.zero;
+
+    private bool _activated = false;
+    private CharacterController _player;
 
     private void Awake()
     {
-        checkpointRenderer = GetComponent<Renderer>();
-        SetMaterial(false);
+        if (checkpointTrigger) checkpointTrigger.isTrigger = true;
+        if (idleFire) idleFire.Play();
+        if (activeFire) activeFire.Stop();
     }
 
-    private void OnEnable()
-    {
-        PlayerStats.OnPlayerLostLife += RespawnPlayer;
-    }
+    private void OnEnable()  { PlayerStats.OnPlayerLostLife += OnPlayerLostLife; }
+    private void OnDisable() { PlayerStats.OnPlayerLostLife -= OnPlayerLostLife; }
 
-    private void OnDisable()
+    private void OnPlayerLostLife(GameObject player)
     {
-        PlayerStats.OnPlayerLostLife -= RespawnPlayer;
-    }
-
-    private void RespawnPlayer(GameObject player)
-    {
-
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && !activated)
+        if (other.CompareTag("Player"))
         {
-            activated = true;
+            var cc = other.GetComponentInParent<CharacterController>();
+            if (cc != null) _player = cc;
+        }
 
-            if (oldRespawnLocation != null && oldRespawnLocation != respawnLocation)
-            {
-                Destroy(oldRespawnLocation.gameObject);
-            }
-
-            if (activeCheckpoint != null)
-                activeCheckpoint.SetMaterial(false);
-
-            activeCheckpoint = this;
-            oldRespawnLocation = respawnLocation;
-            SetMaterial(true);
+        if (!_activated && other.CompareTag("Weapon"))
+        {
+            Activate();
         }
     }
 
-    private void SetMaterial(bool isActive)
+    private void OnTriggerExit(Collider other)
     {
-        if (checkpointRenderer != null)
+        if (_player == null) return;
+
+        var cc = other.GetComponentInParent<CharacterController>();
+        if (cc == _player) _player = null;
+    }
+
+    private void Activate()
+    {
+        _activated = true;
+
+        if (s_active != null && s_active != this)
+            s_active.Deactivate();
+
+        s_active = this;
+        s_respawn = respawnLocation;
+
+        if (idleFire) idleFire.Stop();
+        if (activeFire) activeFire.Play();
+
+        if (skull) skull.SetActive(false);
+
+        if (checkpointTrigger) checkpointTrigger.enabled = false;
+
+        // Restore player health when checkpoint is triggered
+        if (_player != null && _player.TryGetComponent<PlayerStats>(out var stats))
         {
-            checkpointRenderer.material = isActive ? activeMaterial : inactiveMaterial;
+            stats.Heal(stats.maxHealth);
         }
     }
-}   
+
+    private void Deactivate()
+    {
+        if (idleFire) idleFire.Stop();
+        if (activeFire) activeFire.Stop();
+        _activated = false;
+    }
+
+    private void Update()
+    {
+        FacePlayer();
+    }
+
+    private void FacePlayer()
+    {
+        if (_activated) return;
+        if (!skull || !_player) return;
+
+        Vector3 toPlayer = _player.transform.position - skull.transform.position;
+        toPlayer.y = 0f;
+        if (toPlayer.sqrMagnitude < 0.0001f) return;
+
+        Quaternion target = Quaternion.LookRotation(toPlayer);
+        skull.transform.rotation = Quaternion.Slerp(
+            skull.transform.rotation,
+            target,
+            10f * Time.deltaTime
+        );
+    }
+}
 

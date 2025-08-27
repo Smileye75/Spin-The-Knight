@@ -88,27 +88,20 @@ public class PlayerStats : MonoBehaviour
         if (isDying) yield break;
         isDying = true;
 
-        // 1) Enter death state & disable control
         if (animator) animator.SetBool(deathBoolName, true);
         if (playerStateMachine) playerStateMachine.enabled = false;
         if (playerController)  playerController.enabled = false;
 
-        // 2) Deduct a life + reset hearts/UI
-        // still raises OnPlayerLostLife for other listeners if any
-
-        // 3) Wait in unscaled time (works even if game gets paused)
         yield return new WaitForSecondsRealtime(deathDelay);
-        LoseLife(); 
-        // 4) Clear death state & re-enable control
+        LoseLife();
+
         if (animator) animator.SetBool(deathBoolName, false);
         if (playerStateMachine) playerStateMachine.enabled = true;
         if (playerController)  playerController.enabled = true;
 
-        // 5) Teleport via GameManager (safe CharacterController toggle + OnRespawn)
-        if (Checkpoint.HasActive)
-        {
-            GameManager.Instance.RespawnPlayer(Checkpoint.ActiveRespawnPosition);
-        }
+        // FIX: Always call RespawnPlayer, fallback to default if no checkpoint
+        Vector3 respawnPos = Checkpoint.HasActive ? Checkpoint.ActiveRespawnPosition : Vector3.zero;
+        GameManager.Instance.RespawnPlayer(respawnPos);
 
         isDying = false;
     }
