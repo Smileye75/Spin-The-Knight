@@ -58,7 +58,7 @@ public class PlayerStomping : MonoBehaviour
             onStomped = stompable.OnStomped;
         }
         // Try to get MinionEnemy
-        else if (TryGetComponentFromCollider<MinionEnemy>(other, out var minion))
+        else if (TryGetComponentFromCollider<BaseEnemy>(other, out var minion))
         {
             bounceForce = minion.bounceForce;
             jumpBoostMultiplier = minion.jumpBoostMultiplier;

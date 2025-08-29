@@ -71,14 +71,17 @@ public class PlayerStats : MonoBehaviour
         currentHealth = Mathf.Max(currentHealth - amount, 0);
         playerUI?.UpdateHearts(currentHealth);
 
-        // Hit feedback + brief invulnerability
         StartCoroutine(DamageFeedbackAndInvulnerability(1.5f, 0.2f));
 
         if (animator != null)
             animator.SetTrigger("Hit");
 
+        // Call EndAttack if health reaches 0
         if (currentHealth <= 0)
         {
+            if (playerStateMachine != null)
+                playerStateMachine.EndAttack();
+
             StartCoroutine(HandleDeathAndRespawn());
         }
     }
@@ -87,6 +90,10 @@ public class PlayerStats : MonoBehaviour
     {
         if (isDying) yield break;
         isDying = true;
+
+        if (playerStateMachine != null)
+            playerStateMachine.EndAttack();
+
 
         if (animator) animator.SetBool(deathBoolName, true);
         if (playerStateMachine) playerStateMachine.enabled = false;

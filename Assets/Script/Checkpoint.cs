@@ -10,6 +10,7 @@ public class Checkpoint : MonoBehaviour
     [Header("FX")]
     [SerializeField] private ParticleSystem idleFire;
     [SerializeField] private ParticleSystem activeFire;
+    [SerializeField] private ParticleSystem explosionEffect;
 
     private static Checkpoint s_active;
     private static Transform s_respawn;
@@ -67,6 +68,7 @@ public class Checkpoint : MonoBehaviour
         s_respawn = respawnLocation;
 
         if (idleFire) idleFire.Stop();
+        if (explosionEffect) explosionEffect.Play();
         if (activeFire) activeFire.Play();
 
         if (skull) skull.SetActive(false);

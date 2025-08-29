@@ -64,12 +64,13 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
 
             stateMachine.animator.SetBool(HashSpinning, false);
         }
+
     }
 
     public void EndAttack()
     {
-
-
         // Stop the attack and transition to the next state
+        stateMachine.animator.SetBool(HashSpinning, false);
+        stateMachine.SwitchState(new PlayerMoveState(stateMachine));
     }
 }

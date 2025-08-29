@@ -32,7 +32,8 @@ public class WeaponDamage : MonoBehaviour
         // Destroy other objects with "Enemy" tag
         if (other.CompareTag("Enemy"))
         {
-            other.GetComponent<MinionEnemy>()?.PlayDead();
+            other.GetComponent<BaseEnemy>()?.PlayDead();
+            other.GetComponent<EnemyPatrol>()?.PlayDead();
         }
 
         if (other.CompareTag("Explosives"))
