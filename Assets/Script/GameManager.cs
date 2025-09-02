@@ -38,7 +38,9 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject); // Keeps GameManager across scene loads
+        DontDestroyOnLoad(gameObject);
+
+        AssignReferences();
     }
 
     private void Start()
@@ -46,19 +48,6 @@ public class GameManager : MonoBehaviour
         SetPlayerToDefaultSpawn();
     }
 
-    // Handles pause input
-    private void Update()
-    {
-        if (CurrentState == GameState.GameOver || CurrentState == GameState.Victory)
-        {
-            return;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            TogglePause();
-        }
-    }
 
     // Toggles pause state and notifies listeners
     public void TogglePause()
@@ -123,6 +112,8 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1; // Ensure game is unpaused
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         StartCoroutine(WaitAndSetDefaultSpawn());
+        menuUI?.HideAllMenus(); // Hide all UI menus
+        menuUI?.playerUI?.SetActive(true); // Show Player UI after reload
     }
 
     public void PlayGame()
@@ -143,6 +134,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1; // Ensure game is unpaused
         SceneManager.LoadScene("Main Menu");
         StartCoroutine(WaitAndSetDefaultSpawn());
+        menuUI?.HideAllMenus(); // Hide all UI menus
     }
 
     // Handles boss defeat logic
@@ -156,6 +148,22 @@ public class GameManager : MonoBehaviour
     private IEnumerator WaitAndSetDefaultSpawn()
     {
         yield return null; // Wait one frame for scene to load
+        AssignReferences();
         SetPlayerToDefaultSpawn();
+        menuUI?.ReSubscribeEvents();
+
+        // Enable/disable pause action based on scene
+        string sceneName = SceneManager.GetActiveScene().name;
+        bool enablePause = sceneName != "Main Menu";
+        menuUI?.SetPauseActionEnabled(enablePause);
+    }
+
+    private void AssignReferences()
+    {
+        if (player == null)
+            player = GameObject.FindGameObjectWithTag("Player");
+
+        if (menuUI == null)
+            menuUI = FindObjectOfType<MenuUI>();
     }
 }

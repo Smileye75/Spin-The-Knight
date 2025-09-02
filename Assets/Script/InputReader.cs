@@ -19,6 +19,7 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
     public event Action jumpCanceled;   // Raised when jump is canceled
 
     public event Action dodgeRollEvent; 
+    public event Action pauseEvent;
 
     private Controls controls; // Input system controls asset
 
@@ -97,5 +98,20 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
 
         // Raise dodge roll event
         dodgeRollEvent?.Invoke();
+    }
+
+    public void OnPause(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        Debug.Log("Pause pressed!");
+        pauseEvent?.Invoke();
+    }
+
+    public void SetPauseEnabled(bool enabled)
+    {
+        if (enabled)
+            controls.Player.Pause.Enable();
+        else
+            controls.Player.Pause.Disable();
     }
 }

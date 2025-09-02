@@ -31899,6 +31899,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7c72cda2fcadf44586df8765fcbe5be, type: 3}
+--- !u!114 &1022053655 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 377253973197777086, guid: 791593fff5b4a2c418d1a5e79edb6773, type: 3}
+  m_PrefabInstance: {fileID: 5821838423500226853}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cf785d6e968b67449268bc0312622a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1027459874 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3969900259109767539, guid: f7c72cda2fcadf44586df8765fcbe5be, type: 3}
@@ -87147,17 +87158,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7c72cda2fcadf44586df8765fcbe5be, type: 3}
---- !u!114 &1228499428580985164 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4137135270229875762, guid: 791593fff5b4a2c418d1a5e79edb6773, type: 3}
-  m_PrefabInstance: {fileID: 5821838423500226853}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4663f39a2586f9b4db93fbb8a0ea38d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1290774959804796284
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -87227,18 +87227,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Character (Farmer Clothes)
       objectReference: {fileID: 0}
-    - target: {fileID: 2297133232398349821, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4796790452216638094, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
       propertyPath: playerUI
       value: 
-      objectReference: {fileID: 6466376242857467614}
-    - target: {fileID: 4796790452216638094, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-      propertyPath: deathMenuUI
-      value: 
-      objectReference: {fileID: 6967085458278306909}
+      objectReference: {fileID: 1022053655}
     - target: {fileID: 8137160022357846799, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.349
@@ -87453,6 +87445,10 @@ PrefabInstance:
     - target: {fileID: 7583443039075604469, guid: be6dbed047b335e44a7f29cc2af9c96d, type: 3}
       propertyPath: m_Name
       value: Ambushing Goblin
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583443039075604469, guid: be6dbed047b335e44a7f29cc2af9c96d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -87733,11 +87729,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6053affc7c94914d9453e099b6e90bb, type: 3}
---- !u!1 &4768427479853847482 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2297133232398349821, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-  m_PrefabInstance: {fileID: 1444908688326469002}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5090604586575923056
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -87982,22 +87973,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b5bf45de85af757479f54fd1641f39d5, type: 3}
---- !u!114 &6466376242857467614 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 377253973197777086, guid: 791593fff5b4a2c418d1a5e79edb6773, type: 3}
-  m_PrefabInstance: {fileID: 5821838423500226853}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1cf785d6e968b67449268bc0312622a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &6967085458278306909 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3917609456309453865, guid: 791593fff5b4a2c418d1a5e79edb6773, type: 3}
-  m_PrefabInstance: {fileID: 5821838423500226853}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7549686543327955675
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -88009,11 +87984,11 @@ PrefabInstance:
     - target: {fileID: 338615943863093432, guid: dc6d1fa5311b99e40b227dcc80f61493, type: 3}
       propertyPath: menuUI
       value: 
-      objectReference: {fileID: 1228499428580985164}
+      objectReference: {fileID: 0}
     - target: {fileID: 338615943863093432, guid: dc6d1fa5311b99e40b227dcc80f61493, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 4768427479853847482}
+      objectReference: {fileID: 0}
     - target: {fileID: 338615943863093432, guid: dc6d1fa5311b99e40b227dcc80f61493, type: 3}
       propertyPath: defaultSpawnPoint
       value: 

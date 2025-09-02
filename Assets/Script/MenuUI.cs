@@ -6,23 +6,33 @@ using UnityEngine.SceneManagement;
 public class MenuUI : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenuUI;
-    [SerializeField] private GameObject playerUI;
+    [SerializeField] public GameObject playerUI;
     [SerializeField] private GameObject victoryUI;
     [SerializeField] private GameObject gameOverUI;
+
+    private InputReader inputReader;
 
     private void Start()
     {
         GameManager.Instance.OnPauseToggled += HandlePause;
         GameManager.Instance.OnVictory += ShowVictoryUI;
         GameManager.Instance.OnGameOver += ShowGameOverUI;
+
+        inputReader = FindObjectOfType<InputReader>(true);
+        if (inputReader != null)
+            inputReader.pauseEvent += OnPausePressed;
     }
 
     private void OnDestroy()
     {
-        if (GameManager.Instance == null) return;
-        GameManager.Instance.OnPauseToggled -= HandlePause;
-        GameManager.Instance.OnVictory -= ShowVictoryUI;
-        GameManager.Instance.OnGameOver -= ShowGameOverUI;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnPauseToggled -= HandlePause;
+            GameManager.Instance.OnVictory -= ShowVictoryUI;
+            GameManager.Instance.OnGameOver -= ShowGameOverUI;
+        }
+        if (inputReader != null)
+            inputReader.pauseEvent -= OnPausePressed;
     }
 
     private void HandlePause(bool paused)
@@ -61,5 +71,43 @@ public class MenuUI : MonoBehaviour
     public void HideGameOverUI()
     {
         if (gameOverUI != null) gameOverUI.SetActive(false);
+    }
+
+    public void HideAllMenus()
+    {
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+        if (playerUI != null) playerUI.SetActive(false);
+        if (victoryUI != null) victoryUI.SetActive(false);
+        if (gameOverUI != null) gameOverUI.SetActive(false);
+    }
+
+    private void OnPausePressed()
+    {
+        GameManager.Instance.TogglePause();
+    }
+
+    public void ReSubscribeEvents()
+    {
+        GameManager.Instance.OnPauseToggled -= HandlePause;
+        GameManager.Instance.OnVictory -= ShowVictoryUI;
+        GameManager.Instance.OnGameOver -= ShowGameOverUI;
+
+        GameManager.Instance.OnPauseToggled += HandlePause;
+        GameManager.Instance.OnVictory += ShowVictoryUI;
+        GameManager.Instance.OnGameOver += ShowGameOverUI;
+
+        if (inputReader == null)
+            inputReader = FindObjectOfType<InputReader>(true);
+        if (inputReader != null)
+        {
+            inputReader.pauseEvent -= OnPausePressed;
+            inputReader.pauseEvent += OnPausePressed;
+        }
+    }
+
+    public void SetPauseActionEnabled(bool enabled)
+    {
+        if (inputReader != null)
+            inputReader.SetPauseEnabled(enabled);
     }
 }

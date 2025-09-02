@@ -19,6 +19,7 @@ TagManager:
   - Food
   - Coins
   - PlayerDetection
+  - MenuUI
   layers:
   - Default
   - TransparentFX
