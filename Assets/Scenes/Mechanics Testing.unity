@@ -87227,10 +87227,42 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Character (Farmer Clothes)
       objectReference: {fileID: 0}
+    - target: {fileID: 2766838858063533187, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -35.309
+      objectReference: {fileID: 0}
+    - target: {fileID: 2766838858063533187, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -52.522
+      objectReference: {fileID: 0}
+    - target: {fileID: 2766838858063533187, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -93.159
+      objectReference: {fileID: 0}
+    - target: {fileID: 3627041252284903365, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4796790452216638094, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
       propertyPath: playerUI
       value: 
       objectReference: {fileID: 1022053655}
+    - target: {fileID: 5313477427196059204, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5950343658396460951, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5950343658396460951, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7050629560126108080, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8137160022357846799, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.349
@@ -87387,7 +87419,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1969411881718815121, guid: cefdf237bf5a71b4e8ec09eebf02ca5b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -87743,7 +87775,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1257395046358580394, guid: e494eb9e5c490d74aa389085593f7298, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1544360944657942338, guid: e494eb9e5c490d74aa389085593f7298, type: 3}
       propertyPath: m_LocalPosition.x

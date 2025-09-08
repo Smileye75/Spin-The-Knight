@@ -296,6 +296,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2059105539315335046, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: m_Name
+      value: Heal Particles
+      objectReference: {fileID: 0}
     - target: {fileID: 2297133232398349821, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
       propertyPath: m_Name
       value: Player Character (Farmer Clothes)
@@ -358,6 +362,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5044543690149607594, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
   m_PrefabInstance: {fileID: 832086119}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &865731241
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3914932119520301425, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.079
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914932119520301425, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0001001358
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914932119520301425, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.802
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914932119520301425, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.057109274
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914932119520301425, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914932119520301425, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.9983679
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914932119520301425, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914932119520301425, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914932119520301425, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -186.548
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914932119520301425, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7529753249146426334, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
+      propertyPath: m_Name
+      value: Grinlock Model
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6940cff5db072fd4bb2e9b9c1226b5ef, type: 3}
 --- !u!1 &972180204
 GameObject:
   m_ObjectHideFlags: 0
@@ -4464,3 +4525,4 @@ SceneRoots:
   - {fileID: 1185431234311542874}
   - {fileID: 308321515}
   - {fileID: 1497200415}
+  - {fileID: 865731241}

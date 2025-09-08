@@ -39,6 +39,8 @@ public class PlayerStats : MonoBehaviour
     [Tooltip("Animator bool used by the death state.")]
     [SerializeField] private string deathBoolName = "Dead";
 
+    [SerializeField] private ParticleSystem healEffect;
+
     // Prevents re-entrant death handling
     private bool isDying = false;
 
@@ -140,6 +142,7 @@ public class PlayerStats : MonoBehaviour
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        healEffect.Play();
         playerUI?.UpdateHearts(currentHealth);
     }
 

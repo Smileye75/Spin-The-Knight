@@ -35,6 +35,14 @@ public class PlayerAirState : PlayerBaseMachine
     {
         stateMachine.animator.SetBool("IsGrounded", false);
 
+        // Only play SpinJump if not already played and jump buffer has passed
+        if (!stateMachine.hasPlayedSpinJump && 
+            Time.time > stateMachine.lastJumpPressedTime + stateMachine.jumpBufferTime)
+        {
+            stateMachine.animator.SetTrigger("SpinJump");
+            stateMachine.hasPlayedSpinJump = true;
+        }
+
         stateMachine.jumpingFeedback?.PlayFeedbacks();
 
         // Apply initial jump force now (normal jump or custom)
@@ -119,6 +127,7 @@ public class PlayerAirState : PlayerBaseMachine
         if (!isRollingJump)
             stateMachine.inputReader.jumpCanceled -= OnJumpCanceled;
         // No need to reset a bool; animator uses a float that will change automatically on next state
+        stateMachine.animator.ResetTrigger("SpinJump");
     }
 
     /// <summary>

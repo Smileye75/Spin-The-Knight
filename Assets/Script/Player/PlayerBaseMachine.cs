@@ -48,6 +48,7 @@ public abstract class PlayerBaseMachine : State
     /// </summary>
     protected void FaceMovementDirection(Vector3 movement)
     {
+        if (stateMachine.isAirRotationLocked) return;
         if (movement == Vector3.zero) { return; }
         stateMachine.transform.rotation = Quaternion.Lerp(
             stateMachine.transform.rotation,

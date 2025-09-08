@@ -94,6 +94,8 @@ public class PlayerStateMachine : StateMachine
     [HideInInspector] public float jumpForce; // Calculated jump force
     [HideInInspector] public float lastJumpPressedTime; // Last time jump was pressed
     [HideInInspector] public float lastRollTime = -Mathf.Infinity; // Last time player rolled
+    public bool hasPlayedSpinJump = false;
+    public bool isAirRotationLocked = false; // NEW: Air rotation lock flag
 
     public PlayerBaseMachine CurrentState { get; private set; } // <-- Add this property
 

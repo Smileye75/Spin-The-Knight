@@ -15,7 +15,7 @@ public class AnimationEventProxy : MonoBehaviour
     [SerializeField] private Collider weapon;
     public ParticleSystem spinningParticles;
 
-    
+
     private void Awake()
     {
         sm = GetComponentInParent<PlayerStateMachine>();
@@ -32,8 +32,8 @@ public class AnimationEventProxy : MonoBehaviour
     }
 
     // ---- Existing events ----
-    public void SpinCycle()   => sm?.SpinCycle();
-    public void EndAttack()   => sm?.EndAttack();
+    public void SpinCycle() => sm?.SpinCycle();
+    public void EndAttack() => sm?.EndAttack();
 
     // ---- New events you can call from clips ----
     // Call at the first active hit frame of the attack
@@ -50,5 +50,17 @@ public class AnimationEventProxy : MonoBehaviour
         if (weapon != null) weapon.enabled = false;
         spinningParticles?.Stop();
     }
+
+    public void LockAirRotation()
+    {
+        sm.isAirRotationLocked = true;
+    }
+
+
+    public void UnlockAirRotation()
+    {
+        sm.isAirRotationLocked = false;
+    }
+
 
 }

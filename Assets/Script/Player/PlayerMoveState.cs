@@ -17,6 +17,7 @@ public class PlayerMoveState : PlayerBaseMachine
     /// </summary>
     public override void Enter()
     {
+        stateMachine.hasPlayedSpinJump = false;
         stateMachine.inputReader.isAttacking += OnAttack;
         stateMachine.inputReader.jumpEvent += OnJump;
         stateMachine.inputReader.dodgeRollEvent += OnDodgeRoll;
