@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2441652894386775158}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: BouncingPad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   m_Component:
   - component: {fileID: 195088363177728545}
   - component: {fileID: 3503099976181763309}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Bouncing Feedback
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -270,7 +270,7 @@ GameObject:
   - component: {fileID: 7154029605828681975}
   - component: {fileID: 4240511064060698870}
   - component: {fileID: 6186034996161177625}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Mushroom Bounce
   m_TagString: Untagged
   m_Icon: {fileID: 0}

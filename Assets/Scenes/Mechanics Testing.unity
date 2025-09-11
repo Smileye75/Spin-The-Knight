@@ -19501,6 +19501,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3969900259109767539, guid: f7c72cda2fcadf44586df8765fcbe5be, type: 3}
   m_PrefabInstance: {fileID: 1351610678}
   m_PrefabAsset: {fileID: 0}
+--- !u!20 &618950860 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 8196819158813933226, guid: 417faf1ba7848b542aae572917727c24, type: 3}
+  m_PrefabInstance: {fileID: 2982610628267795847}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &622021981
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -87227,42 +87232,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Character (Farmer Clothes)
       objectReference: {fileID: 0}
-    - target: {fileID: 2766838858063533187, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -35.309
-      objectReference: {fileID: 0}
-    - target: {fileID: 2766838858063533187, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -52.522
-      objectReference: {fileID: 0}
-    - target: {fileID: 2766838858063533187, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -93.159
-      objectReference: {fileID: 0}
-    - target: {fileID: 3627041252284903365, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4796790452216638094, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
       propertyPath: playerUI
       value: 
       objectReference: {fileID: 1022053655}
-    - target: {fileID: 5313477427196059204, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5950343658396460951, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 5950343658396460951, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 7050629560126108080, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
+    - target: {fileID: 7083024516072631166, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: cam
+      value: 
+      objectReference: {fileID: 618950860}
     - target: {fileID: 8137160022357846799, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.349

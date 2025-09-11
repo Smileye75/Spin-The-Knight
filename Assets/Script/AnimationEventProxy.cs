@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TrailsFX;
 using UnityEngine;
 
 
@@ -15,12 +16,14 @@ public class AnimationEventProxy : MonoBehaviour
     [SerializeField] private Collider weapon;
     public ParticleSystem spinningParticles;
 
+    public GameObject trailEffect;
+
 
     private void Awake()
     {
         sm = GetComponentInParent<PlayerStateMachine>();
         if (sm == null) Debug.LogWarning("AttackAnimEventProxy: No PlayerStateMachine found in parents.");
-
+        DisableTrail();
         // Optional safety: try to auto-find if not wired in Inspector
         if (weaponDamage == null) weaponDamage = GetComponentInChildren<WeaponDamage>(true);
         if (weapon == null)
@@ -60,6 +63,15 @@ public class AnimationEventProxy : MonoBehaviour
     public void UnlockAirRotation()
     {
         sm.isAirRotationLocked = false;
+    }
+
+    public void EnableTrail()
+    {
+        trailEffect.GetComponent<TrailEffect>().active = true;
+    }
+    public void DisableTrail()
+    {
+        trailEffect.GetComponent<TrailEffect>().active = false;
     }
 
 
