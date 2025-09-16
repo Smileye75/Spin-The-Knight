@@ -13,6 +13,8 @@ public class GoblinShamanBoss : MonoBehaviour
     [SerializeField] private int maxHitPoints = 3;
     [SerializeField] private Transform teleportFront;
     [SerializeField] private Transform teleportBack;
+    [SerializeField] private BoxCollider hitboxCollider;
+    [SerializeField] private BoxCollider damageCollider; 
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -147,8 +149,10 @@ public class GoblinShamanBoss : MonoBehaviour
         else
         {
             if (animator != null)
-            animator.speed = originalAnimatorSpeed;
+                animator.speed = originalAnimatorSpeed;
             animator.SetTrigger("Dead");
+            hitboxCollider.enabled = false;
+            damageCollider.enabled = false;
             //Die();
         }
     }
