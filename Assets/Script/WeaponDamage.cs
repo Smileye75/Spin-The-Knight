@@ -6,6 +6,7 @@ public class WeaponDamage : MonoBehaviour
 {
     [SerializeField] private Collider myCollider;
     [SerializeField] private int damageAmount = 1;
+    [SerializeField] private ParticleSystem hitEffect;
 
     private List<Collider> alreadyCollidedWith = new List<Collider>();
 
@@ -21,17 +22,28 @@ public class WeaponDamage : MonoBehaviour
 
         alreadyCollidedWith.Add(other);
 
+        // Helper to spawn and destroy hit effect
+        void SpawnHitEffect(Vector3 position)
+        {
+            if (hitEffect != null)
+            {
+                ParticleSystem effectInstance = Instantiate(hitEffect, position, Quaternion.identity);
+                Destroy(effectInstance.gameObject, effectInstance.main.duration);
+            }
+        }
+
         // Deal damage to GoblinShamanBoss
         GoblinShamanBoss boss = other.GetComponent<GoblinShamanBoss>();
         if (boss != null)
         {
             boss.TakeDamage(damageAmount);
+            SpawnHitEffect(other.ClosestPoint(transform.position));
             return;
         }
-
-        // Destroy other objects with "Enemy" tag
+ 
         if (other.CompareTag("Enemy"))
         {
+            SpawnHitEffect(other.ClosestPoint(transform.position));
             other.GetComponent<BaseEnemy>()?.PlayDead();
             other.GetComponent<EnemyPatrol>()?.PlayDead();
         }
@@ -48,7 +60,12 @@ public class WeaponDamage : MonoBehaviour
         }
         if (other.CompareTag("Crates"))
         {
-            Destroy(other.gameObject);
+
+            if (other.TryGetComponent<StompableProps>(out StompableProps crate))
+            {
+                crate.OnStomped();
+            }
+            return;
         }
     }
 }

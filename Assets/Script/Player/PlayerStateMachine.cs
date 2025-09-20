@@ -84,6 +84,8 @@ public class PlayerStateMachine : StateMachine
     [Tooltip("How long the spinning attack lasts (in seconds). (Optional; animator Exit Time now drives transitions.)")]
     public float spinningDuration = 1f;
 
+        public bool canDoubleJump = true;
+
     public PlayerStomping playerStomping; // Reference to PlayerStomping component
 
     // Calculated roll speed (hidden from Inspector)

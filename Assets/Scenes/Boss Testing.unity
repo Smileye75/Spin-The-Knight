@@ -304,6 +304,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Character (Farmer Clothes)
       objectReference: {fileID: 0}
+    - target: {fileID: 2749841686825142266, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: m_Quality
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2749841686825142266, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: m_CastShadows
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2749841686825142266, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
+      propertyPath: m_StaticShadowCaster
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4796790452216638094, guid: 300f51833ee118246a7c9b1b324a7477, type: 3}
       propertyPath: playerUI
       value: 

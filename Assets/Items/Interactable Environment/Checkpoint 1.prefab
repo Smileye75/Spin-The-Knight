@@ -24093,7 +24093,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2a12d3fc0532ba64e972160db18dfd99, type: 2}
+  - {fileID: 2100000, guid: b78c35b0d2c93de4ebb25f9594d3f574, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -47415,13 +47415,13 @@ GameObject:
   - component: {fileID: 7061320763123784098}
   - component: {fileID: 2651230330436846434}
   - component: {fileID: 6361742481082083830}
-  - component: {fileID: 6710581854110133105}
+  - component: {fileID: 7134134836056558024}
   m_Layer: 0
   m_Name: Bonefire Checkpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &7061320763123784098
 Transform:
@@ -47489,8 +47489,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6710581854110133105
-BoxCollider:
+--- !u!64 &7134134836056558024
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -47507,9 +47507,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.0657189, y: 0.28050926, z: 1.0598968}
-  m_Center: {x: 0.020782381, y: 0.024233919, z: -0.0154800415}
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 4cc5b8e0a3bafc54694a44ca75025c6d, type: 3}
 --- !u!1 &8189978422368916833
 GameObject:
   m_ObjectHideFlags: 0
@@ -47521,12 +47522,13 @@ GameObject:
   - component: {fileID: 5487412734555406104}
   - component: {fileID: 5733886043250875572}
   - component: {fileID: 7204945692473041271}
+  - component: {fileID: 887669564337895933}
   m_Layer: 0
   m_Name: SM_Prop_Camp_Firepit_Wood_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5487412734555406104
 Transform:
@@ -47593,3 +47595,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &887669564337895933
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8189978422368916833}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.4910245, y: 0.3466228, z: 0.49743223}
+  m_Center: {x: 0.005726166, y: 0.13820387, z: 0.013626397}

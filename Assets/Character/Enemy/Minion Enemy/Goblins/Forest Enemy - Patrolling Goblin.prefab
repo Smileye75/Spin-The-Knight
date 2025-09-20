@@ -621,6 +621,7 @@ MonoBehaviour:
   - {fileID: 8241493815851813929}
   speed: 2
   waitTime: 2
+  detectPlayer: 1
   detectionCollider: {fileID: 6054882981158820853}
   resumePatrolDelay: 2
 --- !u!54 &4845643681256879916

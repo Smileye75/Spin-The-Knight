@@ -17,6 +17,8 @@ public class PlayerAirState : PlayerBaseMachine
     private float stompBounceForce = 0f;
     private Vector3 stompDirection = Vector3.zero;
 
+    private const float attackJumpMultiplier = 1.2f; // Adjust as needed
+
     public PlayerAirState(
         PlayerStateMachine stateMachine,
         float customJumpForce = -1f,
@@ -47,7 +49,14 @@ public class PlayerAirState : PlayerBaseMachine
 
         // Apply initial jump force now (normal jump or custom)
         float force = customJumpForce > 0f ? customJumpForce : stateMachine.jumpForce;
-        stateMachine.forceReceiver.Jump(force); // reuses your existing jump force pipeline (gravity, etc.)
+
+        // Check if attack is pressed at jump start
+        if (stateMachine.inputReader.IsAttackPressed())
+        {
+            force *= attackJumpMultiplier;
+        }
+
+        stateMachine.forceReceiver.Jump(force);
 
         // Variable jump height: only for normal jumps
         if (!isRollingJump)
@@ -56,6 +65,9 @@ public class PlayerAirState : PlayerBaseMachine
         // Initialize animator with current vertical velocity
         UpdateAnimatorVelocityFloat();
         stateMachine.playerStomping?.EnableStompCollider();
+
+        // Always allow double jump at start of air state
+        stateMachine.canDoubleJump = true;
     }
 
     public override void Tick(float deltaTime)
@@ -83,7 +95,7 @@ public class PlayerAirState : PlayerBaseMachine
         Move(movement, deltaTime);
         FaceMovementDirection(movement);
 
-        UpdateAnimatorVelocityFloat();
+        UpdateAnimatorVelocityFloat(); 
 
         // Movement detection for animator
         if (stateMachine.inputReader.movementValue == Vector2.zero)
@@ -95,30 +107,49 @@ public class PlayerAirState : PlayerBaseMachine
             stateMachine.animator.SetBool("IsMoving", true);
         }
 
-
+        // Grounded check
         if (stateMachine.characterController.isGrounded &&
             stateMachine.characterController.velocity.y <= 0f)
         {
             stateMachine.landingFeedback?.PlayFeedbacks();
-            // Raycast down to check for "Ground" tag before switching state
-            RaycastHit hit;
-            Vector3 rayOrigin = stateMachine.transform.position + Vector3.up * 0.1f;
-            if (Physics.Raycast(rayOrigin, Vector3.down, out hit, 1f))
+
+            Collider[] hits = Physics.OverlapSphere(stateMachine.transform.position + Vector3.down * 0.5f, 0.3f);
+            bool stompedObjectFound = false;
+            foreach (var col in hits)
             {
-                if (hit.collider.CompareTag("Ground") || hit.collider.CompareTag("MovingPlatform"))
+                if (col.GetComponent<StompableProps>() != null)
                 {
-                    stateMachine.SwitchState(new PlayerMoveState(stateMachine));
-                }
-                else
-                {
-                    if (stomped)
-                    {
-                        PerformStompBounce();
-                        stomped = false;
-                        return;
-                    }
+                    stompedObjectFound = true;
+                    break;
                 }
             }
+            if (stompedObjectFound || stomped)
+            {
+                PerformStompBounce();
+                stomped = false;
+                return;
+            }
+
+            // Always switch to move state if grounded and not stomping
+            stateMachine.SwitchState(new PlayerMoveState(stateMachine));
+        }
+
+        // Double jump: allow at any time in air, once per airtime
+        if (stateMachine.canDoubleJump 
+            && !stateMachine.characterController.isGrounded 
+            && stateMachine.inputReader.IsAttackPressed())
+        {
+            // Play double jump animation
+            stateMachine.animator.SetTrigger("VerticalSpin");
+            stateMachine.jumpingFeedback?.PlayFeedbacks();
+
+            // Reset vertical velocity to zero before applying jump force
+            stateMachine.forceReceiver.ResetVerticalVelocity();
+
+            // Apply double jump force (same as normal jump)
+            stateMachine.forceReceiver.Jump(stateMachine.jumpForce);
+
+            stateMachine.canDoubleJump = false; // Only allow once per airtime
         }
     }
 
@@ -144,6 +175,8 @@ public class PlayerAirState : PlayerBaseMachine
     {
         // Apply the bounce force and set a new horizontal launch
         stateMachine.forceReceiver.Jump(stompBounceForce);
+        stateMachine.animator.ResetTrigger("VerticalSpin");
+        stateMachine.canDoubleJump = true; // Reset double jump on stomp
 
         // Refresh the animator velocity right away
         UpdateAnimatorVelocityFloat();

@@ -3,12 +3,11 @@
     "SubFolders": true,
     "OverwriteConfig": false,
     "LoadAllShaders": false,
-    "CustomOutputPath": "Shaders",
+    "CustomOutputPath": "\\Shaders",
     "LastImplementationExportImportPath": "C:/Users/empty/OneDrive/Documents/Projects/Unity/Spin-The-Knight/Assets",
     "OpenedFoldouts": [
-        "SURFACE",
-        "STYLIZATION",
-        "LIGHTING"
+        "SPECIAL EFFECTS",
+        "SHADER STATES"
     ],
     "UseCustomFont": true,
     "CustomFont": {

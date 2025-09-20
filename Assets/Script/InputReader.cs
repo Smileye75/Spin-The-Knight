@@ -114,4 +114,9 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
         else
             controls.Player.Pause.Disable();
     }
+
+    public bool IsAttackPressed()
+    {
+        return controls != null && controls.Player.Attack.ReadValue<float>() > 0f;
+    }
 }

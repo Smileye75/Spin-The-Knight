@@ -79,6 +79,7 @@ public class PlayerStomping : MonoBehaviour
             if (stateMachine != null)
             {
                 stateMachine.SwitchState(new PlayerAirState(stateMachine, finalBounceForce));
+                stateMachine.canDoubleJump = true; // Enable double jump after stomp
             }
 
             onStomped.Invoke();

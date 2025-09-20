@@ -13,7 +13,7 @@ public class ForceReceiver : MonoBehaviour
 
     [Header("Gravity & Fall Settings")]
     [Tooltip("Multiplier for gravity when falling.")]
-    [SerializeField] private float fallMultiplier = 2.5f;
+    [SerializeField] private float fallMultiplier = 2f;
 
     [Header("Knockback Settings")]
     [Tooltip("Time to smooth knockback impact.")]
@@ -114,5 +114,17 @@ public class ForceReceiver : MonoBehaviour
     {
         impact.x = 0f;
         impact.z = 0f;
+    }
+
+    /// <summary>
+    /// Resets the vertical velocity to zero, keeping horizontal velocity unchanged.
+    /// </summary>
+    public void ResetVerticalVelocity()
+    {
+        if (characterController != null)
+        {
+            // Set vertical velocity to zero, keep horizontal unchanged
+            verticalVelocity = 0f;
+        }
     }
 }

@@ -26,6 +26,8 @@ public class BaseEnemy : MonoBehaviour
     protected float lastAttackTime = -Mathf.Infinity;
     protected bool isAttacking = false;
 
+ 
+
     [Header("Damage Settings")]
     [Tooltip("Amount of damage dealt to the player.")]
     [SerializeField] protected int damageAmount = 1;
@@ -45,7 +47,7 @@ public class BaseEnemy : MonoBehaviour
     protected virtual void Update()
     {
         if (isDead || player == null) return;
-
+        if(!enableFacePlayer) return;
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         if (distanceToPlayer <= attackRange)
@@ -84,7 +86,7 @@ public class BaseEnemy : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
-
+        stompFeedback.enabled = false;
         SetWalkingAnimation(false);
 
         if (enemyAnimator != null)
@@ -110,16 +112,35 @@ public class BaseEnemy : MonoBehaviour
 
     protected virtual void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player")) return;
-
-        if (other.TryGetComponent<PlayerStats>(out PlayerStats playerStats))
+        // Player collision (existing)
+        if (other.CompareTag("Player"))
         {
-            playerStats.TakeDamage(damageAmount);
-
-            if (other.TryGetComponent(out ForceReceiver receiver))
+            if (other.TryGetComponent<PlayerStats>(out PlayerStats playerStats))
             {
-                receiver.ApplyKnockback(transform.position);
+                playerStats.TakeDamage(damageAmount);
+
+                if (other.TryGetComponent(out ForceReceiver receiver))
+                {
+                    receiver.ApplyKnockback(transform.position);
+                }
             }
+            return;
+        }
+
+        // Weapon collision (push back enemy)
+        if (other.CompareTag("Weapon"))
+        {
+            // Calculate push direction (from weapon to enemy)
+            Vector3 pushDirection = (transform.position - other.transform.position).normalized;
+            float pushForce = 90f; // Adjust this value as needed
+
+            // If you have a Rigidbody on the enemy, apply force:
+            Rigidbody rb = GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
+            }
+            PlayDead();
         }
     }
 

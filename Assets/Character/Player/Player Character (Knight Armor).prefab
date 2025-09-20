@@ -72,6 +72,7 @@ MonoBehaviour:
   weaponDamage: {fileID: 0}
   weapon: {fileID: 0}
   spinningParticles: {fileID: 3899515285235296023}
+  trailEffect: {fileID: 0}
 --- !u!1 &102848051975821627
 GameObject:
   m_ObjectHideFlags: 0
@@ -5143,6 +5144,7 @@ MonoBehaviour:
   inputReader: {fileID: 0}
   deathDelay: 2
   deathBoolName: Dead
+  healEffect: {fileID: 0}
 --- !u!114 &631130405409266777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5181,6 +5183,8 @@ MonoBehaviour:
   jumpForce: 5
   lastJumpPressedTime: 0
   lastRollTime: -Infinity
+  hasPlayedSpinJump: 0
+  isAirRotationLocked: 0
 --- !u!114 &1463541765373847123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5276,8 +5280,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.6848706, y: 0.2200687, z: 0.6848706}
-  m_Center: {x: 0, y: 0.05393598, z: -0.022025168}
+  m_Size: {x: 0.6, y: 0.2200687, z: 0.6}
+  m_Center: {x: 0, y: 0.053935975, z: 0}
 --- !u!1 &594297777882683815
 GameObject:
   m_ObjectHideFlags: 0
