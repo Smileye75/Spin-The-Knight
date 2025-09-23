@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Handles gravity, knockback, and external forces for the player.
+/// ForceReceiver handles gravity, knockback, and external forces for the player.
+/// It manages vertical velocity for jumping and falling, applies knockback from attacks,
+/// and provides utility methods for resetting or modifying forces. This component is used
+/// by the player state machine to control movement physics in a modular way.
 /// </summary>
 public class ForceReceiver : MonoBehaviour
 {
@@ -29,9 +32,14 @@ public class ForceReceiver : MonoBehaviour
     private Vector3 impact;              // Current knockback impact vector
     private Vector3 dampingVelocity;     // Used for smoothing knockback
 
-    // Combines knockback and vertical movement for use in movement calculations
+    /// <summary>
+    /// Combines knockback and vertical movement for use in movement calculations.
+    /// </summary>
     public Vector3 movement => impact + Vector3.up * verticalVelocity;
 
+    /// <summary>
+    /// Handles gravity, falling, and knockback smoothing every frame.
+    /// </summary>
     private void Update()
     {
         // Handle vertical velocity based on grounded state and gravity
@@ -70,6 +78,7 @@ public class ForceReceiver : MonoBehaviour
     /// <summary>
     /// Applies jump force to vertical velocity.
     /// </summary>
+    /// <param name="jumpForce">The force to apply upward.</param>
     public void Jump(float jumpForce)
     {
         verticalVelocity = jumpForce;
@@ -78,6 +87,7 @@ public class ForceReceiver : MonoBehaviour
     /// <summary>
     /// Sets the gravity value.
     /// </summary>
+    /// <param name="gravityValue">Gravity to use for calculations.</param>
     public void SetGravity(float gravityValue)
     {
         gravity = gravityValue;
@@ -86,6 +96,7 @@ public class ForceReceiver : MonoBehaviour
     /// <summary>
     /// Applies knockback force from a source position.
     /// </summary>
+    /// <param name="sourcePosition">The position from which the knockback originates.</param>
     public void ApplyKnockback(Vector3 sourcePosition)
     {
         // Calculate direction away from the source (enemy, explosion, etc.)

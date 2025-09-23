@@ -3,29 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Handles player movement, attack, and jump logic while in the move state.
+/// PlayerMoveState handles player movement, attack, and jump logic while the player is in the move state.
+/// It manages input subscriptions, movement, animation, and transitions to other states (jump, attack, roll).
 /// </summary>
 public class PlayerMoveState : PlayerBaseMachine
 {
-
-    // Constructor: passes state machine reference to base class
+    /// <summary>
+    /// Constructor: passes state machine reference to base class.
+    /// </summary>
     public PlayerMoveState(PlayerStateMachine playerState) : base(playerState) { }
 
     /// <summary>
     /// Called when entering the move state.
-    /// Subscribes to attack and jump input events.
+    /// Subscribes to attack, jump, and dodge roll input events.
+    /// Resets double jump and jump animation flags.
     /// </summary>
     public override void Enter()
     {
-        stateMachine.canDoubleJump = true;
-        stateMachine.hasPlayedSpinJump = false;
+        stateMachine.canDoubleJump = true; // Allow double jump after landing
+        stateMachine.hasPlayedSpinJump = false; // Reset jump animation flag
         stateMachine.inputReader.isAttacking += OnAttack;
         stateMachine.inputReader.jumpEvent += OnJump;
         stateMachine.inputReader.dodgeRollEvent += OnDodgeRoll;
         stateMachine.animator.SetBool("IsGrounded", true);
-        stateMachine.playerStomping?.DisableStompCollider();
-
-
+        stateMachine.playerStomping?.DisableStompCollider(); // Disable stomp collider while grounded
     }
 
     /// <summary>
@@ -35,13 +36,17 @@ public class PlayerMoveState : PlayerBaseMachine
     public override void Tick(float deltaTime)
     {
         Vector3 movement = CalculateMovement();
+
+        // Update last grounded time for coyote time/jump buffering
         if (stateMachine.characterController.isGrounded)
         {
             stateMachine.lastGroundedTime = Time.time;
         }
 
+        // Move the player using input and movement speed
         Move(movement * stateMachine.movementSpeed, deltaTime);
 
+        // Update animator movement state
         if (stateMachine.inputReader.movementValue == Vector2.zero)
         {
             stateMachine.animator.SetBool("IsMoving", false);
@@ -51,12 +56,13 @@ public class PlayerMoveState : PlayerBaseMachine
         stateMachine.animator.SetBool("IsMoving", true);
         FaceMovementDirection(movement);
 
+        // Update attack cooldown timer
         UpdateAttackCooldown(deltaTime);
     }
 
     /// <summary>
     /// Called when exiting the move state.
-    /// Unsubscribes from attack and jump input events.
+    /// Unsubscribes from attack, jump, and dodge roll input events.
     /// </summary>
     public override void Exit()
     {
@@ -67,7 +73,7 @@ public class PlayerMoveState : PlayerBaseMachine
 
     /// <summary>
     /// Handles jump input event.
-    /// Switches to jump state.
+    /// Switches to PlayerAirState (jump/air state).
     /// </summary>
     private void OnJump()
     {
@@ -77,10 +83,15 @@ public class PlayerMoveState : PlayerBaseMachine
         stateMachine.SwitchState(
             new PlayerAirState(
                 stateMachine,
-                airVelocity.y // pass only the Y component if AirState expects a float
+                airVelocity.y // Pass only the Y component if AirState expects a float
             )
         );
     }
+
+    /// <summary>
+    /// Handles dodge roll input event.
+    /// Switches to PlayerRollState if grounded and cooldown has passed.
+    /// </summary>
     private void OnDodgeRoll()
     {
         // Only roll if grounded and cooldown passed
@@ -90,10 +101,13 @@ public class PlayerMoveState : PlayerBaseMachine
         stateMachine.SwitchState(new PlayerRollState(stateMachine));
     }
 
-private void OnAttack()
-{
-    if (!TryConsumeAttackCooldown()) return; // from PlayerBaseMachine:contentReference[oaicite:4]{index=4}
-    stateMachine.SwitchState(new PlayerAttackState(stateMachine));
-}
-
+    /// <summary>
+    /// Handles attack input event.
+    /// Switches to PlayerAttackState if attack cooldown allows.
+    /// </summary>
+    private void OnAttack()
+    {
+        if (!TryConsumeAttackCooldown()) return; // from PlayerBaseMachine
+        stateMachine.SwitchState(new PlayerAttackState(stateMachine));
+    }
 }

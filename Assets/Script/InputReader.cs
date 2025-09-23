@@ -5,7 +5,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// Reads and processes player input, raising events for jump, attack, and movement.
+/// InputReader reads and processes player input using Unity's Input System.
+/// It raises events for jump, attack, dodge roll, and pause actions, and stores movement input.
+/// This script acts as the central hub for all player input, allowing other scripts to subscribe to input events.
 /// </summary>
 public class InputReader : MonoBehaviour, Controls.IPlayerActions
 {
@@ -17,34 +19,38 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
     public event Action jumpEvent;      // Raised when jump is performed
     public event Action isAttacking;    // Raised when attack is performed
     public event Action jumpCanceled;   // Raised when jump is canceled
-
-    public event Action dodgeRollEvent; 
-    public event Action pauseEvent;
+    public event Action dodgeRollEvent; // Raised when dodge roll is performed
+    public event Action pauseEvent;     // Raised when pause is performed
 
     private Controls controls; // Input system controls asset
 
+    /// <summary>
+    /// Initializes and enables input controls.
+    /// </summary>
     private void Start()
     {
-        // Initialize and enable input controls
         controls = new Controls();
         controls.Player.SetCallbacks(this);
         controls.Enable();
     }
 
+    /// <summary>
+    /// Disables input controls when destroyed.
+    /// </summary>
     private void OnDestroy()
     {
-        // Disable input controls when destroyed
         controls.Disable();
     }
 
     /// <summary>
     /// Handles jump input (performed and canceled).
+    /// Raises jumpEvent on performed and jumpCanceled on canceled.
+    /// Also stores the last jump press time in the state machine for jump buffering.
     /// </summary>
     public void OnJump(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            // Raise jump event
             jumpEvent?.Invoke();
 
             // Store last jump press time in state machine (for jump buffering)
@@ -56,50 +62,52 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
 
         if (context.canceled)
         {
-            // Raise jump canceled event
             jumpCanceled?.Invoke();
         }
     }
 
     /// <summary>
-    /// Handles movement input.
+    /// Handles movement input and stores the movement value.
     /// </summary>
     public void OnMovement(InputAction.CallbackContext context)
     {
-        // Store movement input value
         movementValue = context.ReadValue<Vector2>();
     }
 
     /// <summary>
-    /// Handles attack input.
+    /// Handles attack input and raises isAttacking event.
     /// </summary>
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (!context.performed)
             return;
 
-        // Raise attack event
         isAttacking?.Invoke();
     }
 
     /// <summary>
-    /// Handles the jump input state for PlayerStomping Script.
-    /// Returns true if the jump button is pressed.
+    /// Returns true if the jump button is currently pressed.
+    /// Used by PlayerStomping and other scripts for jump checks.
     /// </summary>
     public bool IsJumpPressed()
     {
         return controls != null && controls.Player.Jump.ReadValue<float>() > 0f;
     }
 
+    /// <summary>
+    /// Handles dodge roll input and raises dodgeRollEvent.
+    /// </summary>
     public void OnDodgeRoll(InputAction.CallbackContext context)
     {
         if (!context.performed)
             return;
 
-        // Raise dodge roll event
         dodgeRollEvent?.Invoke();
     }
 
+    /// <summary>
+    /// Handles pause input and raises pauseEvent.
+    /// </summary>
     public void OnPause(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
@@ -107,6 +115,9 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
         pauseEvent?.Invoke();
     }
 
+    /// <summary>
+    /// Enables or disables the pause action.
+    /// </summary>
     public void SetPauseEnabled(bool enabled)
     {
         if (enabled)
@@ -115,6 +126,10 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
             controls.Player.Pause.Disable();
     }
 
+    /// <summary>
+    /// Returns true if the attack button is currently pressed.
+    /// Used for attack checks in player states.
+    /// </summary>
     public bool IsAttackPressed()
     {
         return controls != null && controls.Player.Attack.ReadValue<float>() > 0f;

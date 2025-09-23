@@ -2,22 +2,30 @@ using System.Collections;
 using UnityEngine;
 using MoreMountains.Feedbacks;
 
+/// <summary>
+/// EnemyPatrol is an enemy that inherits from BaseEnemy and patrols between a set of points.
+/// It pauses patrol and faces the player when the player is detected, then resumes patrol after a delay when the player leaves.
+/// Handles walking animation, patrol logic, and detection logic.
+/// </summary>
 public class EnemyPatrol : BaseEnemy
 {
     [Header("Patrol Settings")]
-    [SerializeField] private Transform[] patrolPoints;
-    [SerializeField] private float speed = 2f;
-    [SerializeField] private float waitTime = 2f;
+    [SerializeField] private Transform[] patrolPoints;   // Points to patrol between
+    [SerializeField] private float speed = 2f;           // Patrol movement speed
+    [SerializeField] private float waitTime = 2f;        // Wait time at each patrol point
 
     [Header("Detection")]
-    [SerializeField] private Collider detectionCollider;
-    [SerializeField] private float resumePatrolDelay = 2f;
-    private Transform detectedPlayer;
+    [SerializeField] private Collider detectionCollider; // Collider used for player detection
+    [SerializeField] private float resumePatrolDelay = 2f; // Delay before resuming patrol after losing player
+    private Transform detectedPlayer;                    // Reference to detected player
 
-    private int currentIndex = 0;
-    private bool isPatrolling = true;
-    private Coroutine patrolCoroutine;
+    private int currentIndex = 0;                        // Current patrol point index
+    private bool isPatrolling = true;                    // Whether the enemy is currently patrolling
+    private Coroutine patrolCoroutine;                   // Reference to the patrol coroutine
 
+    /// <summary>
+    /// Initializes patrol state and starts the patrol routine.
+    /// </summary>
     protected override void Start()
     {
         base.Start();
@@ -27,6 +35,9 @@ public class EnemyPatrol : BaseEnemy
         patrolCoroutine = StartCoroutine(PatrolRoutine());
     }
 
+    /// <summary>
+    /// Coroutine that moves the enemy between patrol points, waits at each point, and loops.
+    /// </summary>
     private IEnumerator PatrolRoutine()
     {
         while (isPatrolling && patrolPoints != null && patrolPoints.Length > 1)
@@ -62,6 +73,10 @@ public class EnemyPatrol : BaseEnemy
         }
     }
 
+    /// <summary>
+    /// Called when another collider stays within the detection collider.
+    /// If the player is detected, stops patrolling and faces the player.
+    /// </summary>
     private void OnTriggerStay(Collider other)
     {
         if (detectionCollider == null) return;
@@ -85,6 +100,10 @@ public class EnemyPatrol : BaseEnemy
         }
     }
 
+    /// <summary>
+    /// Called when another collider exits the detection collider.
+    /// If the player leaves, resumes patrol after a delay.
+    /// </summary>
     private void OnTriggerExit(Collider other)
     {
         if (detectionCollider == null) return;
@@ -99,6 +118,9 @@ public class EnemyPatrol : BaseEnemy
         }
     }
 
+    /// <summary>
+    /// Coroutine to resume patrol after a delay when the player leaves detection range.
+    /// </summary>
     private IEnumerator ResumePatrolAfterDelay()
     {
         yield return new WaitForSeconds(resumePatrolDelay);
@@ -106,6 +128,9 @@ public class EnemyPatrol : BaseEnemy
         patrolCoroutine = StartCoroutine(PatrolRoutine());
     }
 
+    /// <summary>
+    /// Handles enemy death: stops patrol and calls base death logic.
+    /// </summary>
     public override void PlayDead()
     {
         // Only do patrol-specific cleanup, then call base.PlayDead()
@@ -117,6 +142,9 @@ public class EnemyPatrol : BaseEnemy
         base.PlayDead();
     }
 
+    /// <summary>
+    /// Updates the enemy each frame. If not patrolling and a player is detected, faces the player.
+    /// </summary>
     protected override void Update()
     {
         base.Update();
@@ -128,6 +156,9 @@ public class EnemyPatrol : BaseEnemy
         }
     }
 
+    /// <summary>
+    /// Rotates the enemy to face the detected player smoothly.
+    /// </summary>
     private void FaceDetectedPlayer()
     {
         Vector3 direction = detectedPlayer.position - transform.position;

@@ -2,25 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// PlayerRollState handles the player's dodge roll action, including movement, animation,
+/// capsule resizing, and state transitions. Allows jumping out of a roll and returns to move state
+/// when the roll is finished or interrupted.
+/// </summary>
 public class PlayerRollState : PlayerBaseMachine
 {
-    private Vector3 rollDirection;
-    private float elapsed;
+    private Vector3 rollDirection;      // Direction of the roll
+    private float elapsed;              // Time elapsed since roll started
 
-    // Capsule adjustment fields
+    // Capsule adjustment fields for crouching during roll
     private CharacterController controller;
     private float originalHeight;
     private Vector3 originalCenter;
     private float rollHeight = 0.8f; // Lower than standing height
     private Vector3 rollCenter = new Vector3(0, 0.5f, 0); // Half of rollHeight
 
+    /// <summary>
+    /// Constructor: passes state machine reference to base class.
+    /// </summary>
     public PlayerRollState(PlayerStateMachine stateMachine) : base(stateMachine) {}
 
+    /// <summary>
+    /// Called when entering the roll state.
+    /// Adjusts capsule size, sets roll direction, and triggers animation.
+    /// </summary>
     public override void Enter()
     {
         stateMachine.lastRollTime = Time.time;
 
-        // Capsule adjustment
+        // Capsule adjustment for crouching effect
         controller = stateMachine.characterController;
         originalHeight = controller.height;
         originalCenter = controller.center;
@@ -42,7 +54,7 @@ public class PlayerRollState : PlayerBaseMachine
         // Face the roll direction
         stateMachine.transform.rotation = Quaternion.LookRotation(rollDirection, Vector3.up);
 
-        // Animator flags
+        // Set rolling animation flag
         if (stateMachine.animator != null)
         {
             stateMachine.animator.SetBool("IsRolling", true);
@@ -51,6 +63,10 @@ public class PlayerRollState : PlayerBaseMachine
         elapsed = 0f;
     }
 
+    /// <summary>
+    /// Called every frame during the roll state.
+    /// Handles roll movement, jump interruption, and state transitions.
+    /// </summary>
     public override void Tick(float deltaTime)
     {
         elapsed += deltaTime;
@@ -81,13 +97,18 @@ public class PlayerRollState : PlayerBaseMachine
             return;
         }
 
+        // End roll after duration
         if (elapsed >= stateMachine.rollDuration)
             stateMachine.SwitchState(new PlayerMoveState(stateMachine));
     }
 
+    /// <summary>
+    /// Called when exiting the roll state.
+    /// Resets capsule size and animation flag.
+    /// </summary>
     public override void Exit()
     {
-        // Reset capsule size
+        // Reset capsule size to original
         controller.height = originalHeight;
         controller.center = originalCenter;
 

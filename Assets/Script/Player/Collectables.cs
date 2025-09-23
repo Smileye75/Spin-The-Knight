@@ -2,16 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Collectables handles the behavior of collectible items such as coins and food.
+/// Coins and food can be attracted to the player when hit by a weapon,
+/// and are collected when the player touches them, applying their effect.
+/// </summary>
 public class Collectables : MonoBehaviour
 {
-    private Transform targetPlayer;
-    private bool moveToPlayer = false;
-    public float moveSpeed = 8f;
+    private Transform targetPlayer;         // The player to move towards when attracted
+    private bool moveToPlayer = false;      // Whether the collectable should move to the player
+    public float moveSpeed = 8f;            // Speed at which the collectable moves to the player
 
-    public int healAmount = 3;
+    public int healAmount = 3;              // Amount of health restored by food
 
+    /// <summary>
+    /// Handles collision with weapon or player.
+    /// If hit by a weapon, starts moving toward the player.
+    /// If touched by the player, applies effect and destroys itself.
+    /// </summary>
+    /// <param name="other">The collider that entered the trigger.</param>
     private void OnTriggerEnter(Collider other)
     {
+        // If hit by a weapon, start moving toward the player who owns the weapon
         if (other.CompareTag("Weapon"))
         {
             PlayerStats stats = other.GetComponentInParent<PlayerStats>();
@@ -21,6 +33,7 @@ public class Collectables : MonoBehaviour
                 moveToPlayer = true;
             }
         }
+        // If touched by the player, apply effect and destroy
         else if (other.TryGetComponent<PlayerStats>(out PlayerStats stats))
         {
             if (gameObject.CompareTag("Coins"))
@@ -30,23 +43,24 @@ public class Collectables : MonoBehaviour
             }
             if (gameObject.CompareTag("Food"))
             {
-                stats.Heal(healAmount); // Or whatever heal amount you want
+                stats.Heal(healAmount); // Heal the player
                 Debug.Log("Player Healed! Current Health: " + stats.currentHealth);
             }
             Destroy(gameObject);
         }
     }
 
+    /// <summary>
+    /// Moves the collectable toward the player if attracted by weapon hit.
+    /// </summary>
     private void Update()
     {
         if (moveToPlayer && targetPlayer != null)
         {
             Vector3 coinPos = transform.position;
             Vector3 playerPos = targetPlayer.position;
-            playerPos.y = coinPos.y;
 
             transform.position = Vector3.MoveTowards(coinPos, playerPos, moveSpeed * Time.deltaTime);
-
         }
     }
 }

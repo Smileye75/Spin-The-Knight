@@ -2,7 +2,9 @@ using Cinemachine;
 using UnityEngine;
 
 /// <summary>
-/// Handles camera switching when the player enters or exits a trigger zone.
+/// CameraTriggerZone handles switching between virtual cameras when the player enters or exits a trigger zone.
+/// It raises the priority of the assigned CinemachineVirtualCamera when the player enters,
+/// and (optionally) lowers it when the player exits, reverting to the main camera.
 /// </summary>
 public class CameraTriggerZone : MonoBehaviour
 {
@@ -13,11 +15,12 @@ public class CameraTriggerZone : MonoBehaviour
     [Tooltip("Should revert to main camera on exit?")]
     [SerializeField] private bool revertToMainCamera = true;
 
-    private int activePriority = 30;
-    private int inactivePriority = 5;
+    private int activePriority = 30;    // Priority when this camera should be active
+    private int inactivePriority = 5;   // Priority when this camera should be inactive
 
     /// <summary>
-    /// Raises the camera priority when the player enters the trigger zone.
+    /// Raises the camera priority when the player enters the trigger zone,
+    /// making this virtual camera the active one.
     /// </summary>
     private void OnTriggerEnter(Collider other)
     {
@@ -26,7 +29,8 @@ public class CameraTriggerZone : MonoBehaviour
     }
 
     /// <summary>
-    /// Lowers the camera priority (reverting to main camera) when the player exits the trigger zone.
+    /// Lowers the camera priority (reverting to main camera) when the player exits the trigger zone,
+    /// if revertToMainCamera is enabled.
     /// </summary>
     private void OnTriggerExit(Collider other)
     {

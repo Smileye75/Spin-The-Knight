@@ -4,25 +4,32 @@ using MoreMountains.Feedbacks;
 using UnityEngine;
 
 /// <summary>
-/// Main state machine for player logic and transitions.
-/// Holds references and settings for movement, combat, and jumping.
+/// PlayerStateMachine is the main state machine for player logic and transitions.
+/// It holds references and settings for movement, combat, jumping, rolling, and feedbacks.
+/// This class manages state switching, player stats, animation, and relays animation events for attacks.
 /// </summary>
 public class PlayerStateMachine : StateMachine
 {
-    // ========== NEW: Spin event relay ==========
+    // ========== Spin event relay ==========
     // The active attack state will set this when it enters, and clear it on exit.
+    // Used to relay animation events (SpinCycle, EndAttack) to the current attack state.
     [System.NonSerialized] public ISpinCounter spinCounter;
-        public MMF_Player landingFeedback;
-        public MMF_Player jumpingFeedback;
 
+    // Feedbacks for landing and jumping (optional, uses MoreMountains.Feedbacks)
+    public MMF_Player landingFeedback;
+    public MMF_Player jumpingFeedback;
 
     /// <summary>
     /// Called by the Animator's AttackAnimEventProxy (on the Animator GameObject) once per spin loop.
     /// Your Spinning clip should have a single Animation Event named "SpinCycle".
     /// </summary>
     public void SpinCycle() => spinCounter?.OnSpinCycle();
+
+    /// <summary>
+    /// Called by the Animator's AttackAnimEventProxy when the attack ends.
+    /// </summary>
     public void EndAttack() => spinCounter?.EndAttack();
-    // ===========================================
+    // ======================================
 
     [Header("Player Stats")]
     public PlayerStats playerStats; // Reference to player stats for health, coins, and lives
@@ -84,7 +91,7 @@ public class PlayerStateMachine : StateMachine
     [Tooltip("How long the spinning attack lasts (in seconds). (Optional; animator Exit Time now drives transitions.)")]
     public float spinningDuration = 1f;
 
-        public bool canDoubleJump = true;
+    public bool canDoubleJump = true; // Whether the player can double jump (reset on landing)
 
     public PlayerStomping playerStomping; // Reference to PlayerStomping component
 
@@ -96,42 +103,52 @@ public class PlayerStateMachine : StateMachine
     [HideInInspector] public float jumpForce; // Calculated jump force
     [HideInInspector] public float lastJumpPressedTime; // Last time jump was pressed
     [HideInInspector] public float lastRollTime = -Mathf.Infinity; // Last time player rolled
-    public bool hasPlayedSpinJump = false;
-    public bool isAirRotationLocked = false; // NEW: Air rotation lock flag
+    public bool hasPlayedSpinJump = false; // Used to prevent repeated jump animation triggers
+    public bool isAirRotationLocked = false; // Air rotation lock flag
 
-    public PlayerBaseMachine CurrentState { get; private set; } // <-- Add this property
+    /// <summary>
+    /// The current player state (move, attack, air, roll, etc.).
+    /// </summary>
+    public PlayerBaseMachine CurrentState { get; private set; }
 
+    /// <summary>
+    /// Initializes player components, calculates gravity/jump force, and starts in move state.
+    /// </summary>
     private void Start()
     {
-        playerStats = GetComponent<PlayerStats>();                         // :contentReference[oaicite:1]{index=1}
-        mainCamera = Camera.main.transform;                                 // :contentReference[oaicite:2]{index=2}
+        playerStats = GetComponent<PlayerStats>();
+        mainCamera = Camera.main.transform;
 
         // Automatically find Animator on child if not assigned in Inspector
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
 
         // Calculate gravity and jump force based on settings
-        float gravity = -(2 * jumpHeight) / (timeToApex * timeToApex);      // :contentReference[oaicite:3]{index=3}
-        jumpForce = Mathf.Abs(gravity) * timeToApex;                        // :contentReference[oaicite:4]{index=4}
-        forceReceiver.SetGravity(gravity);                                  // :contentReference[oaicite:5]{index=5}
+        float gravity = -(2 * jumpHeight) / (timeToApex * timeToApex);
+        jumpForce = Mathf.Abs(gravity) * timeToApex;
+        forceReceiver.SetGravity(gravity);
 
+        // Find PlayerStomping component if not assigned
         if (playerStomping == null)
         {
             playerStomping = GetComponentInChildren<PlayerStomping>();
         }
 
         // Calculate roll speed based on distance and duration
-        rollSpeed = rollDistance / rollDuration;                            // :contentReference[oaicite:6]{index=6}
+        rollSpeed = rollDistance / rollDuration;
 
         // Lock and hide cursor for gameplay
-        Cursor.lockState = CursorLockMode.Locked;                           // :contentReference[oaicite:7]{index=7}
-        Cursor.visible = false;                                             // :contentReference[oaicite:8]{index=8}
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         // Start in movement state
-        SwitchState(new PlayerMoveState(this));                             // :contentReference[oaicite:9]{index=9}
+        SwitchState(new PlayerMoveState(this));
     }
 
-    // Update SwitchState to set CurrentState
+    /// <summary>
+    /// Switches to a new player state and updates the CurrentState property.
+    /// </summary>
+    /// <param name="newState">The new player state to switch to.</param>
     public void SwitchState(PlayerBaseMachine newState)
     {
         CurrentState = newState;

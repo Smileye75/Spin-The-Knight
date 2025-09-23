@@ -4,12 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// GameManager is a singleton that manages the overall game state, including pausing, game over, victory,
+/// player respawn, scene transitions, and boss events. It provides global access to important references,
+/// handles UI menu logic, and broadcasts events for other systems to respond to changes in game state.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     // Singleton instance for global access
     public static GameManager Instance { get; private set; }
 
-    // Game state enum and current state
+    // Enum for tracking the current game state
     public enum GameState { Playing, Paused, GameOver, Victory }
     public GameState CurrentState { get; private set; } = GameState.Playing;
 
@@ -25,11 +30,13 @@ public class GameManager : MonoBehaviour
     public event Action OnVictory;
     public event Action<bool> OnPauseToggled;
     public event Action<Vector3> OnRespawn;
-
     public event Action OnBossSpawned;
     public event Action OnBossDefeated;
 
-    // Singleton setup and persistence
+    /// <summary>
+    /// Ensures only one GameManager exists and persists across scenes.
+    /// Assigns references to player and UI.
+    /// </summary>
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -43,13 +50,17 @@ public class GameManager : MonoBehaviour
         AssignReferences();
     }
 
+    /// <summary>
+    /// Sets the player to the default spawn point at game start.
+    /// </summary>
     private void Start()
     {
         SetPlayerToDefaultSpawn();
     }
 
-
-    // Toggles pause state and notifies listeners
+    /// <summary>
+    /// Toggles the pause state and notifies listeners.
+    /// </summary>
     public void TogglePause()
     {
         bool pause = CurrentState != GameState.Paused;
@@ -58,7 +69,9 @@ public class GameManager : MonoBehaviour
         OnPauseToggled?.Invoke(pause);
     }
 
-    // Handles game over logic
+    /// <summary>
+    /// Handles game over logic, pauses the game, shows UI, and notifies listeners.
+    /// </summary>
     public void GameOver()
     {
         TogglePause();
@@ -67,7 +80,9 @@ public class GameManager : MonoBehaviour
         menuUI?.ShowGameOverUI();
     }
 
-    // Handles victory logic
+    /// <summary>
+    /// Handles victory logic, pauses the game, shows UI, and notifies listeners.
+    /// </summary>
     public void Victory()
     {
         TogglePause();
@@ -76,7 +91,11 @@ public class GameManager : MonoBehaviour
         menuUI?.ShowVictoryUI();
     }
 
-    // Respawns the player at a given position, or at default if position is Vector3.zero
+    /// <summary>
+    /// Respawns the player at a given position, or at the default spawn if position is Vector3.zero.
+    /// Notifies listeners of the respawn event.
+    /// </summary>
+    /// <param name="position">The position to respawn the player at.</param>
     public void RespawnPlayer(Vector3 position)
     {
         if (player != null)
@@ -95,6 +114,9 @@ public class GameManager : MonoBehaviour
         OnRespawn?.Invoke(position); // Other systems (e.g., RespawnManager) listen here
     }
 
+    /// <summary>
+    /// Sets the player to the default spawn point.
+    /// </summary>
     private void SetPlayerToDefaultSpawn()
     {
         if (defaultSpawnPoint != null && player != null)
@@ -106,7 +128,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Reloads the current scene
+    /// <summary>
+    /// Reloads the current scene and resets UI and player spawn.
+    /// </summary>
     public void ReloadScene()
     {
         Time.timeScale = 1; // Ensure game is unpaused
@@ -116,28 +140,38 @@ public class GameManager : MonoBehaviour
         menuUI?.playerUI?.SetActive(true); // Show Player UI after reload
     }
 
+    /// <summary>
+    /// Loads the main game scene ("TheVillageOutskirt") and resets spawn.
+    /// </summary>
     public void PlayGame()
     {
         Time.timeScale = 1; // Ensure game is unpaused
-        SceneManager.LoadScene("Tutorial Level");
+        SceneManager.LoadScene("TheVillageOutskirt");
         StartCoroutine(WaitAndSetDefaultSpawn());
     }
 
+    /// <summary>
+    /// Exits the application.
+    /// </summary>
     public void ExitGame()
     {
         Application.Quit();
     }
 
-    // Loads the main menu scene
+    /// <summary>
+    /// Loads the main menu scene and resets spawn/UI.
+    /// </summary>
     public void LoadMainMenu()
     {
         Time.timeScale = 1; // Ensure game is unpaused
-        SceneManager.LoadScene("Main Menu");
+        SceneManager.LoadScene("StartMenu");
         StartCoroutine(WaitAndSetDefaultSpawn());
         menuUI?.HideAllMenus(); // Hide all UI menus
     }
 
-    // Handles boss defeat logic
+    /// <summary>
+    /// Handles boss defeat logic, triggers victory, and notifies listeners.
+    /// </summary>
     public void BossDefeated()
     {
         Debug.Log("Boss defeated!");
@@ -145,6 +179,9 @@ public class GameManager : MonoBehaviour
         Victory(); // Triggers victory flow
     }
 
+    /// <summary>
+    /// Waits for the scene to load, then assigns references and sets player spawn/UI.
+    /// </summary>
     private IEnumerator WaitAndSetDefaultSpawn()
     {
         yield return null; // Wait one frame for scene to load
@@ -154,10 +191,13 @@ public class GameManager : MonoBehaviour
 
         // Enable/disable pause action based on scene
         string sceneName = SceneManager.GetActiveScene().name;
-        bool enablePause = sceneName != "Main Menu";
+        bool enablePause = sceneName != "StartMenu";
         menuUI?.SetPauseActionEnabled(enablePause);
     }
 
+    /// <summary>
+    /// Finds and assigns references to player and menu UI if not already set.
+    /// </summary>
     private void AssignReferences()
     {
         if (player == null)

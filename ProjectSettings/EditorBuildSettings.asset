@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Main Menu.unity
-    guid: 15183896162e50a48a345e1e6685e732
+    path: Assets/Scenes/StartMenu.unity
+    guid: 8a4e85dba82b33048be197e3011208b7
   - enabled: 1
-    path: Assets/Scenes/The Village Outskirt.unity
+    path: Assets/Scenes/TheVillageOutskirt.unity
     guid: 6646956cf4feb704e9ea26f720e5a6c9
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 78caf0fbcee969646957aa0cebd090d5, type: 3}

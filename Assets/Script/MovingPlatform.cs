@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// MovingPlatform moves between a series of points in the scene, pausing at each point for a set duration.
+/// It calculates and exposes its current velocity for use by other scripts (such as player movement on platforms).
+/// </summary>
 public class MovingPlatform : MonoBehaviour
 {
     [Header("Path Settings")]
@@ -20,13 +24,23 @@ public class MovingPlatform : MonoBehaviour
     private bool waiting = false;         // Is the platform currently waiting?
 
     private Vector3 lastPosition;         // Last frame's position for velocity calculation
-    public Vector3 Velocity { get; private set; } // Current velocity of the platform
 
+    /// <summary>
+    /// The current velocity of the platform (used by player movement scripts).
+    /// </summary>
+    public Vector3 Velocity { get; private set; }
+
+    /// <summary>
+    /// Initializes the platform's last position.
+    /// </summary>
     private void Start()
     {
         lastPosition = transform.position;
     }
 
+    /// <summary>
+    /// Handles platform movement, waiting at points, and velocity calculation each frame.
+    /// </summary>
     private void Update()
     {
         if (waiting)

@@ -4,36 +4,45 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// PlayerUI manages the player's HUD, including health hearts, lives, and coin count.
+/// It provides methods to update the UI in response to changes in the player's stats,
+/// such as taking damage, gaining lives, or collecting coins.
+/// </summary>
 public class PlayerUI : MonoBehaviour
 {
     [Header("Health")]
-    public Image[] hearts;
-    public Sprite fullHeart;
-    public Sprite emptyHeart;
+    public Image[] hearts;           // Array of heart icons representing player health
+    public Sprite fullHeart;         // Sprite for a full (active) heart
+    public Sprite emptyHeart;        // Sprite for an empty (lost) heart
 
     [Header("Lives")]
-    public TMP_Text livesText; // Use Text if not using TextMeshPro
+    public TMP_Text livesText;       // Text displaying the number of lives (TextMeshPro)
 
     [Header("Coins")]
-    public TMP_Text coinText;
+    public TMP_Text coinText;        // Text displaying the number of coins (TextMeshPro)
 
-    // Example starting values (you can set these from another script if needed)
+    // Example starting values (can be set from another script if needed)
     [Header("Initial UI States")]
-    [SerializeField] private int startingHealth = 3;
-    [SerializeField] private int startingLives = 3;
-    [SerializeField] private int startingCoins = 0;
+    [SerializeField] private int startingHealth = 3;   // Initial health to display
+    [SerializeField] private int startingLives = 3;    // Initial lives to display
+    [SerializeField] private int startingCoins = 0;    // Initial coins to display
 
+    /// <summary>
+    /// Initializes the UI to the starting values on game start.
+    /// </summary>
     private void Start()
     {
-        // Initialize UI to starting values
         UpdateHearts(startingHealth);
         UpdateLives(startingLives);
         UpdateCoins(startingCoins);
     }
 
     /// <summary>
-    /// Updates the heart icons based on current health.
+    /// Updates the heart icons based on the player's current health.
+    /// Sets each heart to full or empty depending on current health value.
     /// </summary>
+    /// <param name="currentHealth">The player's current health.</param>
     public void UpdateHearts(int currentHealth)
     {
         for (int i = 0; i < hearts.Length; i++)
@@ -43,8 +52,9 @@ public class PlayerUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the number of lives shown.
+    /// Updates the number of lives shown in the UI.
     /// </summary>
+    /// <param name="currentLives">The player's current number of lives.</param>
     public void UpdateLives(int currentLives)
     {
         if (livesText != null)
@@ -52,8 +62,9 @@ public class PlayerUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the coin counter.
+    /// Updates the coin counter in the UI.
     /// </summary>
+    /// <param name="coinCount">The player's current coin count.</param>
     public void UpdateCoins(int coinCount)
     {
         if (coinText != null)

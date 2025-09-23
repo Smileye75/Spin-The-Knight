@@ -15,4 +15,4 @@ MonoBehaviour:
   tagID: bounce
   baseAmplitude: 13.19
   baseFrequency: 1
-  baseWaveSize: 0.2
+  baseWaveSize: 0.1

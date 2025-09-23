@@ -20,6 +20,7 @@ TagManager:
   - Coins
   - PlayerDetection
   - MenuUI
+  - SpawnPoints
   layers:
   - Default
   - TransparentFX
@@ -39,7 +40,7 @@ TagManager:
   - PlayerDetection
   - JumpPad
   - Boss
-  - 
+  - SpawningPoints
   - 
   - 
   - 

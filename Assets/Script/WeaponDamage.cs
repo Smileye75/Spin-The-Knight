@@ -2,19 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// WeaponDamage handles collision detection and damage dealing for the player's weapon.
+/// It prevents multiple hits on the same target per attack, spawns hit effects, and interacts with enemies,
+/// bosses, crates, and explosives. It also provides a method to reset collision tracking at the start of each attack.
+/// </summary>
 public class WeaponDamage : MonoBehaviour
 {
-    [SerializeField] private Collider myCollider;
-    [SerializeField] private int damageAmount = 1;
-    [SerializeField] private ParticleSystem hitEffect;
+    [SerializeField] private Collider myCollider;           // The weapon's own collider (to ignore self-collision)
+    [SerializeField] private int damageAmount = 1;          // Amount of damage dealt per hit
+    [SerializeField] private ParticleSystem hitEffect;      // Particle effect to spawn on hit
 
-    private List<Collider> alreadyCollidedWith = new List<Collider>();
+    private List<Collider> alreadyCollidedWith = new List<Collider>(); // Tracks already hit targets per attack
 
+    /// <summary>
+    /// Clears the list of already-collided targets. Call this at the start of each attack.
+    /// </summary>
     public void ResetCollision()
     {
         alreadyCollidedWith.Clear();
     }
 
+    /// <summary>
+    /// Handles collision with enemies, bosses, crates, and explosives.
+    /// Deals damage, triggers effects, and prevents duplicate hits per attack.
+    /// </summary>
+    /// <param name="other">The collider that was hit.</param>
     private void OnTriggerEnter(Collider other)
     {
         if (other == myCollider) { return; }
@@ -22,7 +35,7 @@ public class WeaponDamage : MonoBehaviour
 
         alreadyCollidedWith.Add(other);
 
-        // Helper to spawn and destroy hit effect
+        // Helper to spawn and destroy hit effect at the hit position
         void SpawnHitEffect(Vector3 position)
         {
             if (hitEffect != null)
@@ -41,6 +54,7 @@ public class WeaponDamage : MonoBehaviour
             return;
         }
  
+        // Handle regular enemies
         if (other.CompareTag("Enemy"))
         {
             SpawnHitEffect(other.ClosestPoint(transform.position));
@@ -48,22 +62,22 @@ public class WeaponDamage : MonoBehaviour
             other.GetComponent<EnemyPatrol>()?.PlayDead();
         }
 
+        // Handle explosives (trigger explosion, do not destroy weapon)
         if (other.CompareTag("Explosives"))
         {
-            // Try to trigger explosion on the crate's Stompable script
             if (other.TryGetComponent<StompableProps>(out StompableProps crate))
             {
                 crate.TriggerExplosion();
             }
-            // Do NOT destroy the weapon
             return;
         }
+
+        // Handle crates (destroy or explode, do not destroy weapon)
         if (other.CompareTag("Crates"))
         {
-
             if (other.TryGetComponent<StompableProps>(out StompableProps crate))
             {
-                crate.OnStomped();
+                crate.WeaponAttack();
             }
             return;
         }

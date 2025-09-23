@@ -3,40 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Feedbacks;
 
+/// <summary>
+/// BaseEnemy is a base class for enemy behavior in the game.
+/// It manages enemy animation, attacking, facing the player, taking damage, being stomped, and dying.
+/// It also handles feedbacks, coin drops, and disables colliders and attacks when dead.
+/// Derived enemy classes can override its methods for custom behavior.
+/// </summary>
 public class BaseEnemy : MonoBehaviour
 {
     [Header("Animation & Prefabs")]
-    [SerializeField] protected Animator enemyAnimator;
-    [SerializeField] protected GameObject coinPrefab;
-    [SerializeField] protected GameObject enemyPrefab;
-    [SerializeField] protected Collider triggerColliders;
-    [SerializeField] protected Collider attackCollider;
-    [SerializeField] protected Collider weaponCollider;
+    [SerializeField] protected Animator enemyAnimator;      // Animator for enemy animations
+    [SerializeField] protected GameObject coinPrefab;       // Prefab for coin drop on death
+    [SerializeField] protected GameObject enemyPrefab;      // Prefab reference for self-destruction
+    [SerializeField] protected Collider triggerColliders;   // Main trigger collider
+    [SerializeField] protected Collider attackCollider;     // Collider for attack hitbox
+    [SerializeField] protected Collider weaponCollider;     // Collider for weapon hitbox
 
-    protected bool isDead = false;
+    protected bool isDead = false;                          // Tracks if the enemy is dead
 
     [Header("Feedback")]
-    public MMF_Player stompFeedback;
-    public float bounceForce = 8f;
-    public float jumpBoostMultiplier = 1.5f;
+    public MMF_Player stompFeedback;                        // Feedback to play when stomped
+    public float bounceForce = 8f;                          // Force applied to player on stomp
+    public float jumpBoostMultiplier = 1.5f;                // Multiplier for jump boost on stomp
 
     [Header("Attack Settings")]
-    [SerializeField] protected float attackRange = 3f;
-    [SerializeField] protected float attackCooldown = 1.5f;
-    protected float lastAttackTime = -Mathf.Infinity;
-    protected bool isAttacking = false;
-
- 
+    [SerializeField] protected float attackRange = 3f;      // Range to start attacking the player
+    [SerializeField] protected float attackCooldown = 1.5f; // Cooldown between attacks
+    protected float lastAttackTime = -Mathf.Infinity;       // Last time the enemy attacked
+    protected bool isAttacking = false;                     // Whether the enemy is currently attacking
 
     [Header("Damage Settings")]
     [Tooltip("Amount of damage dealt to the player.")]
-    [SerializeField] protected int damageAmount = 1;
+    [SerializeField] protected int damageAmount = 1;        // Damage dealt to the player
 
     [Header("Behavior")]
-    [SerializeField] protected bool enableFacePlayer = true;
+    [SerializeField] protected bool enableFacePlayer = true;// Whether the enemy should face the player
 
-    protected Transform player;
+    protected Transform player;                             // Reference to the player
 
+    /// <summary>
+    /// Finds the player in the scene and stores the reference.
+    /// </summary>
     protected virtual void Start()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -44,10 +51,13 @@ public class BaseEnemy : MonoBehaviour
             player = playerObj.transform;
     }
 
+    /// <summary>
+    /// Handles facing the player, attack logic, and animation triggers.
+    /// </summary>
     protected virtual void Update()
     {
         if (isDead || player == null) return;
-        if(!enableFacePlayer) return;
+        if (!enableFacePlayer) return;
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         if (distanceToPlayer <= attackRange)
@@ -69,12 +79,19 @@ public class BaseEnemy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the walking animation state.
+    /// </summary>
     protected void SetWalkingAnimation(bool walking)
     {
         if (enemyAnimator != null)
             enemyAnimator.SetBool("IsWalking", walking);
     }
 
+    /// <summary>
+    /// Called when the enemy is stomped by the player.
+    /// Plays feedback and triggers death.
+    /// </summary>
     public virtual void OnStomped()
     {
         Debug.Log($"{name} was stomped!");
@@ -82,6 +99,9 @@ public class BaseEnemy : MonoBehaviour
         PlayDead(); // always die on stomp, even if no animator
     }
 
+    /// <summary>
+    /// Handles enemy death: disables colliders, plays death animation, drops coin, and destroys the enemy.
+    /// </summary>
     public virtual void PlayDead()
     {
         if (isDead) return;
@@ -110,9 +130,12 @@ public class BaseEnemy : MonoBehaviour
         Destroy(enemyPrefab, 2f);
     }
 
+    /// <summary>
+    /// Handles collision with the player (deals damage and knockback) and with weapons (pushes back and kills enemy).
+    /// </summary>
     protected virtual void OnTriggerEnter(Collider other)
     {
-        // Player collision (existing)
+        // Player collision
         if (other.CompareTag("Player"))
         {
             if (other.TryGetComponent<PlayerStats>(out PlayerStats playerStats))
@@ -144,6 +167,9 @@ public class BaseEnemy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Rotates the enemy to face the player smoothly.
+    /// </summary>
     protected void FacePlayer()
     {
         if (player == null || !enableFacePlayer) return;

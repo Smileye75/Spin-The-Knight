@@ -5,8 +5,9 @@ using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
 
 /// <summary>
-/// Attach this script to any object that the player can stomp on.
-/// Handles bounce force and optional destruction when stomped.
+/// StompableProps allows an object to be stomped by the player, triggering bounce, feedback, coin drops, and destruction.
+/// Supports instant destruction, delayed explosion, and chain reactions with other stompable objects.
+/// Handles both stomp and weapon attack interactions.
 /// </summary>
 public class StompableProps : MonoBehaviour
 {
@@ -37,7 +38,7 @@ public class StompableProps : MonoBehaviour
 
     /// <summary>
     /// Called when the player stomps this object.
-    /// Handles destruction and can be extended for effects.
+    /// Plays feedback, spawns coins and effects, and destroys or explodes the object.
     /// </summary>
     public void OnStomped()
     {
@@ -51,30 +52,28 @@ public class StompableProps : MonoBehaviour
             {
                 Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
                 Instantiate(coinPrefab, spawnPos, Quaternion.identity);
-             }
+            }
 
             if (crateFeedback != null)
-        {
-            // Instantiate at position, not as child, so it survives after this object is destroyed
-            ParticleSystem create = Instantiate(crateFeedback, transform.position, Quaternion.identity);
-            create.Play();
-
-            // Optionally destroy the particle system after its duration
-            Destroy(create.gameObject, create.main.duration);
-        }
-
+            {
+                // Instantiate at position, not as child, so it survives after this object is destroyed
+                ParticleSystem create = Instantiate(crateFeedback, transform.position, Quaternion.identity);
+                create.Play();
+                Destroy(create.gameObject, create.main.duration);
+            }
 
             Destroy(gameObject, 0.15f);
         }
-
         else if (explodeOnStomp)
         {
             StartCoroutine(ExplodeAfterDelay());
         }
-
         // Place for optional: trigger particles, animation, etc. here
     }
 
+    /// <summary>
+    /// Coroutine to handle delayed explosion with feedback and effects.
+    /// </summary>
     private IEnumerator ExplodeAfterDelay()
     {
         float elapsedTime = 0f;
@@ -114,15 +113,21 @@ public class StompableProps : MonoBehaviour
         Destroy(gameObject, 0.1f);
     }
 
+    /// <summary>
+    /// Triggers an instant explosion (used for chain reactions).
+    /// </summary>
     public void TriggerExplosion()
     {
         StartCoroutine(DelayedExplosion());
     }
 
+    /// <summary>
+    /// Coroutine for instant explosion with feedback and effects.
+    /// </summary>
     private IEnumerator DelayedExplosion()
     {
         explosionFeedback?.PlayFeedbacks();
-        yield return new WaitForSeconds(0.2f); // 1 second delay before explosion
+        yield return new WaitForSeconds(0.2f); // Short delay before explosion
 
         if (explosionEffect != null)
         {
@@ -139,6 +144,10 @@ public class StompableProps : MonoBehaviour
         Destroy(gameObject, 0.1f); // Optional: destroy after a short delay
     }
 
+    /// <summary>
+    /// Handles collision with other crates/explosives or the player when the explosion collider is enabled.
+    /// Triggers chain explosions or deals damage to the player.
+    /// </summary>
     private void OnTriggerEnter(Collider other)
     {
         if (explosionCollider != null && explosionCollider.enabled)
@@ -178,4 +187,48 @@ public class StompableProps : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when the object is hit by a weapon (not stomped).
+    /// Instantly destroys or explodes the object, spawns coins and effects, but does not play stomp feedback.
+    /// </summary>
+    public void WeaponAttack()
+    {
+        Debug.Log($"{name} was stomped (no feedback)!");
+
+        if (destroyOnStomp)
+        {
+            if (coinPrefab != null)
+            {
+                Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
+                Instantiate(coinPrefab, spawnPos, Quaternion.identity);
+            }
+
+            if (crateFeedback != null)
+            {
+                ParticleSystem create = Instantiate(crateFeedback, transform.position, Quaternion.identity);
+                create.Play();
+                Destroy(create.gameObject, create.main.duration);
+            }
+
+            Destroy(gameObject);
+        }
+        else if (explodeOnStomp)
+        {
+            // Instantly explode without delay or feedback
+            if (explosionEffect != null)
+            {
+                ParticleSystem effect = Instantiate(explosionEffect, transform.position, Quaternion.identity);
+                effect.Play();
+                Destroy(effect.gameObject, effect.main.duration);
+            }
+
+            if (explosionCollider != null)
+            {
+                explosionCollider.enabled = true;
+            }
+
+            Destroy(gameObject);
+        }
+        // No feedbacks or coroutine delays
+    }
 }

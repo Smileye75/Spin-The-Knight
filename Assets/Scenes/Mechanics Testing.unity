@@ -19007,6 +19007,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7c72cda2fcadf44586df8765fcbe5be, type: 3}
+--- !u!114 &524007904 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2121465342943371740, guid: 791593fff5b4a2c418d1a5e79edb6773, type: 3}
+  m_PrefabInstance: {fileID: 5821838423500226853}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57a6945b90dcd0c4b81619c0d8b5c283, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &524007905 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2585846342033804764, guid: 791593fff5b4a2c418d1a5e79edb6773, type: 3}
+  m_PrefabInstance: {fileID: 5821838423500226853}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8ace8ced0e81c847968cdca0aeda757, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &528438328
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53411,14 +53433,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 651262984317755966, guid: b515fdb81301e7f4a81558d16ee24285, type: 3}
-      propertyPath: healAmount
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2951686144178333302, guid: b515fdb81301e7f4a81558d16ee24285, type: 3}
-      propertyPath: m_ExcludeLayers.m_Bits
-      value: 32503
-      objectReference: {fileID: 0}
     - target: {fileID: 6522233874202082973, guid: b515fdb81301e7f4a81558d16ee24285, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.244677
@@ -53459,13 +53473,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7298497510145888456, guid: b515fdb81301e7f4a81558d16ee24285, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: f1a1f42bde12ef0468d59225a99a8724, type: 2}
     - target: {fileID: 8091758813614305398, guid: b515fdb81301e7f4a81558d16ee24285, type: 3}
       propertyPath: m_Name
       value: Ham Collectable
+      objectReference: {fileID: 0}
+    - target: {fileID: 8091758813614305398, guid: b515fdb81301e7f4a81558d16ee24285, type: 3}
+      propertyPath: m_TagString
+      value: Coins
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -87777,6 +87791,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4711488181849105866, guid: e6053affc7c94914d9453e099b6e90bb, type: 3}
+      propertyPath: typewriter
+      value: 
+      objectReference: {fileID: 524007904}
+    - target: {fileID: 4711488181849105866, guid: e6053affc7c94914d9453e099b6e90bb, type: 3}
+      propertyPath: checkpointTA
+      value: 
+      objectReference: {fileID: 524007905}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
