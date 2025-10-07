@@ -80,6 +80,8 @@ public class PlayerAirState : PlayerBaseMachine
         // Initialize animator with current vertical velocity
         UpdateAnimatorVelocityFloat();
         stateMachine.playerStomping?.EnableStompCollider();
+        stateMachine.playerBlockBump?.EnableBlockBumpCollider();
+        
 
         // Always allow double jump at start of air state
         stateMachine.canDoubleJump = true;

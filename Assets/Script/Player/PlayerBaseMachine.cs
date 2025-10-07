@@ -70,18 +70,6 @@ public abstract class PlayerBaseMachine : State
     }
 
     /// <summary>
-    /// Handles attack input event.
-    /// Triggers attack animation and sets cooldown.
-    /// Returns true if attack can be performed, false if still on cooldown.
-    /// </summary>
-    protected bool TryConsumeAttackCooldown()
-    {
-        if (attackTimer > 0f) return false;
-        attackTimer = stateMachine.attackCooldown;
-        return true;
-    }
-
-    /// <summary>
     /// Updates the attack cooldown timer.
     /// Call this in Tick() of any state that allows attacking.
     /// </summary>

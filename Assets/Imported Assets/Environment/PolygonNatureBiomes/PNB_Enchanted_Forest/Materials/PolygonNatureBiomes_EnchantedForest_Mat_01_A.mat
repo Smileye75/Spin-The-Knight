@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PolygonNatureBiomes_EnchantedForest_Mat_01_A
-  m_Shader: {fileID: 4800000, guid: 88f334b261a3fa14cbfe8774b6925073, type: 3}
+  m_Shader: {fileID: 4800000, guid: 9ed9229a005670a41ad17b0f0e1b0f6e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -118,7 +118,8 @@ Material:
     - _NormalsSource: 0
     - _NormalsUVType: 0
     - _OcclusionStrength: 1
-    - _OutlineWidth: 0.1
+    - _OutlineWidth: 1
+    - _OutlineZSmooth: 0
     - _Parallax: 0.02
     - _QueueOffset: 0
     - _RampSmoothing: 0.5

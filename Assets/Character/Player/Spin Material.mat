@@ -25,7 +25,6 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - TCP2_COLORS_AS_NORMALS
   - TCP2_UV_NORMALS_FULL
   m_InvalidKeywords:
   - _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
@@ -130,15 +129,17 @@ Material:
     - _LightWrapFactor: 0.31
     - _Metallic: 0
     - _Mode: 0
-    - _NormalsSource: 1
+    - _NormalsSource: 0
     - _NormalsUVType: 0
     - _OcclusionStrength: 1
-    - _OutlineWidth: 0.1
-    - _OutlineZSmooth: 0.15
+    - _OutlineMaxWidth: 1
+    - _OutlineMinWidth: 0
+    - _OutlineWidth: 1.2
+    - _OutlineZSmooth: 0
     - _Parallax: 0.02
     - _QueueOffset: 0
     - _RampSmoothing: 0.166
-    - _RampThreshold: 0.103
+    - _RampThreshold: 0.166
     - _ReceiveShadows: 1
     - _ReceiveShadowsOff: 1
     - _ShadowLineSmoothing: 0.1
@@ -169,6 +170,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _HColor: {r: 0.75, g: 0.75, b: 0.75, a: 1}
     - _OutlineColorVertex: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineOffset: {r: 1.5, g: 1.45, b: 1.51, a: 0}
     - _SColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _ShadowLineColor: {r: 0, g: 0, b: 0, a: 1}
     - _SilhouetteColor: {r: 0, g: 0, b: 0, a: 0}

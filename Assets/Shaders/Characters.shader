@@ -18,6 +18,18 @@ Shader "Characters"
 		_RampSmoothing ("Smoothing", Range(0.001,1)) = 0.5
 		[TCP2Separator]
 		
+		[TCP2HeaderHelp(Outline)]
+		_OutlineWidth ("Width", Range(0.1,4)) = 1
+		_OutlineColorVertex ("Color", Color) = (0,0,0,1)
+		[Space]
+		_OutlineZSmooth ("Z Correction", Range(-3,3)) = 0
+		// Outline Normals
+		[TCP2MaterialKeywordEnumNoPrefix(Regular, _, Vertex Colors, TCP2_COLORS_AS_NORMALS, Tangents, TCP2_TANGENT_AS_NORMALS, UV1, TCP2_UV1_AS_NORMALS, UV2, TCP2_UV2_AS_NORMALS, UV3, TCP2_UV3_AS_NORMALS, UV4, TCP2_UV4_AS_NORMALS)]
+		_NormalsSource ("Outline Normals Source", Float) = 0
+		[TCP2MaterialKeywordEnumNoPrefix(Full XYZ, TCP2_UV_NORMALS_FULL, Compressed XY, _, Compressed ZW, TCP2_UV_NORMALS_ZW)]
+		_NormalsUVType ("UV Data Type", Float) = 0
+		[TCP2Separator]
+
 		[ToggleOff(_RECEIVE_SHADOWS_OFF)] _ReceiveShadowsOff ("Receive Shadows", Float) = 1
 
 		// Avoid compile error if the properties are ending with a drawer
@@ -65,6 +77,9 @@ Shader "Characters"
 		CBUFFER_START(UnityPerMaterial)
 			
 			// Shader Properties
+			float _OutlineZSmooth;
+			float _OutlineWidth;
+			fixed4 _OutlineColorVertex;
 			float4 _BaseMap_ST;
 			fixed4 _BaseColor;
 			float _RampThreshold;
@@ -79,6 +94,141 @@ Shader "Characters"
 		
 		ENDHLSL
 
+		// Outline Include
+		HLSLINCLUDE
+
+		struct appdata_outline
+		{
+			float4 vertex : POSITION;
+			float3 normal : NORMAL;
+			#if TCP2_UV1_AS_NORMALS
+			float4 texcoord0 : TEXCOORD0;
+		#elif TCP2_UV2_AS_NORMALS
+			float4 texcoord1 : TEXCOORD1;
+		#elif TCP2_UV3_AS_NORMALS
+			float4 texcoord2 : TEXCOORD2;
+		#elif TCP2_UV4_AS_NORMALS
+			float4 texcoord3 : TEXCOORD3;
+		#endif
+		#if TCP2_COLORS_AS_NORMALS
+			float4 vertexColor : COLOR;
+		#endif
+		#if TCP2_TANGENT_AS_NORMALS
+			float4 tangent : TANGENT;
+		#endif
+			UNITY_VERTEX_INPUT_INSTANCE_ID
+		};
+
+		struct v2f_outline
+		{
+			float4 vertex : SV_POSITION;
+			float4 vcolor : TEXCOORD0;
+			UNITY_VERTEX_INPUT_INSTANCE_ID
+			UNITY_VERTEX_OUTPUT_STEREO
+		};
+
+		v2f_outline vertex_outline (appdata_outline v)
+		{
+			v2f_outline output = (v2f_outline)0;
+
+			UNITY_SETUP_INSTANCE_ID(v);
+			UNITY_TRANSFER_INSTANCE_ID(v, output);
+			UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+
+			// Shader Properties Sampling
+			float __outlineZsmooth = ( _OutlineZSmooth );
+			float __outlineWidth = ( _OutlineWidth );
+			float4 __outlineColorVertex = ( _OutlineColorVertex.rgba );
+
+		#ifdef TCP2_COLORS_AS_NORMALS
+			//Vertex Color for Normals
+			float3 normal = (v.vertexColor.xyz*2) - 1;
+		#elif TCP2_TANGENT_AS_NORMALS
+			//Tangent for Normals
+			float3 normal = v.tangent.xyz;
+		#elif TCP2_UV1_AS_NORMALS || TCP2_UV2_AS_NORMALS || TCP2_UV3_AS_NORMALS || TCP2_UV4_AS_NORMALS
+			#if TCP2_UV1_AS_NORMALS
+				#define uvChannel texcoord0
+			#elif TCP2_UV2_AS_NORMALS
+				#define uvChannel texcoord1
+			#elif TCP2_UV3_AS_NORMALS
+				#define uvChannel texcoord2
+			#elif TCP2_UV4_AS_NORMALS
+				#define uvChannel texcoord3
+			#endif
+		
+			#if TCP2_UV_NORMALS_FULL
+			//UV for Normals, full
+			float3 normal = v.uvChannel.xyz;
+			#else
+			//UV for Normals, compressed
+			#if TCP2_UV_NORMALS_ZW
+				#define ch1 z
+				#define ch2 w
+			#else
+				#define ch1 x
+				#define ch2 y
+			#endif
+			float3 n;
+			//unpack uvs
+			v.uvChannel.ch1 = v.uvChannel.ch1 * 255.0/16.0;
+			n.x = floor(v.uvChannel.ch1) / 15.0;
+			n.y = frac(v.uvChannel.ch1) * 16.0 / 15.0;
+			//- get z
+			n.z = v.uvChannel.ch2;
+			//- transform
+			n = n*2 - 1;
+			float3 normal = n;
+			#endif
+		#else
+			float3 normal = v.normal;
+		#endif
+		
+		#if TCP2_ZSMOOTH_ON
+			//Correct Z artefacts
+			normal = UnityObjectToViewPos(normal);
+			normal.z = -_ZSmooth;
+		#endif
+		
+			//Z correction in view space
+			normal = mul(UNITY_MATRIX_V, float4(normal, 0)).xyz;
+			normal.z += __outlineZsmooth;
+			normal = mul(float4(normal, 0), UNITY_MATRIX_V).xyz;
+			float size = 1;
+		
+		#if !defined(SHADOWCASTER_PASS)
+			output.vertex = UnityObjectToClipPos(v.vertex.xyz);
+			normal = mul(UNITY_MATRIX_M, float4(normal, 0)).xyz;
+			float2 clipNormals = normalize(mul(UNITY_MATRIX_VP, float4(normal,0)).xy);
+			half2 outlineWidth = (__outlineWidth * output.vertex.w) / (_ScreenParams.xy / 2.0);
+			output.vertex.xy += clipNormals.xy * outlineWidth;
+			
+			output.vertex.z += __outlineZsmooth * 0.0001;
+		#else
+			v.vertex = v.vertex + float4(normal,0) * __outlineWidth * size * 0.01;
+		#endif
+		
+			output.vcolor.xyzw = __outlineColorVertex;
+
+			return output;
+		}
+
+		float4 fragment_outline (v2f_outline input) : SV_Target
+		{
+
+			UNITY_SETUP_INSTANCE_ID(input);
+			UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+
+			// Shader Properties Sampling
+			float4 __outlineColor = ( float4(1,1,1,1) );
+
+			half4 outlineColor = __outlineColor * input.vcolor.xyzw;
+
+			return outlineColor;
+		}
+
+		ENDHLSL
+		// Outline Include End
 		Pass
 		{
 			Name "Main"
@@ -315,6 +465,30 @@ Shader "Characters"
 			ENDHLSL
 		}
 
+		// Outline
+		Pass
+		{
+			Name "Outline"
+			Tags
+			{
+			}
+			Cull Front
+			Offset 0,0
+			Blend Off
+
+			HLSLPROGRAM
+
+			#pragma vertex vertex_outline
+			#pragma fragment fragment_outline
+
+			#pragma target 3.0
+
+			#pragma multi_compile _ TCP2_COLORS_AS_NORMALS TCP2_TANGENT_AS_NORMALS TCP2_UV1_AS_NORMALS TCP2_UV2_AS_NORMALS TCP2_UV3_AS_NORMALS TCP2_UV4_AS_NORMALS
+			#pragma multi_compile _ TCP2_UV_NORMALS_FULL TCP2_UV_NORMALS_ZW
+			#pragma multi_compile_instancing
+
+			ENDHLSL
+		}
 		// Depth & Shadow Caster Passes
 		HLSLINCLUDE
 
@@ -483,5 +657,5 @@ Shader "Characters"
 	CustomEditor "ToonyColorsPro.ShaderGenerator.MaterialInspector_SG2"
 }
 
-/* TCP_DATA u config(ver:"2.9.18";unity:"2022.3.61f1";tmplt:"SG2_Template_URP";features:list["UNITY_5_4","UNITY_5_5","UNITY_5_6","UNITY_2017_1","UNITY_2018_1","UNITY_2018_2","UNITY_2018_3","UNITY_2019_1","UNITY_2019_2","UNITY_2019_3","UNITY_2019_4","UNITY_2020_1","UNITY_2021_1","UNITY_2021_2","UNITY_2022_2","TEMPLATE_LWRP"];flags:list[];flags_extra:dict[];keywords:dict[RENDER_TYPE="Opaque",RampTextureDrawer="[TCP2Gradient]",RampTextureLabel="Ramp Texture",SHADER_TARGET="3.0"];shaderProperties:list[];customTextures:list[];codeInjection:codeInjection(injectedFiles:list[];mark:False);matLayers:list[]) */
-/* TCP_HASH 718f349354cacd7b375776302bd6bd1a */
+/* TCP_DATA u config(ver:"2.9.18";unity:"2022.3.62f2";tmplt:"SG2_Template_URP";features:list["UNITY_5_4","UNITY_5_5","UNITY_5_6","UNITY_2017_1","UNITY_2018_1","UNITY_2018_2","UNITY_2018_3","UNITY_2019_1","UNITY_2019_2","UNITY_2019_3","UNITY_2019_4","UNITY_2020_1","UNITY_2021_1","UNITY_2021_2","UNITY_2022_2","OUTLINE","OUTLINE_OPAQUE","OUTLINE_CLIP_SPACE","OUTLINE_MAX_WIDTH","OUTLINE_MIN_WIDTH","OUTLINE_ZSMOOTH","OUTLINE_CONSTANT_SIZE","OUTLINE_PIXEL_PERFECT","TEMPLATE_LWRP"];flags:list[];flags_extra:dict[];keywords:dict[RENDER_TYPE="Opaque",RampTextureDrawer="[TCP2Gradient]",RampTextureLabel="Ramp Texture",SHADER_TARGET="3.0"];shaderProperties:list[];customTextures:list[];codeInjection:codeInjection(injectedFiles:list[];mark:False);matLayers:list[]) */
+/* TCP_HASH 833b1f819ae8f20b19579a3bf40593fa */

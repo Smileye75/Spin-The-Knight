@@ -83,6 +83,7 @@ public class PlayerRollState : PlayerBaseMachine
                     true                    // isRollingJump
                 )
             );
+            stateMachine.animator.SetTrigger("VerticalSpin");
             return;
         }
 

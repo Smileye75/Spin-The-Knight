@@ -249,13 +249,13 @@ MonoBehaviour:
         AnimateScaleTarget: {fileID: 2441652894386775158}
         DeclaredDuration: 0
         Axis: 3
-        Damping: 0.4
+        Damping: 0.2
         Frequency: 6
         Mode: 2
         MoveToMin: 1
         MoveToMax: 2
         BumpScaleMin: 20
-        BumpScaleMax: 30
+        BumpScaleMax: 50
 --- !u!1 &8090831161085261144
 GameObject:
   m_ObjectHideFlags: 0

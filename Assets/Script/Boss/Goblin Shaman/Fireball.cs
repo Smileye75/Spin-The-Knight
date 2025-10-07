@@ -15,7 +15,7 @@ public class Fireball : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        Destroy(gameObject, 3f); // Destroy after 3 seconds
+        Destroy(gameObject, 5f); // Destroy after 3 seconds
     }
 
     /// <summary>

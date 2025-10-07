@@ -27,6 +27,7 @@ public class PlayerMoveState : PlayerBaseMachine
         stateMachine.inputReader.dodgeRollEvent += OnDodgeRoll;
         stateMachine.animator.SetBool("IsGrounded", true);
         stateMachine.playerStomping?.DisableStompCollider(); // Disable stomp collider while grounded
+        stateMachine.playerBlockBump?.DisableBlockBumpCollider(); // Disable block bump collider while grounded
     }
 
     /// <summary>
@@ -107,7 +108,6 @@ public class PlayerMoveState : PlayerBaseMachine
     /// </summary>
     private void OnAttack()
     {
-        if (!TryConsumeAttackCooldown()) return; // from PlayerBaseMachine
         stateMachine.SwitchState(new PlayerAttackState(stateMachine));
     }
 }

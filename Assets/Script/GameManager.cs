@@ -30,7 +30,6 @@ public class GameManager : MonoBehaviour
     public event Action OnVictory;
     public event Action<bool> OnPauseToggled;
     public event Action<Vector3> OnRespawn;
-    public event Action OnBossSpawned;
     public event Action OnBossDefeated;
 
     /// <summary>

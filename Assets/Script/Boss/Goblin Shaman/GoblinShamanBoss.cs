@@ -26,8 +26,6 @@ public class GoblinShamanBoss : MonoBehaviour
 
     [Header("Teleport Effect Settings")]
     [SerializeField] private GameObject teleportEffectPrefab;    // Teleport visual effect
-    [SerializeField] private float teleportEffectExpandDuration = 0.3f;
-    [SerializeField] private float teleportEffectShrinkDuration = 0.3f;
 
     [SerializeField] private GameObject explosionEffectPrefab;   // Explosion effect on teleport
 
@@ -46,6 +44,10 @@ public class GoblinShamanBoss : MonoBehaviour
     private int lastSpawnIndex = -1;
 
     private float originalAnimatorSpeed = 1f;
+
+    [SerializeField] private int shotsBeforeRest = 5;
+    [SerializeField] private float restDuration = 0.5f;
+    private int shotsFired = 0;
 
     /// <summary>
     /// Initializes boss state and starts shooting routine.
@@ -87,6 +89,19 @@ public class GoblinShamanBoss : MonoBehaviour
 
                 lastSpawnIndex = newIndex;
                 currentSpawnIndex = newIndex;
+
+                // Only count and rest if HP is 1
+                if (currentHitPoints == 1)
+                {
+                    shotsFired++;
+                    if (shotsFired >= shotsBeforeRest)
+                    {
+                        canShoot = false;
+                        shotsFired = 0;
+                        yield return new WaitForSeconds(restDuration); // Boss rests
+                        canShoot = true;
+                    }
+                }
             }
             yield return new WaitForSeconds(shootInterval);
         }
@@ -158,10 +173,12 @@ public class GoblinShamanBoss : MonoBehaviour
     public void TakeDamage(int amount)
     {
         if (currentHitPoints <= 0) return;
-        animator.SetTrigger("Hit");
         currentHitPoints -= amount;
+        hitboxCollider.enabled = false;
+        damageCollider.enabled = false;
         if (currentHitPoints > 0)
         {
+            animator.SetTrigger("Hit");
             Teleport();
             fireballSpeed += 5f;
             shootInterval -= .75f;
@@ -171,9 +188,8 @@ public class GoblinShamanBoss : MonoBehaviour
             if (animator != null)
                 animator.speed = originalAnimatorSpeed;
             animator.SetTrigger("Dead");
-            hitboxCollider.enabled = false;
-            damageCollider.enabled = false;
-            //Die();
+
+            StartCoroutine(DieWithDelay(2f)); // Wait 2 seconds before dying (adjust as needed)
         }
     }
 
@@ -184,7 +200,6 @@ public class GoblinShamanBoss : MonoBehaviour
     {
         canShoot = false;
         Transform target = atFront ? teleportBack : teleportFront;
-
         // Play explosion effect at current position before teleporting
         if (explosionEffectPrefab != null)
         {
@@ -251,6 +266,10 @@ public class GoblinShamanBoss : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         canShoot = true;
+
+        // Re-enable colliders after cooldown
+        if (hitboxCollider != null) hitboxCollider.enabled = true;
+        if (damageCollider != null) damageCollider.enabled = true;
     }
 
     /// <summary>
@@ -285,6 +304,11 @@ public class GoblinShamanBoss : MonoBehaviour
         // Always instantiate and destroy after 2 seconds, regardless of particle system
         Destroy(effect, 2f);
     }
-}
 
+    private IEnumerator DieWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Die();
+    }
 
+   }

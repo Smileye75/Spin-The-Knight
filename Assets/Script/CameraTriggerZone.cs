@@ -12,8 +12,7 @@ public class CameraTriggerZone : MonoBehaviour
     [Tooltip("Camera to activate when player enters.")]
     [SerializeField] private CinemachineVirtualCamera targetCamera;
 
-    [Tooltip("Should revert to main camera on exit?")]
-    [SerializeField] private bool revertToMainCamera = true;
+    private static CameraTriggerZone activeZone = null;
 
     private int activePriority = 30;    // Priority when this camera should be active
     private int inactivePriority = 5;   // Priority when this camera should be inactive
@@ -24,8 +23,16 @@ public class CameraTriggerZone : MonoBehaviour
     /// </summary>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-            targetCamera.Priority = activePriority;
+        if (other.CompareTag("Player") || other.CompareTag("Boss"))
+        {
+            // Revert previous zone if any
+            if (activeZone != null && activeZone != this)
+                activeZone.SetInactive();
+
+            // Activate this zone
+            SetActive();
+            activeZone = this;
+        }
     }
 
     /// <summary>
@@ -34,7 +41,22 @@ public class CameraTriggerZone : MonoBehaviour
     /// </summary>
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && revertToMainCamera)
+        if ((other.CompareTag("Player") || other.CompareTag("Boss")) && activeZone == this)
+        {
+            SetInactive();
+            activeZone = null;
+        }
+    }
+
+    private void SetActive()
+    {
+        if (targetCamera != null)
+            targetCamera.Priority = activePriority;
+    }
+
+    private void SetInactive()
+    {
+        if (targetCamera != null)
             targetCamera.Priority = inactivePriority;
     }
 }

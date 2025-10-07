@@ -138,4 +138,13 @@ public class ForceReceiver : MonoBehaviour
             verticalVelocity = 0f;
         }
     }
+
+    /// <summary>
+    /// Adds an external force to the receiver, affecting movement.
+    /// </summary>
+    /// <param name="force">The force vector to add.</param>
+    public void AddForce(Vector3 force)
+    {
+        impact += force;
+    }
 }

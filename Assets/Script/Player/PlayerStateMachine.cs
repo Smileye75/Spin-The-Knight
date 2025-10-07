@@ -57,10 +57,6 @@ public class PlayerStateMachine : StateMachine
     [Tooltip("Player rotation speed.")]
     public float rotationSpeed = 10f; // How quickly the player rotates
 
-    [Header("Combat Settings")]
-    [Tooltip("Cooldown time between attacks.")]
-    public float attackCooldown = 0.5f; // Minimum time between attacks
-
     [Header("Jump Settings")]
     [Tooltip("Time window to buffer jump input.")]
     public float jumpBufferTime = 0.3f; // Allows jump input to be buffered
@@ -87,13 +83,10 @@ public class PlayerStateMachine : StateMachine
     [Tooltip("How many times the player spins during the spinning attack animation.")]
     public int attackSpinCount = 1; // Set in Inspector
 
-    [Header("Attack Spin Settings")]
-    [Tooltip("How long the spinning attack lasts (in seconds). (Optional; animator Exit Time now drives transitions.)")]
-    public float spinningDuration = 1f;
-
     public bool canDoubleJump = true; // Whether the player can double jump (reset on landing)
 
     public PlayerStomping playerStomping; // Reference to PlayerStomping component
+    public PlayerBlockBump playerBlockBump; // Reference to PlayerBlockBump component
 
     // Calculated roll speed (hidden from Inspector)
     [HideInInspector] public float rollSpeed;
@@ -132,6 +125,12 @@ public class PlayerStateMachine : StateMachine
         if (playerStomping == null)
         {
             playerStomping = GetComponentInChildren<PlayerStomping>();
+        }
+
+        // Find PlayerBlockBump component if not assigned
+        if (playerBlockBump == null)
+        {
+            playerBlockBump = GetComponentInChildren<PlayerBlockBump>();
         }
 
         // Calculate roll speed based on distance and duration

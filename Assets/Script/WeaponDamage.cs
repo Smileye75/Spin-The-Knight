@@ -77,7 +77,7 @@ public class WeaponDamage : MonoBehaviour
         {
             if (other.TryGetComponent<StompableProps>(out StompableProps crate))
             {
-                crate.WeaponAttack();
+                crate.InstantBreak();
             }
             return;
         }

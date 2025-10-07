@@ -503,10 +503,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1257395046358580394}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.70710576, z: -0, w: 0.7071079}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 16}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1751173627269924798}
   - {fileID: 4618773027375420691}
@@ -892,7 +892,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3846018093981099296, guid: 6d2027ac5e0169849bae3c473647f554, type: 3}
+  - {fileID: 2100000, guid: 445b49450b1b1b549b8580c3a6f665e8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1035,7 +1035,7 @@ Transform:
   m_GameObject: {fileID: 4528345589673333764}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.000014528632, y: 0, z: 5.0000005}
+  m_LocalPosition: {x: -0.00001655306, y: 0, z: 2.9271421}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1133,7 +1133,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3846018093981099296, guid: 6d2027ac5e0169849bae3c473647f554, type: 3}
+  - {fileID: 2100000, guid: 445b49450b1b1b549b8580c3a6f665e8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1282,7 +1282,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 4.5, y: 4.5, z: 4.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6523344294112170838}
@@ -1327,8 +1327,9 @@ MonoBehaviour:
   enemyPrefab: {fileID: 1257395046358580394}
   triggerColliders: {fileID: 3021295653147683101}
   attackCollider: {fileID: 2697896137905016868}
+  weaponCollider: {fileID: 0}
   stompFeedback: {fileID: 7370850150466993093}
-  bounceForce: 8
+  bounceForce: 16
   jumpBoostMultiplier: 1.5
   attackRange: 3
   attackCooldown: 1.5
@@ -1483,7 +1484,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a2ef3c73ef912a9438a70d030ef32b18, type: 2}
+  - {fileID: 2100000, guid: 445b49450b1b1b549b8580c3a6f665e8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
