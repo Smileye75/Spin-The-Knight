@@ -110,7 +110,14 @@ public class GameManager : MonoBehaviour
 
             if (cc != null) cc.enabled = true;
         }
-        OnRespawn?.Invoke(position); // Other systems (e.g., RespawnManager) listen here
+        OnRespawn?.Invoke(position);
+
+        // --- Add this: ---
+        var bossSpawner = FindObjectOfType<BossSpawner>();
+        if (bossSpawner != null)
+        {
+            bossSpawner.DespawnBoss();
+        }
     }
 
     /// <summary>
@@ -135,8 +142,6 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1; // Ensure game is unpaused
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         StartCoroutine(WaitAndSetDefaultSpawn());
-        menuUI?.HideAllMenus(); // Hide all UI menus
-        menuUI?.playerUI?.SetActive(true); // Show Player UI after reload
     }
 
     /// <summary>
@@ -186,6 +191,16 @@ public class GameManager : MonoBehaviour
         yield return null; // Wait one frame for scene to load
         AssignReferences();
         SetPlayerToDefaultSpawn();
+        if (player != null)
+        {
+            var stats = player.GetComponent<PlayerStats>();
+            if (stats != null)
+                stats.UpdateUI();
+        }
+
+        // --- UI update logic here ---
+        menuUI?.HideAllMenus();
+        menuUI?.playerUI?.SetActive(true);
         menuUI?.ReSubscribeEvents();
 
         // Enable/disable pause action based on scene

@@ -311,4 +311,6 @@ public class GoblinShamanBoss : MonoBehaviour
         Die();
     }
 
+    
+
    }

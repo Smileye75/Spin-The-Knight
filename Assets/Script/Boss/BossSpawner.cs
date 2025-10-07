@@ -6,19 +6,10 @@ public class BossSpawner : MonoBehaviour
 {
     [Header("Boss Settings")]
     [SerializeField] private GameObject bossPrefab;
+    [SerializeField] private Transform bossSpawnPoint; // Assign this in the Inspector
 
     private GameObject spawnedBoss;
     private bool bossSpawned = false;
-
-    private void Awake()
-    {
-        // Disable the boss at the start
-        if (bossPrefab != null)
-        {
-            bossPrefab.SetActive(false);
-            spawnedBoss = bossPrefab;
-        }
-    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -31,11 +22,26 @@ public class BossSpawner : MonoBehaviour
         }
     }
 
-    private void SpawnBoss()
+    public void SpawnBoss()
+    {
+        if (bossPrefab != null && bossSpawnPoint != null)
+        {
+            // Destroy any previous boss instance
+            if (spawnedBoss != null)
+                Destroy(spawnedBoss);
+
+            spawnedBoss = Instantiate(bossPrefab, bossSpawnPoint.position, bossSpawnPoint.rotation);
+        }
+    }
+
+    public void DespawnBoss()
     {
         if (spawnedBoss != null)
         {
-            spawnedBoss.SetActive(true);
+            Destroy(spawnedBoss);
+            spawnedBoss = null;
         }
+        bossSpawned = false;
+        GetComponent<Collider>().enabled = true; // Allow retriggering if needed
     }
 }

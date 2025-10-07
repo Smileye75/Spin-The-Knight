@@ -34,8 +34,6 @@ public class Fireball : MonoBehaviour
     /// <param name="other">The collider the fireball hit.</param>
     private void OnTriggerEnter(Collider other)
     {
-        // Only react to player or wall collisions
-        if (!other.CompareTag("Player")) return;
 
         // Deal damage and knockback to player
         if (other.TryGetComponent<PlayerStats>(out PlayerStats playerStats))

@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PolyKnights_Mat_01 1
-  m_Shader: {fileID: 4800000, guid: 9ed9229a005670a41ad17b0f0e1b0f6e, type: 3}
+  m_Shader: {fileID: 4800000, guid: 083e056d1781c154a9d4e26c74dc8064, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:

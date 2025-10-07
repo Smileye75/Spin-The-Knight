@@ -223,4 +223,18 @@ public class PlayerStats : MonoBehaviour
     {
         playerUI = ui;
     }
+
+    /// <summary>
+    /// Updates the player UI elements for health, lives, and coins.
+    /// </summary>
+    public void UpdateUI()
+    {
+        var playerUI = FindObjectOfType<PlayerUI>();
+        if (playerUI != null)
+        {
+            playerUI.UpdateHearts(currentHealth);
+            playerUI.UpdateLives(lives);
+            playerUI.UpdateCoins(coins);
+        }
+    }
 }
