@@ -298,7 +298,7 @@ public class GoblinShamanBoss : MonoBehaviour
     {
         if (teleportEffectPrefab == null) return;
 
-        position.y = 0.1f; // Set Y-axis to 0.1
+        position.y = 2.5f; // Set Y-axis to 3
         GameObject effect = Instantiate(teleportEffectPrefab, position, Quaternion.identity);
 
         // Always instantiate and destroy after 2 seconds, regardless of particle system

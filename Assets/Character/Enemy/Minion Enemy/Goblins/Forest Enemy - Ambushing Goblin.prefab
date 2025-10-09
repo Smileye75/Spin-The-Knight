@@ -2410,7 +2410,7 @@ MonoBehaviour:
         DebugActive: 0
         SquashAndStretchTarget: {fileID: 1320742944898935552}
         Mode: 0
-        Axis: 3
+        Axis: 4
         AnimateScaleDuration: 0.2
         RemapCurveZero: 1
         RemapCurveOne: 2

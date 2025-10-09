@@ -15629,7 +15629,6 @@ MonoBehaviour:
   forceReceiver: {fileID: 6063304817010549121}
   movementSpeed: 6
   rotationSpeed: 25
-  attackCooldown: 0
   jumpBufferTime: 0.5
   jumpHeight: 3
   timeToApex: 0.4
@@ -15638,7 +15637,6 @@ MonoBehaviour:
   rollDuration: 0.5
   rollCooldown: 1
   attackSpinCount: 3
-  spinningDuration: 1
   canDoubleJump: 1
   playerStomping: {fileID: 0}
   playerBlockBump: {fileID: 0}
@@ -21226,8 +21224,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 0.1664732, y: 0.16309795, z: 0.6230904}
-  m_Center: {x: -0.04872864, y: 0.010478934, z: 0.31821886}
+  m_Size: {x: 0.76404643, y: 1.2489578, z: 1.4219079}
+  m_Center: {x: 0.12287381, y: 0.052414976, z: -0.08118981}
 --- !u!54 &8066475616276657562
 Rigidbody:
   m_ObjectHideFlags: 0
