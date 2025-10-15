@@ -28,6 +28,7 @@ public class PlayerMoveState : PlayerBaseMachine
         stateMachine.animator.SetBool("IsGrounded", true);
         stateMachine.playerStomping?.DisableStompCollider(); // Disable stomp collider while grounded
         stateMachine.playerBlockBump?.DisableBlockBumpCollider(); // Disable block bump collider while grounded
+        stateMachine.inputReader.shieldEvent += OnShield; // Ensure shield state is reset
     }
 
     /// <summary>
@@ -59,6 +60,8 @@ public class PlayerMoveState : PlayerBaseMachine
 
         // Update attack cooldown timer
         UpdateAttackCooldown(deltaTime);
+
+
     }
 
     /// <summary>
@@ -70,6 +73,7 @@ public class PlayerMoveState : PlayerBaseMachine
         stateMachine.inputReader.isAttacking -= OnAttack;
         stateMachine.inputReader.jumpEvent -= OnJump;
         stateMachine.inputReader.dodgeRollEvent -= OnDodgeRoll;
+        stateMachine.inputReader.shieldEvent -= OnShield; // Unsubscribe from shield event
     }
 
     /// <summary>
@@ -109,5 +113,9 @@ public class PlayerMoveState : PlayerBaseMachine
     private void OnAttack()
     {
         stateMachine.SwitchState(new PlayerAttackState(stateMachine));
+    }
+    private void OnShield()
+    {
+        stateMachine.SwitchState(new PlayerShieldState(stateMachine));
     }
 }

@@ -88,6 +88,8 @@ public class PlayerStateMachine : StateMachine
     public PlayerStomping playerStomping; // Reference to PlayerStomping component
     public PlayerBlockBump playerBlockBump; // Reference to PlayerBlockBump component
 
+    public GameObject shieldObject;
+
     // Calculated roll speed (hidden from Inspector)
     [HideInInspector] public float rollSpeed;
 
