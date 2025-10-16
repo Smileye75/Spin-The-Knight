@@ -12,8 +12,18 @@ public class WeaponDamage : MonoBehaviour
     [SerializeField] private Collider myCollider;           // The weapon's own collider (to ignore self-collision)
     [SerializeField] private int damageAmount = 1;          // Amount of damage dealt per hit
     [SerializeField] private ParticleSystem hitEffect;      // Particle effect to spawn on hit
+    [SerializeField] private Transform weaponTransform;
 
     private List<Collider> alreadyCollidedWith = new List<Collider>(); // Tracks already hit targets per attack
+    private Vector3 originalScale; // Store the original scale
+
+    private void Awake()
+    {
+        if (weaponTransform == null)
+            weaponTransform = this.transform;
+
+        originalScale = weaponTransform.localScale; // Store the starting scale
+    }
 
     /// <summary>
     /// Clears the list of already-collided targets. Call this at the start of each attack.
@@ -21,6 +31,16 @@ public class WeaponDamage : MonoBehaviour
     public void ResetCollision()
     {
         alreadyCollidedWith.Clear();
+    }
+
+    /// <summary>
+    /// Resets the weapon's scale to its original value.
+    /// Call this after the attack ends.
+    /// </summary>
+    public void ResetScale()
+    {
+        if (weaponTransform != null)
+            weaponTransform.localScale = originalScale;
     }
 
     /// <summary>

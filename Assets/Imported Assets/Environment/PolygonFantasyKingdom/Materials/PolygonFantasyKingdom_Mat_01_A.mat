@@ -123,7 +123,7 @@ Material:
     - _NormalsSource: 0
     - _NormalsUVType: 0
     - _OcclusionStrength: 1
-    - _OutlineWidth: 1.2
+    - _OutlineWidth: 1
     - _OutlineZSmooth: 0
     - _Parallax: 0.02
     - _QueueOffset: 0

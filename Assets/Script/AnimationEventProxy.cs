@@ -66,7 +66,7 @@ public class AnimationEventProxy : MonoBehaviour
     {
         if (weaponDamage != null) weaponDamage.ResetCollision();
         if (weapon != null) weapon.enabled = true;
-        spinningParticles?.Play();
+        //spinningParticles?.Play();
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public class AnimationEventProxy : MonoBehaviour
     public void DisableWeapon()
     {
         if (weapon != null) weapon.enabled = false;
-        spinningParticles?.Stop();
+        //spinningParticles?.Stop();
     }
 
     // ---- Air Rotation Lock ----

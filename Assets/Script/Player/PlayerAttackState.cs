@@ -13,9 +13,14 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
     // Animator state names (should match your Animator Controller)
     private const string StateEndAttack = "End Attack";
 
-    private int currentSpins;                 // Number of completed spin cycles in this attack
-    private const int BaseLayer = 0;          // Animator layer index (change if using another layer)
-    private const float EndDoneThreshold = 0.98f; // How much of End clip must play before exiting
+    private int currentSpins;
+    private bool attackStarted = false;
+    private bool wasAttackHeld = false;
+    private float attackHoldTime = 0f;
+    private const float upscaleDelay = 0.5f; // seconds to wait before upscaling
+    float currentScale;
+    float targetScale = 3f; // Max scale
+    float lerpSpeed = 1;  // Adjust for how quickly it scales up
 
     /// <summary>
     /// Constructor for PlayerAttackState.
@@ -31,10 +36,15 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
         stateMachine.spinCounter = this;
 
         currentSpins = 0;
+        attackStarted = false;
+        wasAttackHeld = stateMachine.inputReader.IsAttackPressed();
+        currentScale = stateMachine.weaponDamage.transform.localScale.x;
+        targetScale = stateMachine.targetScale; // Max scale
+        lerpSpeed = stateMachine.lerpSpeed;  // Adjust for how quickly it scales up
 
         // Trigger attack animation and set spinning flag
-        stateMachine.animator.SetTrigger(HashStartAttack);
-        stateMachine.animator.SetBool(HashSpinning, true);
+       // stateMachine.animator.SetTrigger(HashStartAttack);
+        //stateMachine.animator.SetBool(HashSpinning, true);
         // Animator now: Start Attack (plays), then transitions to Spinning via Exit Time,
         // because Spinning == true.
     }
@@ -42,15 +52,67 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
     /// <summary>
     /// Called every frame during the attack state. Handles movement and state transitions.
     /// </summary>
-    public override void Tick(float dt)
+    public override void Tick(float deltaTime)
     {
         Vector3 movement = CalculateMovement();
-        Move(movement * stateMachine.movementSpeed, dt);
+        Move(movement * stateMachine.movementSpeed, deltaTime);
 
-        // Only apply facing and exit if spinning has stopped
-        if (!stateMachine.animator.GetBool(HashSpinning))
+        // Movement animation logic
+
+
+        bool isAttackHeld = stateMachine.inputReader.IsAttackPressed();
+
+        // Only allow scaling if the button was held from the beginning
+        if (!attackStarted && wasAttackHeld && isAttackHeld)
         {
+            attackHoldTime += deltaTime;
+            if (stateMachine.inputReader.movementValue == Vector2.zero)
+                stateMachine.animator.SetBool("IsMoving", false);
+
+            else
+                stateMachine.animator.SetBool("IsMoving", true);
+
             FaceMovementDirection(movement);
+        
+            if (attackHoldTime > upscaleDelay)
+            {
+                if (stateMachine.weaponDamage != null)
+                {
+
+                    float current = stateMachine.weaponDamage.transform.localScale.x;
+                    float newScale = Mathf.Lerp(current, targetScale, lerpSpeed * deltaTime);
+                    stateMachine.weaponDamage.transform.localScale = Vector3.one * newScale;
+                }
+            }
+            else if (stateMachine.weaponDamage != null)
+            {
+                // Keep weapon at original scale during delay
+                stateMachine.weaponDamage.ResetScale();
+            }
+        }
+        else if (stateMachine.weaponDamage != null)
+        {
+            //stateMachine.weaponDamage.ResetScale();
+            attackHoldTime = 0f; // Reset timer if not holding
+        }
+
+        // Start attack if:
+        if (!attackStarted)
+        {
+            if (!wasAttackHeld && isAttackHeld)
+            {
+                StartAttack();
+            }
+            else if (wasAttackHeld && !isAttackHeld)
+            {
+                StartAttack();
+            }
+        }
+
+        wasAttackHeld = isAttackHeld;
+
+        if (attackStarted && !stateMachine.animator.GetBool(HashSpinning))
+        {
             stateMachine.SwitchState(new PlayerMoveState(stateMachine));
         }
     }
@@ -65,6 +127,9 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
 
         stateMachine.animator.ResetTrigger(HashStartAttack);
         stateMachine.animator.SetBool(HashSpinning, false);
+
+        if (stateMachine.weaponDamage != null)
+            stateMachine.weaponDamage.ResetScale();
     }
 
     // -------------------------------
@@ -94,5 +159,13 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
     {
         stateMachine.animator.SetBool(HashSpinning, false);
         stateMachine.SwitchState(new PlayerMoveState(stateMachine));
+
+    }
+
+    private void StartAttack()
+    {
+        attackStarted = true;
+        stateMachine.animator.SetTrigger(HashStartAttack);
+        stateMachine.animator.SetBool(HashSpinning, true);
     }
 }

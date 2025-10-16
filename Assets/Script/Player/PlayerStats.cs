@@ -87,6 +87,16 @@ public class PlayerStats : MonoBehaviour
     public void TakeDamage(int amount)
     {
         if (isInvulnerable || isDying) return;
+        if (animator != null)
+            animator.SetTrigger("Hit");
+
+        if (playerStateMachine.CurrentState is PlayerShieldState)
+        {
+            // Optionally play a block effect or sound here
+            Debug.Log("Attack blocked by shield!");
+            return; // Nullify damage
+        }
+    
 
         currentHealth = Mathf.Max(currentHealth - amount, 0);
         playerUI?.UpdateHearts(currentHealth);

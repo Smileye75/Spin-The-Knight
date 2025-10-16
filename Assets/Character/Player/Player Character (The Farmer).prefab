@@ -11639,6 +11639,7 @@ MonoBehaviour:
   canDoubleJump: 1
   playerStomping: {fileID: 6545793978744606386}
   playerBlockBump: {fileID: 6137944137004504176}
+  shieldObject: {fileID: 2789008608620646866}
   rollSpeed: 0
   lastGroundedTime: 0
   jumpForce: 5
@@ -17882,8 +17883,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 0.76404643, y: 1.2489578, z: 1.4219079}
-  m_Center: {x: 0.12287381, y: 0.052414976, z: -0.08118981}
+  m_Size: {x: 0.7640464, y: 0.609548, z: 0.85802704}
+  m_Center: {x: 0.122873776, y: -0.039851796, z: 0.20075007}
 --- !u!54 &2437241135419834708
 Rigidbody:
   m_ObjectHideFlags: 0

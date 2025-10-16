@@ -13,14 +13,6 @@ public class PlayerShieldState : PlayerBaseMachine
         if (stateMachine.animator != null)
             stateMachine.animator.SetBool("usingShield", true);
     }
-
-    public override void Exit()
-    {
-        // Reset shield animation
-        if (stateMachine.animator != null)
-            stateMachine.animator.SetBool("usingShield", false);
-    }
-
     public override void Tick(float deltaTime)
     {
         // If shield button released, return to move state
@@ -32,4 +24,12 @@ public class PlayerShieldState : PlayerBaseMachine
 
         // (Optional) Add stamina drain or other defensive logic here
     }
+    
+    public override void Exit()
+    {
+        // Reset shield animation
+        if (stateMachine.animator != null)
+            stateMachine.animator.SetBool("usingShield", false);
+    }
+
 }

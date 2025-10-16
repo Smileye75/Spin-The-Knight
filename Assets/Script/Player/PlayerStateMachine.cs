@@ -50,6 +50,13 @@ public class PlayerStateMachine : StateMachine
     [Tooltip("Handles external forces like gravity.")]
     public ForceReceiver forceReceiver; // Applies gravity and knockback
 
+
+    [Header("Weapon Settings")]
+    public WeaponDamage weaponDamage; // Reference to the player's weapon damage script
+    [HideInInspector] public float targetScale = 1.5f;
+    [HideInInspector] public float lerpSpeed = 1f;
+    public int attackSpinCount = 1; // Set in Inspector
+
     [Header("Movement Settings")]
     [Tooltip("Player movement speed.")]
     public float movementSpeed = 5f; // How fast the player moves
@@ -81,14 +88,14 @@ public class PlayerStateMachine : StateMachine
     public float rollCooldown = 0.75f;
 
     [Tooltip("How many times the player spins during the spinning attack animation.")]
-    public int attackSpinCount = 1; // Set in Inspector
+
 
     public bool canDoubleJump = true; // Whether the player can double jump (reset on landing)
 
     public PlayerStomping playerStomping; // Reference to PlayerStomping component
     public PlayerBlockBump playerBlockBump; // Reference to PlayerBlockBump component
 
-    public GameObject shieldObject;
+    public Collider shieldObject;
 
     // Calculated roll speed (hidden from Inspector)
     [HideInInspector] public float rollSpeed;
