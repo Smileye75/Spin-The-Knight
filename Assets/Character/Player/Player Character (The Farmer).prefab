@@ -11523,6 +11523,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7375669585443710414}
   - component: {fileID: 4328376877549727386}
+  - component: {fileID: 2531437461509242709}
   - component: {fileID: 6565753603677489317}
   - component: {fileID: 3064733659860585907}
   - component: {fileID: 966129447289812405}
@@ -11579,6 +11580,30 @@ CharacterController:
   m_SkinWidth: 0.025
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0.8, z: 0.05}
+--- !u!114 &2531437461509242709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2787145867759493644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a816797810f06694f8b0ee3cc93108df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleLevel: 0
+  lerpSpeedLevel: 0
+  spinCountLevel: 0
+  attackSpeedLevel: 0
+  baseTargetScale: 1.5
+  scalePerLevel: 0.1
+  baseLerpSpeed: 1
+  lerpSpeedPerLevel: 2
+  baseSpinCount: 1
+  spinCountPerLevel: 1
+  baseAttackAnimSpeed: 1.2
+  attackAnimSpeedPerLevel: 0.2
 --- !u!114 &6565753603677489317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11626,6 +11651,10 @@ MonoBehaviour:
   animator: {fileID: 7985376938511219695}
   mainCamera: {fileID: 0}
   forceReceiver: {fileID: 8852573305649902521}
+  weaponDamage: {fileID: 7661886585986666648}
+  targetScale: 1.5
+  lerpSpeed: 8
+  attackSpinCount: 1
   movementSpeed: 6
   rotationSpeed: 25
   jumpBufferTime: 0.5
@@ -11635,7 +11664,6 @@ MonoBehaviour:
   rollDistance: 7
   rollDuration: 0.5
   rollCooldown: 1
-  attackSpinCount: 3
   canDoubleJump: 1
   playerStomping: {fileID: 6545793978744606386}
   playerBlockBump: {fileID: 6137944137004504176}
@@ -17623,7 +17651,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.032, y: -0.004, z: 0.163}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2575339877076448571}
@@ -17677,8 +17705,8 @@ MonoBehaviour:
   colorOverTime:
     serializedVersion: 2
     key0: {r: 0.12477186, g: 0.10461649, b: 0.07618539, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
-    key2: {r: 0.79499316, g: 0.7906363, b: 0.78453434, a: 0}
+    key1: {r: 0.24528301, g: 0.20656815, b: 0.14462441, a: 1}
+    key2: {r: 0.24528301, g: 0.20656815, b: 0.14462441, a: 0}
     key3: {r: 0.79499316, g: 0.7906363, b: 0.78453434, a: 0}
     key4: {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 0}
     key5: {r: 0.9630164, g: 0.9622304, b: 0.9611296, a: 0}
@@ -17686,7 +17714,7 @@ MonoBehaviour:
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 56090
+    ctime2: 65535
     ctime3: 59560
     ctime4: 65535
     ctime5: 65535
@@ -17757,20 +17785,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: -0.99999636
+      outSlope: -0.99999636
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
+      value: 0.0000036358833
+      inSlope: -0.99999636
+      outSlope: -0.99999636
       tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -17864,6 +17892,7 @@ MonoBehaviour:
   myCollider: {fileID: 0}
   damageAmount: 1
   hitEffect: {fileID: 3176652519396064368, guid: 7a8298bfdd1537f4bb6c7cc002021c46, type: 3}
+  weaponTransform: {fileID: 7851611207052795093}
 --- !u!65 &8254348576057264086
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17883,8 +17912,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 0.7640464, y: 0.609548, z: 0.85802704}
-  m_Center: {x: 0.122873776, y: -0.039851796, z: 0.20075007}
+  m_Size: {x: 0.41448608, y: 0.60955894, z: 1.3336225}
+  m_Center: {x: -0.051907156, y: -0.03985178, z: 0.43855312}
 --- !u!54 &2437241135419834708
 Rigidbody:
   m_ObjectHideFlags: 0

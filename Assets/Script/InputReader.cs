@@ -22,7 +22,6 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
     public event Action dodgeRollEvent; // Raised when dodge roll is performed
     public event Action pauseEvent;     // Raised when pause is performed
     public event Action shieldEvent;    // Raised when shield is performed
-    public event Action shieldThrowEvent; // Raised when shield throw is performed
     public event Action interactEvent;  // Raised when interact is performed
 
     private Controls controls; // Input system controls asset
@@ -146,12 +145,6 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
     public bool IsShieldPressed()
     {
         return controls != null && controls.Player.Shield.ReadValue<float>() > 0f;
-    }
-
-    public void OnShieldThrow(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-            shieldThrowEvent?.Invoke();
     }
 
     public void OnInteract(InputAction.CallbackContext context)

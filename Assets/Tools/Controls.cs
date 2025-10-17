@@ -147,15 +147,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Shield Throw"",
-                    ""type"": ""Button"",
-                    ""id"": ""07de3605-b967-4db6-91fa-97398ce7388e"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""727b1d2a-ac98-4580-a234-beb57921e964"",
@@ -333,17 +324,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""4b1eef86-cff8-4ef3-8290-64e5100ac8ba"",
-                    ""path"": ""<Keyboard>/q"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Shield Throw"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""17b0b64e-a692-41ed-ba9c-7d3eec796682"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
@@ -383,7 +363,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_DodgeRoll = m_Player.FindAction("Dodge Roll", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_Shield = m_Player.FindAction("Shield", throwIfNotFound: true);
-        m_Player_ShieldThrow = m_Player.FindAction("Shield Throw", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
     }
 
@@ -471,7 +450,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_DodgeRoll;
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_Shield;
-    private readonly InputAction m_Player_ShieldThrow;
     private readonly InputAction m_Player_Interact;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
@@ -508,10 +486,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Shield".
         /// </summary>
         public InputAction @Shield => m_Wrapper.m_Player_Shield;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/ShieldThrow".
-        /// </summary>
-        public InputAction @ShieldThrow => m_Wrapper.m_Player_ShieldThrow;
         /// <summary>
         /// Provides access to the underlying input action "Player/Interact".
         /// </summary>
@@ -560,9 +534,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Shield.started += instance.OnShield;
             @Shield.performed += instance.OnShield;
             @Shield.canceled += instance.OnShield;
-            @ShieldThrow.started += instance.OnShieldThrow;
-            @ShieldThrow.performed += instance.OnShieldThrow;
-            @ShieldThrow.canceled += instance.OnShieldThrow;
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
@@ -595,9 +566,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Shield.started -= instance.OnShield;
             @Shield.performed -= instance.OnShield;
             @Shield.canceled -= instance.OnShield;
-            @ShieldThrow.started -= instance.OnShieldThrow;
-            @ShieldThrow.performed -= instance.OnShieldThrow;
-            @ShieldThrow.canceled -= instance.OnShieldThrow;
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
@@ -696,13 +664,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnShield(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Shield Throw" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnShieldThrow(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Interact" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

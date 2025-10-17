@@ -61,15 +61,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Shield Throw",
-                    "type": "Button",
-                    "id": "07de3605-b967-4db6-91fa-97398ce7388e",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Interact",
                     "type": "Button",
                     "id": "727b1d2a-ac98-4580-a234-beb57921e964",
@@ -242,17 +233,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Shield",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4b1eef86-cff8-4ef3-8290-64e5100ac8ba",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Shield Throw",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

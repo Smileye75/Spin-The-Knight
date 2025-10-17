@@ -1,23 +1,23 @@
 using UnityEngine;
+using MoreMountains.Feedbacks;
 using Febucci.UI;          // for TextAnimator_TMP
 using Febucci.UI.Core;
 
 /// <summary>
-/// Checkpoint manages checkpoint activation, respawn location, visual effects, and UI feedback.
-/// When activated (by weapon hit), it becomes the current respawn point, restores player health,
-/// plays particle effects, and displays a checkpoint message. Only one checkpoint can be active at a time.
+/// Checkpoint manages checkpoint activation, respawn location, and UI feedback.
+/// When activated (by weapon hit or stomp), it becomes the current respawn point, restores player health,
+/// and plays feedbacks. Only one checkpoint can be active at a time.
 /// </summary>
 public class Checkpoint : MonoBehaviour
 {
     [Header("Setup")]
     [SerializeField] private Transform respawnLocation;      // Where the player respawns if they die
-    [SerializeField] private GameObject skull;               // Visual indicator (rotates to face player)
     [SerializeField] private BoxCollider checkpointTrigger;  // Trigger collider for checkpoint activation
 
-    [Header("FX")]
-    [SerializeField] private ParticleSystem idleFire;        // Idle fire effect (plays when inactive)
-    [SerializeField] private ParticleSystem activeFire;      // Active fire effect (plays when activated)
-    [SerializeField] private ParticleSystem explosionEffect; // Explosion effect on activation
+    [Header("Feedbacks")]
+    [SerializeField] private MMFeedbacks weaponFeedback;     // Feedback when activated by weapon
+    [SerializeField] private MMFeedbacks activatedFeedback;  // Feedback when activated
+    [SerializeField] private MMFeedbacks expiredFeedback;// Feedback when deactivated
 
     [Header("Checkpoint UI")]
     [SerializeField] private TextAnimator_TMP checkpointTA;  // Animated checkpoint text
@@ -39,36 +39,26 @@ public class Checkpoint : MonoBehaviour
     public static Vector3 ActiveRespawnPosition => HasActive ? s_respawn.position : Vector3.zero;
 
     private bool _activated = false;                         // Whether this checkpoint is activated
-    private CharacterController _player;                     // Reference to the player (for facing and healing)
+    private CharacterController _player;                     // Reference to the player (for healing)
 
-    /// <summary>
-    /// Initializes checkpoint state and effects.
-    /// </summary>
     private void Awake()
     {
         if (checkpointTrigger) checkpointTrigger.isTrigger = true;
-        if (idleFire) idleFire.Play();
-        if (activeFire) activeFire.Stop();
     }
 
-    /// <summary>
-    /// Subscribes/unsubscribes to player life loss events.
-    /// </summary>
     private void OnEnable()  { PlayerStats.OnPlayerLostLife += OnPlayerLostLife; }
     private void OnDisable() { PlayerStats.OnPlayerLostLife -= OnPlayerLostLife; }
 
-    /// <summary>
-    /// Called when the player loses a life (not used here, but can be extended).
-    /// </summary>
     private void OnPlayerLostLife(GameObject player)
     {
         // Optional: handle checkpoint-specific logic on player death
     }
 
     /// <summary>
-    /// Handles trigger entry for player and weapon.
-    /// Player: stores reference for facing and healing.
-    /// Weapon: activates the checkpoint if not already activated.
+    /// Handles trigger entry for player and activation sources.
+    /// Player: stores reference for healing.
+    /// Weapon: activates the checkpoint with weapon feedback.
+    /// Stomp: activates the checkpoint with stomp feedback.
     /// </summary>
     private void OnTriggerEnter(Collider other)
     {
@@ -80,13 +70,10 @@ public class Checkpoint : MonoBehaviour
 
         if (!_activated && other.CompareTag("Weapon"))
         {
-            Activate();
+            Activate(weaponFeedback);
         }
     }
 
-    /// <summary>
-    /// Clears player reference when they exit the trigger.
-    /// </summary>
     private void OnTriggerExit(Collider other)
     {
         if (_player == null) return;
@@ -96,9 +83,9 @@ public class Checkpoint : MonoBehaviour
     }
 
     /// <summary>
-    /// Activates this checkpoint: sets as active, plays effects, restores player health, and shows UI.
+    /// Activates this checkpoint: sets as active, plays feedback, restores player health, and shows UI.
     /// </summary>
-    private void Activate()
+    private void Activate(MMFeedbacks feedback)
     {
         _activated = true;
 
@@ -109,19 +96,18 @@ public class Checkpoint : MonoBehaviour
         s_active = this;
         s_respawn = respawnLocation;
 
-        if (idleFire) idleFire.Stop();
-        if (explosionEffect) explosionEffect.Play();
-        if (activeFire) activeFire.Play();
-
-        if (skull) skull.SetActive(false);
-
         if (checkpointTrigger) checkpointTrigger.enabled = false;
-
+        if (activatedFeedback != null)
+            activatedFeedback.PlayFeedbacks();
         // Restore player health when checkpoint is triggered
         if (_player != null && _player.TryGetComponent<PlayerStats>(out var stats))
         {
             stats.Heal(stats.maxHealth);
         }
+
+        // Play the appropriate feedback
+        if (feedback != null)
+            feedback.PlayFeedbacks();
 
         // Show checkpoint UI text with typewriter effect
         if (checkpointTA && typewriter)
@@ -157,37 +143,8 @@ public class Checkpoint : MonoBehaviour
     /// </summary>
     private void Deactivate()
     {
-        if (idleFire) idleFire.Stop();
-        if (activeFire) activeFire.Stop();
         _activated = false;
-    }
-
-    /// <summary>
-    /// Updates the skull to face the player if not activated.
-    /// </summary>
-    private void Update()
-    {
-        FacePlayer();
-    }
-
-    /// <summary>
-    /// Rotates the skull to face the player while the checkpoint is not activated.
-    /// </summary>
-    private void FacePlayer()
-    {
-        if (_activated) return;
-        if (!skull || !_player) return;
-
-        Vector3 toPlayer = _player.transform.position - skull.transform.position;
-        toPlayer.y = 0f;
-        if (toPlayer.sqrMagnitude < 0.0001f) return;
-
-        Quaternion target = Quaternion.LookRotation(toPlayer);
-        skull.transform.rotation = Quaternion.Slerp(
-            skull.transform.rotation,
-            target,
-            10f * Time.deltaTime
-        );
+        expiredFeedback?.PlayFeedbacks();
     }
 }
 
