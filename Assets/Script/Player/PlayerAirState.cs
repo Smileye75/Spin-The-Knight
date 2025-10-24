@@ -28,6 +28,7 @@ public class PlayerAirState : PlayerBaseMachine
     // Multiplier for jump force if attack is pressed at jump start
     private const float attackJumpMultiplier = 1.2f; // Adjust as needed
 
+
     /// <summary>
     /// Constructor for PlayerAirState. Sets up jump parameters and launch direction.
     /// </summary>
@@ -85,6 +86,7 @@ public class PlayerAirState : PlayerBaseMachine
 
         // Always allow double jump at start of air state
         stateMachine.canDoubleJump = true;
+
     }
 
     /// <summary>
@@ -235,4 +237,5 @@ public class PlayerAirState : PlayerBaseMachine
 
         stateMachine.animator.SetFloat("VelocitySpeed", norm);
     }
+
 }

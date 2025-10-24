@@ -174,3 +174,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 8
   healAmount: 3
+  coinAmount: 0
+  staminaAmount: 3

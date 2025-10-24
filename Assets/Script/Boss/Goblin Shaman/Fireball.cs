@@ -49,12 +49,32 @@ public class Fireball : MonoBehaviour
         // Play explosion effect and destroy fireball on hitting player or wall
         if (other.CompareTag("Player") || other.CompareTag("Wall"))
         {
+            if (other.TryGetComponent<PlayerStateMachine>(out var stateMachine) &&
+                stateMachine.CurrentState is PlayerShieldState shieldState)
+            {
+                shieldState.TryReflect(gameObject); // Reflect the projectile
+                return; // Prevent normal damage/explosion if reflected
+            }
+
             if (explosionEffect != null)
             {
                 ParticleSystem effectInstance = Instantiate(explosionEffect, transform.position, Quaternion.identity);
                 Destroy(effectInstance.gameObject, effectInstance.main.duration);
             }
             Destroy(gameObject);
+        }
+
+        if (other.TryGetComponent<GoblinShamanBoss>(out var boss))
+        {
+            boss.TriggerDizzy(boss.dizzyDuration);
+            // Optionally destroy the fireball
+            if (explosionEffect != null)
+            {
+                ParticleSystem effectInstance = Instantiate(explosionEffect, transform.position, Quaternion.identity);
+                Destroy(effectInstance.gameObject, effectInstance.main.duration);
+            }
+            Destroy(gameObject);
+            return;
         }
     }
 }

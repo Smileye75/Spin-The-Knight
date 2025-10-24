@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 5177876662074522338}
   - component: {fileID: 8024907109934147359}
   - component: {fileID: 21276727832945362}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Fireball
-  m_TagString: Untagged
+  m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 3800864110370926544}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.359, y: 0, z: 3.585}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -4882,7 +4882,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 523519
+    m_Bits: 392447
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -4916,7 +4916,7 @@ GameObject:
   - component: {fileID: 3800864110802284985}
   - component: {fileID: 3800864110802284991}
   - component: {fileID: 3800864110802284984}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4932,7 +4932,7 @@ Transform:
   m_GameObject: {fileID: 3800864110802284986}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0102, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -9761,7 +9761,7 @@ GameObject:
   - component: {fileID: 8717527027636457236}
   - component: {fileID: 2412727040109802531}
   - component: {fileID: 8663066644709118215}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9879,7 +9879,7 @@ GameObject:
   - component: {fileID: 7555561722476759202}
   - component: {fileID: 7555561722476759196}
   - component: {fileID: 7555561722476759197}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Expansive Wave
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14721,7 +14721,7 @@ GameObject:
   - component: {fileID: 7555561724215026215}
   - component: {fileID: 7555561724215026209}
   - component: {fileID: 7555561724215026214}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}

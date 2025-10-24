@@ -22,6 +22,7 @@ TagManager:
   - MenuUI
   - SpawnPoints
   - Boss
+  - Projectile
   layers:
   - Default
   - TransparentFX
@@ -42,7 +43,7 @@ TagManager:
   - JumpPad
   - Boss
   - SpawningPoints
-  - 
+  - Projectile
   - 
   - 
   - 

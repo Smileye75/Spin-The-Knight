@@ -22,6 +22,10 @@ public class PlayerUI : MonoBehaviour
     [Header("Coins")]
     public TMP_Text coinText;        // Text displaying the number of coins (TextMeshPro)
 
+    [Header("Stamina")]
+    public Image[] staminaIcons;      // Array of stamina icons
+    public Sprite staminaGem;        // Sprite for full stamina
+
     // Example starting values (can be set from another script if needed)
     [Header("Initial UI States")]
     [SerializeField] private int startingHealth = 3;   // Initial health to display
@@ -69,5 +73,20 @@ public class PlayerUI : MonoBehaviour
     {
         if (coinText != null)
             coinText.text = coinCount.ToString("D2");
+    }
+    public void UpdateStamina(int currentStamina, int maxStamina)
+    {
+        for (int i = 0; i < staminaIcons.Length; i++)
+        {
+            if (i < maxStamina)
+            {
+                staminaIcons[i].gameObject.SetActive(true);
+                staminaIcons[i].fillAmount = i < currentStamina ? 1f : 0f;
+            }
+            else
+            {
+                staminaIcons[i].gameObject.SetActive(false); // Hide unused icons
+            }
+        }
     }
 }

@@ -1058,8 +1058,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1916b0d6900b7f24f9e241b25dd848a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounceForce: 15
-  jumpBoostMultiplier: 1.5
+  bounceForce: 12
+  jumpBoostMultiplier: 1.2
   destroyOnStomp: 0
   stompFeedback: {fileID: 1103879375915486368}
   crateFeedback: {fileID: 0}
@@ -1067,6 +1067,7 @@ MonoBehaviour:
   explosion: {fileID: 3387939338087657328}
   shatter: {fileID: 5646316329655931239}
   attractToPlayer: 0
+  stackManager: {fileID: 0}
 --- !u!54 &8583912995397351966
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -11523,7 +11523,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7375669585443710414}
   - component: {fileID: 4328376877549727386}
-  - component: {fileID: 2531437461509242709}
   - component: {fileID: 6565753603677489317}
   - component: {fileID: 3064733659860585907}
   - component: {fileID: 966129447289812405}
@@ -11580,30 +11579,6 @@ CharacterController:
   m_SkinWidth: 0.025
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0.8, z: 0.05}
---- !u!114 &2531437461509242709
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2787145867759493644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a816797810f06694f8b0ee3cc93108df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scaleLevel: 0
-  lerpSpeedLevel: 0
-  spinCountLevel: 0
-  attackSpeedLevel: 0
-  baseTargetScale: 1.5
-  scalePerLevel: 0.1
-  baseLerpSpeed: 1
-  lerpSpeedPerLevel: 2
-  baseSpinCount: 1
-  spinCountPerLevel: 1
-  baseAttackAnimSpeed: 1.2
-  attackAnimSpeedPerLevel: 0.2
 --- !u!114 &6565753603677489317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11631,6 +11606,9 @@ MonoBehaviour:
   deathDelay: 2
   deathBoolName: Dead
   healEffect: {fileID: 4380663536471967004}
+  maxStamina: 3
+  currentStamina: 0
+  staminaCost: 1
 --- !u!114 &3064733659860585907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11652,9 +11630,10 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   forceReceiver: {fileID: 8852573305649902521}
   weaponDamage: {fileID: 7661886585986666648}
-  targetScale: 1.5
-  lerpSpeed: 8
-  attackSpinCount: 1
+  targetScale: 2
+  lerpSpeed: 5
+  attackSpinCount: 3
+  attackAnimSpeed: 1.5
   movementSpeed: 6
   rotationSpeed: 25
   jumpBufferTime: 0.5
@@ -11716,6 +11695,8 @@ GameObject:
   - component: {fileID: 4676299493299405570}
   - component: {fileID: 8332056534095769442}
   - component: {fileID: 2856921517548502622}
+  - component: {fileID: 1738828573562575634}
+  - component: {fileID: 8277237401911137613}
   m_Layer: 0
   m_Name: Spin_Knight_Shield
   m_TagString: Untagged
@@ -11788,6 +11769,54 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1738828573562575634
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2789008608620646866}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 0.90608275, y: 0.8926473, z: 0.22309938}
+  m_Center: {x: 0, y: 0, z: 0.05}
+--- !u!54 &8277237401911137613
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2789008608620646866}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2910276262580951990
 GameObject:
   m_ObjectHideFlags: 0
@@ -17893,6 +17922,7 @@ MonoBehaviour:
   damageAmount: 1
   hitEffect: {fileID: 3176652519396064368, guid: 7a8298bfdd1537f4bb6c7cc002021c46, type: 3}
   weaponTransform: {fileID: 7851611207052795093}
+  playerStats: {fileID: 0}
 --- !u!65 &8254348576057264086
 BoxCollider:
   m_ObjectHideFlags: 0

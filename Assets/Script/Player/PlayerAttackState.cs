@@ -19,8 +19,8 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
     private float attackHoldTime = 0f;
     private const float upscaleDelay = 0.5f; // seconds to wait before upscaling
     float currentScale;
-    float targetScale = 3f; // Max scale
-    float lerpSpeed = 1;  // Adjust for how quickly it scales up
+    float targetScale = 1.5f; // Max scale
+    float lerpSpeed = 2;  // Adjust for how quickly it scales up
 
     /// <summary>
     /// Constructor for PlayerAttackState.
@@ -42,11 +42,6 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
         targetScale = stateMachine.targetScale; // Max scale
         lerpSpeed = stateMachine.lerpSpeed;  // Adjust for how quickly it scales up
 
-        // Trigger attack animation and set spinning flag
-       // stateMachine.animator.SetTrigger(HashStartAttack);
-        //stateMachine.animator.SetBool(HashSpinning, true);
-        // Animator now: Start Attack (plays), then transitions to Spinning via Exit Time,
-        // because Spinning == true.
     }
 
     /// <summary>
@@ -78,22 +73,23 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
             {
                 if (stateMachine.weaponDamage != null)
                 {
-
                     float current = stateMachine.weaponDamage.transform.localScale.x;
                     float newScale = Mathf.Lerp(current, targetScale, lerpSpeed * deltaTime);
                     stateMachine.weaponDamage.transform.localScale = Vector3.one * newScale;
+
+                    // Set heavy attack flag if scale is close to or above target
+                    if (newScale >= targetScale - 0.1f)
+                        stateMachine.weaponDamage.SetHeavyAttack(true);
+                    else
+                        stateMachine.weaponDamage.SetHeavyAttack(false);
                 }
             }
             else if (stateMachine.weaponDamage != null)
             {
                 // Keep weapon at original scale during delay
                 stateMachine.weaponDamage.ResetScale();
+                stateMachine.weaponDamage.SetHeavyAttack(false);
             }
-        }
-        else if (stateMachine.weaponDamage != null)
-        {
-            //stateMachine.weaponDamage.ResetScale();
-            attackHoldTime = 0f; // Reset timer if not holding
         }
 
         // Start attack if:
@@ -129,7 +125,10 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
         stateMachine.animator.SetBool(HashSpinning, false);
 
         if (stateMachine.weaponDamage != null)
+        {
             stateMachine.weaponDamage.ResetScale();
+            stateMachine.weaponDamage.SetHeavyAttack(false); // Always reset on exit
+        }
     }
 
     // -------------------------------
@@ -158,6 +157,11 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
     public void EndAttack()
     {
         stateMachine.animator.SetBool(HashSpinning, false);
+        if (stateMachine.weaponDamage != null)
+        {
+            stateMachine.weaponDamage.ResetScale();
+            stateMachine.weaponDamage.SetHeavyAttack(false);
+        }
         stateMachine.SwitchState(new PlayerMoveState(stateMachine));
 
     }
@@ -168,4 +172,5 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
         stateMachine.animator.SetTrigger(HashStartAttack);
         stateMachine.animator.SetBool(HashSpinning, true);
     }
+
 }

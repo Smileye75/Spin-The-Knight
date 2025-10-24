@@ -1961,9 +1961,11 @@ MonoBehaviour:
   destroyOnStomp: 1
   stompFeedback: {fileID: 4277643542699267436}
   crateFeedback: {fileID: 198202731371243394, guid: 24e10e213520d6d4d94536de37f56352, type: 3}
-  coinPrefab: {fileID: 1910419942694860952, guid: f7c72cda2fcadf44586df8765fcbe5be, type: 3}
+  coinPrefab: {fileID: 5928777775714429725, guid: e8e9f6cdcb30c6d4db6e978b210dfcbe, type: 3}
   explosion: {fileID: 0}
   shatter: {fileID: 4484846601108647766}
+  attractToPlayer: 0
+  stackManager: {fileID: 0}
 --- !u!54 &2579629753109166318
 Rigidbody:
   m_ObjectHideFlags: 0

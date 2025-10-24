@@ -32,4 +32,19 @@ public class PlayerShieldState : PlayerBaseMachine
             stateMachine.animator.SetBool("usingShield", false);
     }
 
+    public void TryReflect(GameObject attacker)
+    {
+        if (attacker != null && attacker.CompareTag("Projectile"))
+        {
+            attacker.transform.forward = -attacker.transform.forward;
+
+            var fireball = attacker.GetComponent<Fireball>();
+            if (fireball != null)
+            {
+                fireball.speed = 30f; // Set desired reflected speed
+            }
+
+            Debug.Log("Projectile reflected!");
+        }
+    }
 }

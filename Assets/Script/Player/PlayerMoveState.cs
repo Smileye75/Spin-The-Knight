@@ -112,7 +112,8 @@ public class PlayerMoveState : PlayerBaseMachine
     /// </summary>
     private void OnAttack()
     {
-        stateMachine.SwitchState(new PlayerAttackState(stateMachine));
+
+            stateMachine.SwitchState(new PlayerAttackState(stateMachine));
     }
     private void OnShield()
     {

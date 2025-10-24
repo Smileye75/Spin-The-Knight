@@ -53,9 +53,11 @@ public class PlayerStateMachine : StateMachine
 
     [Header("Weapon Settings")]
     public WeaponDamage weaponDamage; // Reference to the player's weapon damage script
-    [HideInInspector] public float targetScale = 1.5f;
-    [HideInInspector] public float lerpSpeed = 1f;
-    public int attackSpinCount = 1; // Set in Inspector
+    [Header("Attack Settings")]
+    public float targetScale = 1.5f;
+    public float lerpSpeed = 2f;
+    public int attackSpinCount = 3;
+    public float attackAnimSpeed = 1.5f;
 
     [Header("Movement Settings")]
     [Tooltip("Player movement speed.")]
@@ -108,6 +110,7 @@ public class PlayerStateMachine : StateMachine
     public bool hasPlayedSpinJump = false; // Used to prevent repeated jump animation triggers
     public bool isAirRotationLocked = false; // Air rotation lock flag
 
+
     /// <summary>
     /// The current player state (move, attack, air, roll, etc.).
     /// </summary>
@@ -151,6 +154,12 @@ public class PlayerStateMachine : StateMachine
 
         // Start in movement state
         SwitchState(new PlayerMoveState(this));
+    }
+
+    private void Awake()
+    {
+        if (animator != null)
+            animator.SetFloat("AttackSpeed", attackAnimSpeed);
     }
 
     /// <summary>

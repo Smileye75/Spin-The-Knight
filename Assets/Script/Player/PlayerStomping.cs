@@ -60,44 +60,30 @@ public class PlayerStomping : MonoBehaviour
     {
         float bounceForce = 0f;
         float jumpBoostMultiplier = 1f;
-        System.Action onStomped = null;
 
         // Try to get StompableProps from the collided object
         if (TryGetComponentFromCollider<StompableProps>(other, out var stompable))
         {
             bounceForce = stompable.bounceForce;
             jumpBoostMultiplier = stompable.jumpBoostMultiplier;
-            onStomped = stompable.OnStomped;
+
+            // Call the stomp method directly with parameters
+            stompable.OnStomped(false, false);
+
+            // Apply bounce and air state for crates
+            ApplyBounce(bounceForce, jumpBoostMultiplier);
         }
-        // Try to get BaseEnemy (minion) from the collided object
+        // Try to get BaseEnemy from the collided object
         else if (TryGetComponentFromCollider<BaseEnemy>(other, out var minion))
         {
             bounceForce = minion.bounceForce;
             jumpBoostMultiplier = minion.jumpBoostMultiplier;
-            onStomped = minion.OnStomped;
-        }
 
-        // If we found a valid stompable or minion enemy
-        if (onStomped != null)
-        {
-            bool heldJump = inputReader != null && inputReader.IsJumpPressed();
-            float finalBounceForce = bounceForce;
+            // Call the armored-aware stomp method directly
+            minion.OnStomped(false, false);
 
-            // If jump is held, apply jump boost multiplier
-            if (heldJump)
-            {
-                finalBounceForce *= jumpBoostMultiplier;
-            }
-
-            // Switch to air state with bounce force and enable double jump
-            if (stateMachine != null)
-            {
-                stateMachine.SwitchState(new PlayerAirState(stateMachine, finalBounceForce));
-                stateMachine.canDoubleJump = true; // Enable double jump after stomp
-            }
-
-            // Invoke the stomped event on the stompable or enemy
-            onStomped.Invoke();
+            // Apply bounce and air state for enemies
+            ApplyBounce(bounceForce, jumpBoostMultiplier);
         }
     }
 
@@ -112,5 +98,22 @@ public class PlayerStomping : MonoBehaviour
     {
         component = collider.GetComponent<T>();
         return component != null;
+    }
+
+    private void ApplyBounce(float bounceForce, float jumpBoostMultiplier)
+    {
+        bool heldJump = inputReader != null && inputReader.IsJumpPressed();
+        float finalBounceForce = bounceForce;
+
+        if (heldJump)
+        {
+            finalBounceForce *= jumpBoostMultiplier;
+        }
+
+        if (stateMachine != null)
+        {
+            stateMachine.SwitchState(new PlayerAirState(stateMachine, finalBounceForce));
+            stateMachine.canDoubleJump = true; // Enable double jump after stomp
+        }
     }
 }

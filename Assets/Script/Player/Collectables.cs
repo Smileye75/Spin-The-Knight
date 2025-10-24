@@ -14,6 +14,8 @@ public class Collectables : MonoBehaviour
     public float moveSpeed = 15f;            // Speed at which the collectable moves to the player
 
     public int healAmount = 3;              // Amount of health restored by food
+    public int coinAmount = 1;              // Amount of coins this collectable gives
+    public int staminaAmount = 1;          // Amount of stamina restored by this collectable
 
     /// <summary>
     /// Handles collision with weapon or player.
@@ -38,14 +40,14 @@ public class Collectables : MonoBehaviour
         {
             if (gameObject.CompareTag("Coins"))
             {
-                stats.AddCoin(1);
+                stats.AddCoin(coinAmount);
                 Debug.Log("Coins Collected: " + stats.coins);
             }
             if (gameObject.CompareTag("Food"))
             {
-                stats.Heal(healAmount); // Heal the player
-                Debug.Log("Player Healed! Current Health: " + stats.currentHealth);
+                stats.Rest();
             }
+
             Destroy(gameObject);
         }
     }

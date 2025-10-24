@@ -4,43 +4,44 @@ using UnityEngine;
 public class GoblinShamanBoss : MonoBehaviour
 {
     [Header("Fireball Settings")]
-    [SerializeField] private GameObject fireballPrefab;          // Prefab for the fireball projectile
-    [SerializeField] private Transform[] fireballSpawnPoints;    // Points where fireballs can spawn
-    [SerializeField] private float fireballSpeed = 10f;          // Speed of the fireball
-    [SerializeField] private float shootInterval = 2f;           // Time between shots
+    [SerializeField] private GameObject fireballPrefab;
+    [SerializeField] private Transform[] fireballSpawnPoints;
+    [SerializeField] private float fireballSpeed = 10f;
+    [SerializeField] private float shootInterval = 2f;
 
     [Header("Boss Settings")]
-    [SerializeField] private int maxHitPoints = 3;               // Boss's maximum health
-    [SerializeField] private Transform teleportFront;            // Teleport destination (front)
-    [SerializeField] private Transform teleportBack;             // Teleport destination (back)
-    [SerializeField] private BoxCollider hitboxCollider;         // Collider for taking hits
-    [SerializeField] private BoxCollider damageCollider;         // Collider for dealing damage
+    [SerializeField] private int maxHitPoints = 3;
+    [SerializeField] private Transform teleportFront;
+    [SerializeField] private Transform teleportBack;
+    [SerializeField] private Transform teleportLeft;
+    [SerializeField] private Transform teleportCenter;
+    [SerializeField] private Transform teleportRight;
+    [SerializeField] private BoxCollider hitboxCollider;
+    [SerializeField] private BoxCollider damageCollider;
 
     [Header("Animation")]
-    [SerializeField] private Animator animator;                  // Animator for boss animations
-    [SerializeField] private string shootTriggerName = "Shoot";  // Animation trigger for shooting
+    [SerializeField] private Animator animator;
+    [SerializeField] private string shootTriggerName = "Shoot";
 
     [Header("Magic Circle Settings")]
-    [SerializeField] private GameObject magicCirclePrefab;       // Magic circle visual effect
-    [SerializeField] private float magicCircleShrinkDuration = 0.3f; // Shrink duration for magic circle
+    [SerializeField] private GameObject magicCirclePrefab;
+    [SerializeField] private float magicCircleShrinkDuration = 0.3f;
 
     [Header("Teleport Effect Settings")]
-    [SerializeField] private GameObject teleportEffectPrefab;    // Teleport visual effect
+    [SerializeField] private GameObject teleportEffectPrefab;
+    [SerializeField] private GameObject explosionEffectPrefab;
 
-    [SerializeField] private GameObject explosionEffectPrefab;   // Explosion effect on teleport
+    public int damage = 1;
 
-    public int damage = 1; // Damage dealt to player on contact
-
+    // --- Runtime state ---
     private int currentHitPoints;
-    private bool atFront = true;            // Tracks if boss is at front or back
-    private bool canShoot = true;           // Controls if boss can shoot
-    private Quaternion originalRotation;    // Stores original rotation for flipping
-    private bool rotated = false;           // Tracks if boss is rotated
+    private bool atFront = true;
+    private bool canShoot = true;
+    private Quaternion originalRotation;
+    private bool rotated = false;
 
-    private int currentSpawnIndex = 0;      // Index of current fireball spawn point
-    private GameObject activeMagicCircle;   // Reference to active magic circle
-
-    // Tracks last used spawn point to avoid immediate repeats
+    private int currentSpawnIndex = 0;
+    private GameObject activeMagicCircle;
     private int lastSpawnIndex = -1;
 
     private float originalAnimatorSpeed = 1f;
@@ -49,48 +50,107 @@ public class GoblinShamanBoss : MonoBehaviour
     [SerializeField] private float restDuration = 0.5f;
     private int shotsFired = 0;
 
-    /// <summary>
-    /// Initializes boss state and starts shooting routine.
-    /// </summary>
+    // --- Lane teleport data (Left/Center/Right) ---
+    [Header("Lane Teleport (Left/Center/Right)")]
+    [SerializeField] private float phase1LaneTeleportInterval = 4f;
+    [SerializeField] private float phase2LaneTeleportInterval = 2.5f;
+    [SerializeField] private float phase3LaneTeleportInterval = 1.5f;
+    // Per-phase lane sequences (0=Left, 1=Center, 2=Right)
+    [SerializeField] private int[] phase1LaneOrder = { 0, 1, 0, 2 };
+    [SerializeField] private int[] phase2LaneOrder = { 0, 1, 2, 1, 0, 1 };
+    [SerializeField] private int[] phase3LaneOrder = { 2, 1, 0, 1, 2, 1, 0 };
+    private Transform[] teleportPoints;
+    private int laneOrderIndex = -1;
+    private bool isHitTeleporting = false;   // guards conflict with damage-teleport
+    private bool laneRoutineStarted = false; // starts at Phase 2 (first time boss is hit)
+    
+    [SerializeField] private float phase2ShootInterval = 1.2f;
+    [SerializeField] private float phase3ShootInterval = 0.5f;
+
+    [SerializeField] private Transform fireballPointsRoot;
+    [SerializeField] private Transform sideTeleportPointsRoot;
+
+    private bool isDizzy = false;
+    private float dizzyTimer = 0f;
+    [SerializeField] public float dizzyDuration = 2f; // How long the boss stays dizzy
+
+    private enum Phase { Phase1, Phase2, Phase3 }
+    private Phase CurrentPhase =>
+        (currentHitPoints <= 1) ? Phase.Phase3 :
+        (currentHitPoints <= 2) ? Phase.Phase2 :
+        (currentHitPoints <= 3) ? Phase.Phase1 : Phase.Phase1;
+
     void Start()
     {
         currentHitPoints = maxHitPoints;
         originalRotation = transform.rotation;
-        if (animator != null)
-            originalAnimatorSpeed = animator.speed;
+        if (animator != null) originalAnimatorSpeed = animator.speed;
+        teleportPoints = new Transform[] { teleportLeft, teleportCenter, teleportRight };
+        // Start in Center lane if assigned
+        if (teleportCenter != null) transform.position = teleportCenter.position;
         StartCoroutine(ShootRoutine());
+        laneRoutineStarted = true;
+        StartCoroutine(LaneTeleportRoutine());
+
     }
 
-    /// <summary>
-    /// Coroutine that handles the boss's shooting pattern and animation speed.
-    /// </summary>
+    void Update()
+    {
+        if (isDizzy)
+        {
+            dizzyTimer -= Time.deltaTime;
+            if (dizzyTimer <= 0f)
+            {
+                isDizzy = false;
+                canShoot = true;
+                if (animator) animator.SetBool("IsDizzy", false); // End dizzy
+            }
+        }
+    }
+
+
+    public void TriggerDizzy(float duration)
+    {
+        if (isDizzy) return; // Prevent stacking
+        isDizzy = true;
+        dizzyTimer = duration;
+        canShoot = false; // Stop shooting/moving
+        if (animator) animator.SetBool("IsDizzy", true); // Use bool instead of trigger
+    }
+
+
     IEnumerator ShootRoutine()
     {
         while (currentHitPoints > 0)
         {
+            // Adjust shoot interval by phase (optional)
+            float wait = shootInterval;
+            switch (CurrentPhase)
+            {
+                case Phase.Phase2: wait = phase2ShootInterval; break;
+                case Phase.Phase3: wait = phase3ShootInterval; break;
+            }
+
             if (canShoot)
             {
                 if (animator != null)
                 {
                     animator.SetTrigger(shootTriggerName);
-                    animator.speed = Mathf.Clamp(2f / shootInterval, 0.5f, 2f);
+                    animator.speed = Mathf.Clamp(2f / wait, 0.5f, 2f);
                 }
 
-                // Choose a random spawn point, avoiding immediate repeats
-                int newIndex;
-                int attempts = 0;
+                // choose spawn (random, avoiding immediate repeats)
+                int newIndex, attempts = 0;
                 do
                 {
                     newIndex = Random.Range(0, fireballSpawnPoints.Length);
                     attempts++;
-                }
-                while (fireballSpawnPoints.Length > 1 &&
-                       newIndex == lastSpawnIndex && attempts < 10);
+                } while (fireballSpawnPoints.Length > 1 && newIndex == lastSpawnIndex && attempts < 10);
 
                 lastSpawnIndex = newIndex;
                 currentSpawnIndex = newIndex;
 
-                // Only count and rest if HP is 1
+                // Only rest on 1 HP (your original)
                 if (currentHitPoints == 1)
                 {
                     shotsFired++;
@@ -98,46 +158,80 @@ public class GoblinShamanBoss : MonoBehaviour
                     {
                         canShoot = false;
                         shotsFired = 0;
-                        yield return new WaitForSeconds(restDuration); // Boss rests
+                        yield return new WaitForSeconds(restDuration);
                         canShoot = true;
                     }
                 }
             }
-            yield return new WaitForSeconds(shootInterval);
+
+            yield return new WaitForSeconds(wait);
         }
     }
 
-    /// <summary>
-    /// Called by animation event to shoot a fireball and handle magic circle effect.
-    /// </summary>
+
+    private IEnumerator LaneTeleportRoutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        while (currentHitPoints > 0)
+        {
+            // Wait while boss is dizzy
+            while (isDizzy)
+                yield return null;
+
+            float interval = phase1LaneTeleportInterval;
+            switch (CurrentPhase)
+            {
+                case Phase.Phase2: interval = phase2LaneTeleportInterval; break;
+                case Phase.Phase3: interval = phase3LaneTeleportInterval; break;
+                case Phase.Phase1: default: interval = phase1LaneTeleportInterval; break;
+            }
+
+            yield return new WaitForSeconds(interval);
+
+            if (isHitTeleporting) continue;
+            if (teleportLeft == null || teleportCenter == null || teleportRight == null) continue;
+
+            int[] order = GetCurrentLaneOrder();
+            if (order == null || order.Length == 0) continue;
+
+            laneOrderIndex = (laneOrderIndex + 1) % order.Length;
+            int lane = Mathf.Clamp(order[laneOrderIndex], 0, 2);
+            Transform target = teleportPoints[lane];
+
+            yield return StartCoroutine(TeleportToPoint(target.position, flipYRotation: false));
+        }
+    }
+
+    private int[] GetCurrentLaneOrder()
+    {
+        switch (CurrentPhase)
+        {
+            case Phase.Phase1: return phase1LaneOrder;
+            case Phase.Phase2: return phase2LaneOrder;
+            case Phase.Phase3: return phase3LaneOrder;
+            default: return phase1LaneOrder;
+        }
+    }
+
+
     public void CastFireballWithMagicCircle()
     {
         ShootFireballFromCurrentSpawn();
         if (activeMagicCircle != null)
-        {
             StartCoroutine(ShrinkAndDestroyMagicCircle());
-        }
     }
 
-    /// <summary>
-    /// Instantiates a fireball at the current spawn point.
-    /// </summary>
     void ShootFireballFromCurrentSpawn()
     {
         if (fireballSpawnPoints.Length == 0) return;
         Transform spawnPoint = fireballSpawnPoints[currentSpawnIndex];
         GameObject fireball = Instantiate(fireballPrefab, spawnPoint.position, spawnPoint.rotation);
 
-        Fireball fireballScript = fireball.GetComponent<Fireball>();
-        if (fireballScript != null)
-        {
-            fireballScript.speed = fireballSpeed;
-        }
+        Fireball fb = fireball.GetComponent<Fireball>();
+        if (fb != null) fb.speed = fireballSpeed;
     }
 
-    /// <summary>
-    /// Spawns a magic circle effect at the current spawn point.
-    /// </summary>
     public void SpawnMagicCircleEffect()
     {
         if (magicCirclePrefab != null && fireballSpawnPoints.Length > 0)
@@ -148,9 +242,6 @@ public class GoblinShamanBoss : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Coroutine to shrink and destroy the magic circle effect.
-    /// </summary>
     private IEnumerator ShrinkAndDestroyMagicCircle()
     {
         float elapsed = 0f;
@@ -167,58 +258,63 @@ public class GoblinShamanBoss : MonoBehaviour
         activeMagicCircle = null;
     }
 
-    /// <summary>
-    /// Handles taking damage, triggers teleport and increases difficulty as health decreases.
-    /// </summary>
     public void TakeDamage(int amount)
     {
         if (currentHitPoints <= 0) return;
         currentHitPoints -= amount;
-        hitboxCollider.enabled = false;
-        damageCollider.enabled = false;
+        
+        if (isDizzy)
+        {
+            isDizzy = false;
+            canShoot = true;
+            if (animator) animator.SetBool("IsDizzy", false); // End dizzy
+        }
+
+
+        if (hitboxCollider) hitboxCollider.enabled = false;
+        if (damageCollider) damageCollider.enabled = false;
+
         if (currentHitPoints > 0)
         {
-            animator.SetTrigger("Hit");
-            Teleport();
+            if (animator) animator.SetTrigger("Hit");
+
+            // Increase pressure
             fireballSpeed += 5f;
-            shootInterval -= .75f;
+            shootInterval = Mathf.Max(0.2f, shootInterval - 0.5f);
+
+            // do your front/back teleport (with facing flip)
+            Teleport();
         }
         else
         {
-            if (animator != null)
-                animator.speed = originalAnimatorSpeed;
-            animator.SetTrigger("Dead");
-
-            StartCoroutine(DieWithDelay(2f)); // Wait 2 seconds before dying (adjust as needed)
+            if (animator) animator.speed = originalAnimatorSpeed;
+            if (animator) animator.SetTrigger("Dead");
+            StartCoroutine(DieWithDelay(2f));
         }
     }
 
-    /// <summary>
-    /// Teleports the boss to the opposite position, plays effects, and flips rotation.
-    /// </summary>
+    // Front/back damage-teleport (preserved), with a guard flag to avoid colliding with lane hops
     void Teleport()
     {
         canShoot = false;
+        isHitTeleporting = true;
+
         Transform target = atFront ? teleportBack : teleportFront;
-        // Play explosion effect at current position before teleporting
+
         if (explosionEffectPrefab != null)
         {
             Vector3 explosionPos = transform.position;
-            explosionPos.y = 0.1f; // Match teleport effect Y
+            explosionPos.y = 0.1f;
             GameObject explosion = Instantiate(explosionEffectPrefab, explosionPos, Quaternion.identity);
             Destroy(explosion, 2f);
         }
 
-        // Play teleport effect at BOTH current and target positions
-        PlayTeleportEffect(transform.position);      // Where boss starts teleporting
-        PlayTeleportEffect(target.position);         // Where boss will appear
+        PlayTeleportEffect(transform.position);
+        PlayTeleportEffect(target.position);
 
         StartCoroutine(TeleportWithEffect(target.position));
     }
 
-    /// <summary>
-    /// Handles collision with the player, dealing damage and knockback.
-    /// </summary>
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent<PlayerStats>(out PlayerStats playerStats))
@@ -230,20 +326,27 @@ public class GoblinShamanBoss : MonoBehaviour
                 receiver.ApplyKnockback(transform.position);
             }
         }
-
     }
 
-    /// <summary>
-    /// Coroutine to handle teleport delay and rotation flip.
-    /// </summary>
     private IEnumerator TeleportWithEffect(Vector3 targetPosition)
     {
         PlayTeleportEffect(targetPosition);
-        yield return new WaitForSeconds(0.5f); // Wait for effect duration
+        yield return new WaitForSeconds(0.5f);
 
+        // Parent fireball points to boss before teleport
+        if (fireballPointsRoot != null)
+            fireballPointsRoot.SetParent(transform, true);
+
+        // Move boss
         transform.position = targetPosition;
 
-        // Flip rotation each teleport
+
+
+        // Move side teleport points to match boss position (if needed)
+        if (sideTeleportPointsRoot != null)
+            sideTeleportPointsRoot.position = targetPosition;
+
+        // Flip facing each damage-teleport
         if (!rotated)
         {
             transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y + 180f, transform.eulerAngles.z);
@@ -256,52 +359,54 @@ public class GoblinShamanBoss : MonoBehaviour
         }
 
         atFront = !atFront;
+        // After teleport, reset fireball points local X and unparent
+        if (fireballPointsRoot != null)
+        {
+            Vector3 localPos = fireballPointsRoot.localPosition;
+            localPos.x = 0f;
+            fireballPointsRoot.localPosition = localPos;
+            fireballPointsRoot.SetParent(null, true);
+        }
+
         StartCoroutine(TeleportCooldown());
     }
 
-    /// <summary>
-    /// Cooldown after teleport before boss can shoot again.
-    /// </summary>
     IEnumerator TeleportCooldown()
     {
         yield return new WaitForSeconds(0.5f);
         canShoot = true;
+        isHitTeleporting = false;
 
-        // Re-enable colliders after cooldown
-        if (hitboxCollider != null) hitboxCollider.enabled = true;
-        if (damageCollider != null) damageCollider.enabled = true;
+        if (hitboxCollider) hitboxCollider.enabled = true;
+        if (damageCollider) damageCollider.enabled = true;
     }
 
-    /// <summary>
-    /// Handles boss death, disables itself, and notifies the game manager.
-    /// </summary>
     void Die()
     {
-        if (animator != null)
-            animator.speed = originalAnimatorSpeed;
+        if (animator) animator.speed = originalAnimatorSpeed;
         Destroy(gameObject);
         GameManager.Instance.BossDefeated();
     }
 
-    /// <summary>
-    /// Destroys the boss object (for reset or cleanup).
-    /// </summary>
     public void ResetBoss()
     {
-        Destroy(gameObject);
+        // If you reuse the object via pooling, reset flags:
+        laneRoutineStarted = false;
+        isHitTeleporting = false;
+        rotated = false;
+        atFront = true;
+        canShoot = true;
+        currentHitPoints = maxHitPoints;
+        if (animator) animator.speed = originalAnimatorSpeed;
+        Destroy(gameObject); // your original behavior
     }
 
-    /// <summary>
-    /// Plays a teleport effect at the given position.
-    /// </summary>
     public void PlayTeleportEffect(Vector3 position)
     {
         if (teleportEffectPrefab == null) return;
 
-        position.y = 2.5f; // Set Y-axis to 3
+        position.y = 2.5f; // keep your VFX height
         GameObject effect = Instantiate(teleportEffectPrefab, position, Quaternion.identity);
-
-        // Always instantiate and destroy after 2 seconds, regardless of particle system
         Destroy(effect, 2f);
     }
 
@@ -311,6 +416,17 @@ public class GoblinShamanBoss : MonoBehaviour
         Die();
     }
 
-    
+    // Shared helper for lateral lane hops (no collider disable; optional flip)
+    private IEnumerator TeleportToPoint(Vector3 targetPosition, bool flipYRotation)
+    {
+        PlayTeleportEffect(transform.position);
+        PlayTeleportEffect(targetPosition);
 
-   }
+        yield return new WaitForSeconds(0.25f); // snappier than damage-teleport
+
+        transform.position = targetPosition;
+
+        if (flipYRotation)
+            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y + 180f, transform.eulerAngles.z);
+    }
+}

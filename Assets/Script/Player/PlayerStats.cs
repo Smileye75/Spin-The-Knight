@@ -44,6 +44,11 @@ public class PlayerStats : MonoBehaviour
 
     [SerializeField] private ParticleSystem healEffect;             // Effect to play when healing
 
+    [Header("Stamina")]
+    public int maxStamina = 3;
+    public int currentStamina;
+    public int staminaCost = 1; // How much stamina each attack costs
+
     // Prevents re-entrant death handling
     private bool isDying = false;
 
@@ -53,6 +58,8 @@ public class PlayerStats : MonoBehaviour
     public void Awake()
     {
         currentHealth = maxHealth;
+        currentStamina = maxStamina;
+        playerUI?.UpdateStamina(currentStamina, maxStamina); // Update stamina UI
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
@@ -90,9 +97,9 @@ public class PlayerStats : MonoBehaviour
         if (animator != null)
             animator.SetTrigger("Hit");
 
-        if (playerStateMachine.CurrentState is PlayerShieldState)
+        if (playerStateMachine.CurrentState is PlayerShieldState && currentStamina > 0)
         {
-            // Optionally play a block effect or sound here
+            ConsumeStamina(staminaCost);
             Debug.Log("Attack blocked by shield!");
             return; // Nullify damage
         }
@@ -175,14 +182,15 @@ public class PlayerStats : MonoBehaviour
     }
 
     /// <summary>
-    /// Heals the player by the given amount, plays heal effect, and updates UI.
+    /// Restores the player's health and stamina to maximum, plays rest effect, and updates UI.
     /// </summary>
-    /// <param name="amount">Amount to heal.</param>
-    public void Heal(int amount)
+    public void Rest()
     {
-        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
         healEffect.Play();
         playerUI?.UpdateHearts(currentHealth);
+        playerUI?.UpdateStamina(currentStamina, maxStamina);
     }
 
     /// <summary>
@@ -247,4 +255,20 @@ public class PlayerStats : MonoBehaviour
             playerUI.UpdateCoins(coins);
         }
     }
+
+    public bool ConsumeStamina(int amount)
+    {
+        if (currentStamina >= amount)
+        {
+            currentStamina -= amount;
+            playerUI?.UpdateStamina(currentStamina, maxStamina); // Update stamina UI
+            return true;
+        }
+        else
+        {
+            Debug.Log("Not enough stamina to attack!");
+            return false;
+        }
+    }
+
 }
