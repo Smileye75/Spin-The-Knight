@@ -30,6 +30,7 @@ public class GoblinShamanBoss : MonoBehaviour
     [Header("Teleport Effect Settings")]
     [SerializeField] private GameObject teleportEffectPrefab;
     [SerializeField] private GameObject explosionEffectPrefab;
+    [SerializeField] private BossPlatformsSimple bossPlatforms;
 
     public int damage = 1;
 
@@ -91,6 +92,8 @@ public class GoblinShamanBoss : MonoBehaviour
         StartCoroutine(ShootRoutine());
         laneRoutineStarted = true;
         StartCoroutine(LaneTeleportRoutine());
+        if(!bossPlatforms)
+            bossPlatforms = FindObjectOfType<BossPlatformsSimple>();
 
     }
 
@@ -112,6 +115,8 @@ public class GoblinShamanBoss : MonoBehaviour
     public void TriggerDizzy(float duration)
     {
         if (isDizzy) return; // Prevent stacking
+        if (bossPlatforms != null)
+            bossPlatforms.RaiseRandomPlatforms();
         isDizzy = true;
         dizzyTimer = duration;
         canShoot = false; // Stop shooting/moving
@@ -262,14 +267,17 @@ public class GoblinShamanBoss : MonoBehaviour
     {
         if (currentHitPoints <= 0) return;
         currentHitPoints -= amount;
-        
+
         if (isDizzy)
         {
             isDizzy = false;
             canShoot = true;
             if (animator) animator.SetBool("IsDizzy", false); // End dizzy
         }
-
+        
+        if (bossPlatforms != null)
+            bossPlatforms.ResetAll();
+    
 
         if (hitboxCollider) hitboxCollider.enabled = false;
         if (damageCollider) damageCollider.enabled = false;

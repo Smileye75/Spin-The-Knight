@@ -11623,14 +11623,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   landingFeedback: {fileID: 2545428971674137674}
   jumpingFeedback: {fileID: 4898867262802508339}
-  playerStats: {fileID: 0}
+  playerStats: {fileID: 6565753603677489317}
   inputReader: {fileID: 966129447289812405}
   characterController: {fileID: 4328376877549727386}
   animator: {fileID: 7985376938511219695}
   mainCamera: {fileID: 0}
   forceReceiver: {fileID: 8852573305649902521}
   weaponDamage: {fileID: 7661886585986666648}
-  targetScale: 2
+  targetScale: 1.5
   lerpSpeed: 5
   attackSpinCount: 3
   attackAnimSpeed: 1.5
@@ -17922,7 +17922,7 @@ MonoBehaviour:
   damageAmount: 1
   hitEffect: {fileID: 3176652519396064368, guid: 7a8298bfdd1537f4bb6c7cc002021c46, type: 3}
   weaponTransform: {fileID: 7851611207052795093}
-  playerStats: {fileID: 0}
+  playerStats: {fileID: 6565753603677489317}
 --- !u!65 &8254348576057264086
 BoxCollider:
   m_ObjectHideFlags: 0
