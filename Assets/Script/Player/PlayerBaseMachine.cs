@@ -10,8 +10,6 @@ using UnityEngine;
 public abstract class PlayerBaseMachine : State
 {
     protected PlayerStateMachine stateMachine; // Reference to the main player state machine
-    private float attackTimer = 0f;            // Timer to manage attack cooldown
-
     /// <summary>
     /// Constructor: stores reference to the main player state machine.
     /// </summary>
@@ -67,19 +65,6 @@ public abstract class PlayerBaseMachine : State
             Quaternion.LookRotation(movement),
             stateMachine.rotationSpeed * Time.deltaTime
         );
-    }
-
-    /// <summary>
-    /// Updates the attack cooldown timer.
-    /// Call this in Tick() of any state that allows attacking.
-    /// </summary>
-    /// <param name="deltaTime">Time since last frame.</param>
-    protected void UpdateAttackCooldown(float deltaTime)
-    {
-        if (attackTimer > 0)
-        {
-            attackTimer -= deltaTime;
-        }
     }
 
     /// <summary>

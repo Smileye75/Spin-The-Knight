@@ -1,6 +1,6 @@
 using UnityEngine;
 using MoreMountains.Feedbacks;
-using Febucci.UI;          // for TextAnimator_TMP
+using Febucci.UI;         
 using Febucci.UI.Core;
 
 /// <summary>

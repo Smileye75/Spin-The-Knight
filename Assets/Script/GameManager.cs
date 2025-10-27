@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
     [Header("Default Spawn")]
     [SerializeField] private Transform defaultSpawnPoint; // Assign in Inspector
 
+    public LoadingScreen loadingScreen; // Reference to loading screen
+
     // Events for UI and other systems to subscribe to
     public event Action OnGameOver;
     public event Action OnVictory;
@@ -149,9 +151,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void PlayGame()
     {
-        Time.timeScale = 1; // Ensure game is unpaused
-        SceneManager.LoadScene("TheVillageOutskirt");
-        StartCoroutine(WaitAndSetDefaultSpawn());
+        Time.timeScale = 1;
+        StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
+    }
+
+    public IEnumerator SceneTransition()
+    {
+        if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeIn(1f));   
+        yield return new WaitForSeconds(1.5f);
     }
 
     /// <summary>
@@ -167,10 +174,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void LoadMainMenu()
     {
-        Time.timeScale = 1; // Ensure game is unpaused
-        SceneManager.LoadScene("StartMenu");
-        StartCoroutine(WaitAndSetDefaultSpawn());
-        menuUI?.HideAllMenus(); // Hide all UI menus
+        Time.timeScale = 1;
+        StartCoroutine(LoadSceneWithFade("StartMenu"));
+        menuUI?.HideAllMenus();
     }
 
     /// <summary>
@@ -219,5 +225,34 @@ public class GameManager : MonoBehaviour
 
         if (menuUI == null)
             menuUI = FindObjectOfType<MenuUI>();
+    }
+
+    public IEnumerator LoadSceneWithFade(string sceneName, float fadeDuration = 1f)
+    {
+        if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeIn(fadeDuration));
+
+        // Start loading scene asynchronously
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        asyncLoad.allowSceneActivation = false;
+
+        // Wait until the scene is loaded
+        while (!asyncLoad.isDone)
+        {
+            if (asyncLoad.progress >= 0.9f)
+            {
+                // Scene is ready, activate it
+                asyncLoad.allowSceneActivation = true;
+            }
+            yield return null;
+        }
+
+        // Wait one frame for scene objects to initialize
+        yield return null;
+
+        // Assign references and set up player/UI as before
+        AssignReferences();
+        SetPlayerToDefaultSpawn();
+
+        if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeOut(fadeDuration));
     }
 }

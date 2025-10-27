@@ -39,6 +39,7 @@ public class PlayerStats : MonoBehaviour
     [Header("Death Settings")]
     [Tooltip("How long to wait (unscaled seconds) before respawning after death.")]
     [SerializeField] private float deathDelay = 2f;                 // Delay before respawn
+    [SerializeField] private LoadingScreen loadingScreen;           // Reference to loading screen for respawn
     [Tooltip("Animator bool used by the death state.")]
     [SerializeField] private string deathBoolName = "Dead";         // Animator parameter for death
 
@@ -131,26 +132,36 @@ public class PlayerStats : MonoBehaviour
         if (isDying) yield break;
         isDying = true;
 
-        if (playerStateMachine != null)
-            playerStateMachine.EndAttack();
-
+        playerStateMachine?.EndAttack();
         if (animator) animator.SetBool(deathBoolName, true);
         if (playerStateMachine) playerStateMachine.enabled = false;
         if (playerController) playerController.enabled = false;
+        if (inputReader) inputReader.enabled = false; // Disable input
 
         yield return new WaitForSecondsRealtime(deathDelay);
+
+        if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeIn(1f));
+
         LoseLife();
+        yield return new WaitForSeconds(2f);
 
-        if (animator) animator.SetBool(deathBoolName, false);
-        if (playerStateMachine) playerStateMachine.enabled = true;
-        if (playerController) playerController.enabled = true;
-
-        // Always call RespawnPlayer, fallback to default if no checkpoint
         Vector3 respawnPos = Checkpoint.HasActive ? Checkpoint.ActiveRespawnPosition : Vector3.zero;
         GameManager.Instance.RespawnPlayer(respawnPos);
+        Rest();
+
+        if (animator) animator.SetBool(deathBoolName, false);
+        yield return new WaitForSeconds(2f);
+        if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeOut(1f));
+        if (playerStateMachine) playerStateMachine.enabled = true;
+        if (playerController) playerController.enabled = true;
+        if (inputReader) inputReader.enabled = true; // Re-enable input
 
         isDying = false;
+
     }
+
+
+
 
     /// <summary>
     /// Plays damage feedback and makes the player invulnerable for a short duration.

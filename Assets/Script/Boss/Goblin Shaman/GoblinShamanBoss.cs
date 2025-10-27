@@ -62,9 +62,7 @@ public class GoblinShamanBoss : MonoBehaviour
     [SerializeField] private int[] phase3LaneOrder = { 2, 1, 0, 1, 2, 1, 0 };
     private Transform[] teleportPoints;
     private int laneOrderIndex = -1;
-    private bool isHitTeleporting = false;   // guards conflict with damage-teleport
-    private bool laneRoutineStarted = false; // starts at Phase 2 (first time boss is hit)
-    
+    private bool isHitTeleporting = false;   // guards conflict with damage-teleport    
     [SerializeField] private float phase2ShootInterval = 1.2f;
     [SerializeField] private float phase3ShootInterval = 0.5f;
 
@@ -90,7 +88,6 @@ public class GoblinShamanBoss : MonoBehaviour
         // Start in Center lane if assigned
         if (teleportCenter != null) transform.position = teleportCenter.position;
         StartCoroutine(ShootRoutine());
-        laneRoutineStarted = true;
         StartCoroutine(LaneTeleportRoutine());
         if(!bossPlatforms)
             bossPlatforms = FindObjectOfType<BossPlatformsSimple>();
@@ -399,13 +396,14 @@ public class GoblinShamanBoss : MonoBehaviour
     public void ResetBoss()
     {
         // If you reuse the object via pooling, reset flags:
-        laneRoutineStarted = false;
         isHitTeleporting = false;
         rotated = false;
         atFront = true;
         canShoot = true;
         currentHitPoints = maxHitPoints;
         if (animator) animator.speed = originalAnimatorSpeed;
+        if (bossPlatforms != null)
+            bossPlatforms.ResetAll();
         Destroy(gameObject); // your original behavior
     }
 

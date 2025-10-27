@@ -59,7 +59,8 @@ public class PlayerMoveState : PlayerBaseMachine
         FaceMovementDirection(movement);
 
         // Update attack cooldown timer
-        UpdateAttackCooldown(deltaTime);
+    if (stateMachine.attackCooldownTimer > 0f)
+        stateMachine.attackCooldownTimer -= deltaTime;
 
 
     }
@@ -112,11 +113,16 @@ public class PlayerMoveState : PlayerBaseMachine
     /// </summary>
     private void OnAttack()
     {
+        if (stateMachine.attackCooldownTimer > 0f)
+            return; // Still on cooldown
 
-            stateMachine.SwitchState(new PlayerAttackState(stateMachine));
+        stateMachine.SwitchState(new PlayerAttackState(stateMachine));
+        stateMachine.attackCooldownTimer = stateMachine.attackCooldown; // Reset cooldown
     }
     private void OnShield()
     {
+        if (!stateMachine.shieldUnlocked)
+            return;
         stateMachine.SwitchState(new PlayerShieldState(stateMachine));
     }
 }

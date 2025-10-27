@@ -9,6 +9,7 @@ using UnityEngine;
 /// </summary>
 public class EnemySpawner : MonoBehaviour
 {
+    [SerializeField] private PlayerStateMachine stateMachine;
     [Header("Spawning")]
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private float spawnInterval = 2f;
@@ -74,6 +75,7 @@ public class EnemySpawner : MonoBehaviour
             {
                 rockVFX.Play();
             }
+            stateMachine.UnlockShield();
 
             wallObject.SetActive(false);
             wallObject = null;

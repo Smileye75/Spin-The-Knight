@@ -306,8 +306,8 @@ Material:
     - _FrostingColour: {r: 1, g: 1, b: 1, a: 0}
     - _GustHighlight: {r: 0.5660378, g: 0.5660378, b: 0.5660378, a: 0}
     - _GustSmoothing: {r: 0.5, g: 0.5, b: 0.5, a: 0}
-    - _LeafBaseColour: {r: 0.100629, g: 0.2830189, b: 0, a: 0}
-    - _LeafNoiseColour: {r: 0.20000002, g: 0.3529412, b: 0.09019608, a: 1}
+    - _LeafBaseColour: {r: 0.26913002, g: 0.745283, b: 0, a: 0}
+    - _LeafNoiseColour: {r: 0.16558716, g: 0.3962264, b: 0, a: 1}
     - _LeafNoiseLargeColour: {r: 0.07843138, g: 0.02015968, b: 0, a: 0}
     - _LeafTint: {r: 0.07843138, g: 0.02015968, b: 0, a: 0}
     - _SnowColour: {r: 1, g: 1, b: 1, a: 0}
