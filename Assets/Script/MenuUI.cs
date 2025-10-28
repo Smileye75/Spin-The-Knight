@@ -15,8 +15,8 @@ public class MenuUI : MonoBehaviour
     [SerializeField] public GameObject playerUI;        // Main player HUD
     [SerializeField] private GameObject victoryUI;      // Victory screen panel
     [SerializeField] private GameObject gameOverUI;     // Game over screen panel
-
     [SerializeField] private GameObject mainMenuUI;      // Main menu screen panel
+    [SerializeField] private GameObject loadButton;       // Load button in main menu
 
     private InputReader inputReader;                    // Reference to input handler
 
@@ -38,7 +38,7 @@ public class MenuUI : MonoBehaviour
         // Optional: Listen for scene changes to update mainMenuUI
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
-
+ 
     private void OnDestroy()
     {
         if (GameManager.Instance != null)
@@ -79,6 +79,7 @@ public class MenuUI : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         UpdateMainMenuUIVisibility();
+        ReSubscribeEvents();
     }
 
     /// <summary>
@@ -186,5 +187,23 @@ public class MenuUI : MonoBehaviour
     {
         if (inputReader != null)
             inputReader.SetPauseEnabled(enabled);
+    }
+
+    private void Update()
+    {
+        if (SceneManager.GetActiveScene().name == "StartMenu")
+        {
+            // Check if the game has save data and show/hide the load button accordingly
+            if (GameManager.Instance.HasSaveData())
+            {
+                // Show load button
+                loadButton.SetActive(true);
+            }
+            else
+            {
+                // Hide load button
+                loadButton.SetActive(false);
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ Material:
   - _FLATCOLOURSWITCH_ON
   - _FROSTINGSWITCH_ON
   - _LEAFFLATCOLOURSWITCH_ON
+  - _RECEIVESHADOWS_OFF
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -292,12 +293,12 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Emissive2Colour: {r: 0, g: 0, b: 0, a: 0}
     - _EmissiveColour: {r: 0, g: 0, b: 0, a: 0}
-    - _FrostingColour: {r: 0.19742212, g: 0.8018868, b: 0, a: 1}
-    - _GustHighlight: {r: 0.1132075, g: 0.1132075, b: 0.1132075, a: 0}
+    - _FrostingColour: {r: 0.10173883, g: 0.41509432, b: 0, a: 1}
+    - _GustHighlight: {r: 0.064633936, g: 0.2735849, b: 0.009033469, a: 0}
     - _GustSmoothing: {r: 0.5, g: 0.5, b: 0.5, a: 0}
     - _LeafBaseColour: {r: 0.027457006, g: 0.254717, b: 0, a: 0}
-    - _LeafNoiseColour: {r: 0.044187233, g: 0.5754717, b: 0, a: 0}
-    - _LeafNoiseLargeColour: {r: 0.06756917, g: 0.8962264, b: 0, a: 0}
+    - _LeafNoiseColour: {r: 0, g: 0.4433962, b: 0.0018951329, a: 0}
+    - _LeafNoiseLargeColour: {r: 0.0427206, g: 0.4745098, b: 0, a: 0}
     - _LeafTint: {r: 0.07843138, g: 0.02015968, b: 0, a: 0}
     - _SnowColour: {r: 0.7718434, g: 1, b: 0.1839623, a: 0}
     - _Tint: {r: 0, g: 0, b: 0, a: 0}

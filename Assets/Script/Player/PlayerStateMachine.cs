@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Feedbacks;
 using UnityEngine;
-using ES3Types; 
+using ES3Types;
+using UnityEngine.SceneManagement; // Added for scene management
 
 /// <summary>
 /// PlayerStateMachine is the main state machine for player logic and transitions.
@@ -58,7 +59,7 @@ public class PlayerStateMachine : StateMachine
     public float lerpSpeed = 2f;
     public int attackSpinCount = 3;
     public float attackAnimSpeed = 1.5f;
-    public float attackCooldown = 2f; // seconds
+    public float attackCooldown = 0.5f;
     public float attackCooldownTimer = 0f;
 
 
@@ -100,8 +101,8 @@ public class PlayerStateMachine : StateMachine
     public PlayerStomping playerStomping; // Reference to PlayerStomping component
     public PlayerBlockBump playerBlockBump; // Reference to PlayerBlockBump component
 
-    public GameObject shieldObject;
-    public GameObject staminaShieldUI;
+    public static bool HasLoadedPlayerData { get; private set; } = false;
+
 
     // Calculated roll speed (hidden from Inspector)
     [HideInInspector] public float rollSpeed;
@@ -113,14 +114,6 @@ public class PlayerStateMachine : StateMachine
     [HideInInspector] public float lastRollTime = -Mathf.Infinity; // Last time player rolled
     public bool hasPlayedSpinJump = false; // Used to prevent repeated jump animation triggers
     public bool isAirRotationLocked = false; // Air rotation lock flag
-
-    [Header("Player Movement Rewards")]
-    public bool shieldUnlocked = false;
-    public bool heavyAttackUnlocked = false;
-    public bool jumpAttackUnlocked = false;
-    public bool rollJumpUnlocked = false;
-
-
 
     /// <summary>
     /// The current player state (move, attack, air, roll, etc.).
@@ -158,29 +151,15 @@ public class PlayerStateMachine : StateMachine
 
         // Calculate roll speed based on distance and duration
         rollSpeed = rollDistance / rollDuration;
-
-        // Lock and hide cursor for gameplay
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        if (staminaShieldUI == null)
-        {
-            GameObject staminaObj = GameObject.Find("Player Stamina");
-            if (staminaObj != null)
-                staminaShieldUI = staminaObj;
-        }
-        
-        if (shieldObject != null && !shieldUnlocked)
-            shieldObject.SetActive(false);
-        if (staminaShieldUI != null && !shieldUnlocked)
-            staminaShieldUI.SetActive(false);
-
         // Start in movement state
         SwitchState(new PlayerMoveState(this));
     }
 
     private void Awake()
     {
+
         if (animator != null)
             animator.SetFloat("AttackSpeed", attackAnimSpeed);
     }
@@ -195,54 +174,14 @@ public class PlayerStateMachine : StateMachine
         base.SwitchState(newState); // Call base logic if needed
     }
 
-    public void UnlockShield()
+    private void Update()
     {
-        shieldUnlocked = true;
-        if (shieldObject != null)
-            shieldObject.SetActive(true);
-        if (staminaShieldUI != null)
-            staminaShieldUI.SetActive(true);
-    }
-    public void SavePlayerData()
-    {
-        PlayerSaveData data = new PlayerSaveData
-        {
-            coins = playerStats.coins,
-            lives = playerStats.lives,
-            shieldUnlocked = shieldUnlocked,
-            heavyAttackUnlocked = heavyAttackUnlocked,
-            jumpAttackUnlocked = jumpAttackUnlocked,
-            rollJumpUnlocked = rollJumpUnlocked
-        };
-        ES3.Save("PlayerSaveData", data);
-    }
-    public void LoadPlayerData()
-    {
-        if (ES3.KeyExists("PlayerSaveData"))
-        {
-            PlayerSaveData data = ES3.Load<PlayerSaveData>("PlayerSaveData");
-            playerStats.coins = data.coins;
-            playerStats.lives = data.lives;
-            shieldUnlocked = data.shieldUnlocked;
-            heavyAttackUnlocked = data.heavyAttackUnlocked;
-            jumpAttackUnlocked = data.jumpAttackUnlocked;
-            rollJumpUnlocked = data.rollJumpUnlocked;
-        }
-    }
-    public void ResetPlayerData()
-    {
-        // Set default values
-        playerStats.coins = 0;
-        playerStats.lives = 3; // or your default starting lives
+        // Always tick down the attack cooldown timer
+        if (attackCooldownTimer > 0f)
+            attackCooldownTimer -= Time.deltaTime;
 
-        shieldUnlocked = false;
-        heavyAttackUnlocked = false;
-        jumpAttackUnlocked = false;
-        rollJumpUnlocked = false;
-
-        // Optionally, reset other stats as needed
-
-        // Save the reset data
-        SavePlayerData();
+        // Forward Tick to current state
+        CurrentState?.Tick(Time.deltaTime);
     }
+
 }

@@ -41,7 +41,8 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
     /// </summary>
     private void OnDestroy()
     {
-        controls.Disable();
+        if (controls != null)
+            controls.Disable();
     }
 
     /// <summary>

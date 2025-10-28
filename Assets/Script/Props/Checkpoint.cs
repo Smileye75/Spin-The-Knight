@@ -111,6 +111,8 @@ public class Checkpoint : MonoBehaviour
             CancelInvoke(nameof(HideCheckpointText));
             Invoke(nameof(HideCheckpointText), showSeconds);
         }
+        GameManager.Instance?.SaveGame();
+
     }
 
     /// <summary>

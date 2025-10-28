@@ -11604,11 +11604,20 @@ MonoBehaviour:
   playerController: {fileID: 0}
   inputReader: {fileID: 0}
   deathDelay: 2
+  loadingScreen: {fileID: 0}
   deathBoolName: Dead
   healEffect: {fileID: 4380663536471967004}
   maxStamina: 3
   currentStamina: 0
   staminaCost: 1
+  staminaRegenDelay: 0.5
+  staminaRegenRate: 0.2
+  shieldUnlocked: 0
+  heavyAttackUnlocked: 0
+  jumpAttackUnlocked: 0
+  rollJumpUnlocked: 0
+  shieldObject: {fileID: 2789008608620646866}
+  staminaUI: {fileID: 0}
 --- !u!114 &3064733659860585907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11634,6 +11643,8 @@ MonoBehaviour:
   lerpSpeed: 5
   attackSpinCount: 3
   attackAnimSpeed: 1.5
+  attackCooldown: 0.5
+  attackCooldownTimer: 0
   movementSpeed: 6
   rotationSpeed: 25
   jumpBufferTime: 0.5
@@ -11646,7 +11657,6 @@ MonoBehaviour:
   canDoubleJump: 1
   playerStomping: {fileID: 6545793978744606386}
   playerBlockBump: {fileID: 6137944137004504176}
-  shieldObject: {fileID: 2789008608620646866}
   rollSpeed: 0
   lastGroundedTime: 0
   jumpForce: 5

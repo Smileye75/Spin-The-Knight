@@ -27,6 +27,7 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Wall Object")]
     [SerializeField] private GameObject wallObject;          // Wall to deactivate after all enemies are defeated
+    [SerializeField] private SkullGates skullGates;           // Reference to the SkullGates script
 
     [Header("VFX")]
     [SerializeField] private ParticleSystem rockVFX;
@@ -71,14 +72,9 @@ public class EnemySpawner : MonoBehaviour
 
         if (totalSpawned >= maxEnemiesLimit && spawnedEnemies.Count == 0 && wallObject != null)
         {
-            if (rockVFX != null)
-            {
-                rockVFX.Play();
-            }
-            stateMachine.UnlockShield();
+            stateMachine.playerStats.UnlockShield();
+            skullGates.ActivateGate();
 
-            wallObject.SetActive(false);
-            wallObject = null;
         }
     }
 
@@ -90,6 +86,7 @@ public class EnemySpawner : MonoBehaviour
         timeUntilSpawn = spawnInterval;
     }
 
+    
     /// <summary>
     /// Spawns a new enemy at a random assigned spawn point, and reduces spawn interval every 5 enenmy spawns.
     /// </summary>
@@ -124,6 +121,16 @@ public class EnemySpawner : MonoBehaviour
             SetTimeUntilSpawn();
             if (triggerZone != null)
                 triggerZone.enabled = false; // Prevent retriggering
+        }
+        if(other.CompareTag("Projectile"))
+        {
+            if (rockVFX != null)
+            {
+                rockVFX.Play();
+            }
+            skullGates.DestroyGate();
+            wallObject.SetActive(false);
+            wallObject = null;
         }
     }
 }

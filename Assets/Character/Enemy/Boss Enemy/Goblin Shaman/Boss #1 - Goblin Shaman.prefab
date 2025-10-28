@@ -2599,7 +2599,7 @@ MonoBehaviour:
   - {fileID: 1806623610298253394}
   - {fileID: 6930202962380698983}
   - {fileID: 5770566999563859741}
-  fireballSpeed: 10
+  fireballSpeed: 13
   shootInterval: 2
   maxHitPoints: 3
   teleportFront: {fileID: 3667987965801407040}
@@ -2615,6 +2615,7 @@ MonoBehaviour:
   magicCircleShrinkDuration: 0.3
   teleportEffectPrefab: {fileID: 7022777940026708960, guid: 8597a586540412e4bb73d4b8f20531db, type: 3}
   explosionEffectPrefab: {fileID: 6981941031284743971, guid: f818f29bd494eb443b5e4cc99c39a9a5, type: 3}
+  bossPlatforms: {fileID: 0}
   damage: 1
   shotsBeforeRest: 5
   restDuration: 0.5

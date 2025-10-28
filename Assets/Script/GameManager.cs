@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
     public event Action<Vector3> OnRespawn;
     public event Action OnBossDefeated;
 
+    private PlayerSaveData pendingLoadData; // Add this field to GameManager
+
     /// <summary>
     /// Ensures only one GameManager exists and persists across scenes.
     /// Assigns references to player and UI.
@@ -149,15 +151,16 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Loads the main game scene ("TheVillageOutskirt") and resets spawn.
     /// </summary>
-    public void PlayGame()
+    public void NewGame()
     {
         Time.timeScale = 1;
+        ResetGameData();
         StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
     }
 
     public IEnumerator SceneTransition()
     {
-        if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeIn(1f));   
+        if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeIn(1f));
         yield return new WaitForSeconds(1.5f);
     }
 
@@ -185,6 +188,7 @@ public class GameManager : MonoBehaviour
     public void BossDefeated()
     {
         Debug.Log("Boss defeated!");
+        SaveGame();
         OnBossDefeated?.Invoke();
         Victory(); // Triggers victory flow
     }
@@ -231,28 +235,121 @@ public class GameManager : MonoBehaviour
     {
         if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeIn(fadeDuration));
 
-        // Start loading scene asynchronously
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         asyncLoad.allowSceneActivation = false;
 
-        // Wait until the scene is loaded
         while (!asyncLoad.isDone)
         {
             if (asyncLoad.progress >= 0.9f)
             {
-                // Scene is ready, activate it
                 asyncLoad.allowSceneActivation = true;
             }
             yield return null;
         }
 
-        // Wait one frame for scene objects to initialize
         yield return null;
 
-        // Assign references and set up player/UI as before
         AssignReferences();
         SetPlayerToDefaultSpawn();
 
-        if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeOut(fadeDuration));
+        if (player != null)
+        {
+            var stats = player.GetComponent<PlayerStats>();
+            if (stats != null)
+                stats.UpdateUI();
+        }
+
+        // Always fade out if no save data or after reset
+        if (!HasSaveData() && loadingScreen)
+            yield return StartCoroutine(loadingScreen.FadeOut(fadeDuration));
+
+        // Always fade out at the end
+        if (loadingScreen)
+            yield return StartCoroutine(loadingScreen.FadeOut(1.5f));
+    }
+
+    public void SaveGame()
+    {
+        if (player == null) player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
+
+        var stats = player.GetComponent<PlayerStats>();
+        if (stats != null)
+            SaveManager.Instance.SaveData(stats);
+    }
+
+
+    public void LoadGame()
+    {
+        // Load data BEFORE scene transition
+        pendingLoadData = SaveManager.Instance.LoadData();
+        StartCoroutine(LoadGameRoutine());
+    }
+
+    private IEnumerator LoadGameRoutine()
+    {
+        yield return StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
+
+        PlayerStats stats = null;
+        float timeout = 5f;
+        bool loadedData = false;
+
+        while (stats == null && timeout > 0f)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+                stats = player.GetComponent<PlayerStats>();
+
+            timeout -= Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (stats != null && pendingLoadData != null)
+        {
+            stats.coins = pendingLoadData.coins;
+            stats.lives = pendingLoadData.lives;
+            stats.shieldUnlocked = pendingLoadData.shieldUnlocked;
+            stats.heavyAttackUnlocked = pendingLoadData.heavyAttackUnlocked;
+            stats.jumpAttackUnlocked = pendingLoadData.jumpAttackUnlocked;
+            stats.rollJumpUnlocked = pendingLoadData.rollJumpUnlocked;
+
+            stats.currentHealth = stats.maxHealth;
+            stats.currentStamina = stats.maxStamina;
+
+            if (stats.shieldUnlocked) stats.UnlockShield();
+            else if (stats.shieldObject) stats.shieldObject.SetActive(false);
+
+            stats.playerUI?.UpdateHearts(stats.currentHealth);
+            stats.playerUI?.UpdateLives(stats.lives);
+            stats.playerUI?.UpdateCoins(stats.coins);
+            stats.playerUI?.UpdateStamina(stats.currentStamina, stats.maxStamina);
+
+            Debug.Log("✅ Player progress loaded after scene transition!");
+            loadedData = true;
+        }
+
+        // If no data was loaded, or after reset, ensure fade out
+        if (!loadedData && loadingScreen)
+            yield return StartCoroutine(loadingScreen.FadeOut(1f));
+    }
+
+    public void ResetGameData()
+    {
+        SaveManager.Instance.DeleteSave();
+
+        if (player == null) player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
+
+        var stats = player.GetComponent<PlayerStats>();
+        if (stats != null)
+            stats.ResetPlayerProgress();
+
+        // Optionally fade out if loading screen is active
+        if (loadingScreen) StartCoroutine(loadingScreen.FadeOut(1f));
+    }
+
+    public bool HasSaveData()
+    {
+        return SaveManager.Instance.HasSave();
     }
 }

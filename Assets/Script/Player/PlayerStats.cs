@@ -15,7 +15,7 @@ public class PlayerStats : MonoBehaviour
     public int coins = 0;                      // Number of coins collected
     public int lives = 3;                      // Number of lives remaining
 
-    [SerializeField] private PlayerUI playerUI;        // Reference to the UI script for updating hearts, coins, lives
+    [SerializeField] public PlayerUI playerUI;        // Reference to the UI script for updating hearts, coins, lives
 
     // Event for other systems to listen for life loss
     public static event System.Action<GameObject> OnPlayerLostLife;
@@ -50,18 +50,44 @@ public class PlayerStats : MonoBehaviour
     public int currentStamina;
     public int staminaCost = 1; // How much stamina each attack costs
 
+    [Header("Stamina Regen")]
+    [SerializeField] private float staminaRegenDelay = 0.5f; // Delay before regen starts
+    [SerializeField] private float staminaRegenRate = 0.2f;    // Stamina points per second
+
+    private float smoothStamina;
+    private Coroutine staminaRegenCoroutine;
+
     // Prevents re-entrant death handling
     private bool isDying = false;
+
+    [Header("Player Movement Rewards")]
+    public bool shieldUnlocked = false;
+        
+    public bool heavyAttackUnlocked = false;
+        
+    public bool jumpAttackUnlocked = false;
+        
+    public bool rollJumpUnlocked = false;
+
+    public GameObject shieldObject;
+        
+    public GameObject staminaUI;
+
+    public static bool IsLoadingFromSave = false;
+        
 
     /// <summary>
     /// Initializes health and references on Awake.
     /// </summary>
     public void Awake()
     {
-        currentHealth = maxHealth;
-        currentStamina = maxStamina;
-        playerUI?.UpdateStamina(currentStamina, maxStamina); // Update stamina UI
-
+        if (!IsLoadingFromSave)
+        {
+            currentHealth = maxHealth;
+            currentStamina = maxStamina;
+            playerUI?.UpdateStamina(currentStamina, maxStamina); // Update stamina UI
+        }
+    
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
 
@@ -78,14 +104,37 @@ public class PlayerStats : MonoBehaviour
             playerRenderer = GetComponentInChildren<Renderer>();
         if (playerRenderer != null)
             originalMaterial = playerRenderer.material;
+        if (!staminaUI && playerUI != null)
+            staminaUI = playerUI.staminaShieldUI;
+
     }
 
     public void Update()
     {
-        if (playerUI == null)
-            playerUI = FindObjectOfType<PlayerUI>(true);
+        if (playerUI == null || loadingScreen == null || staminaUI == null)
+        {
+            var persistentRoot = FindObjectOfType<PersistentUIRoot>();
+            if (persistentRoot != null)
+            {
+                if (playerUI == null)
+                    playerUI = persistentRoot.GetComponentInChildren<PlayerUI>(true);
+                if (loadingScreen == null)
+                    loadingScreen = persistentRoot.GetComponentInChildren<LoadingScreen>(true);
+                // Assign staminaUI after playerUI is found
+                if (staminaUI == null && playerUI != null)
+                    staminaUI = playerUI.staminaShieldUI;
+                if(!shieldUnlocked && shieldObject != null)
+                {
+                    shieldObject.SetActive(false);
+                    if (staminaUI != null)
+                        staminaUI.SetActive(false);
+                }
+            }
+        }
         else
+        {
             enabled = false; // Disables Update() from running again
+        }
     }
 
     /// <summary>
@@ -160,7 +209,14 @@ public class PlayerStats : MonoBehaviour
 
     }
 
-
+    public void UnlockShield()
+    {
+        shieldUnlocked = true;
+        if (shieldObject != null)
+            shieldObject.SetActive(true);
+        if (staminaUI != null)
+            staminaUI.SetActive(true);
+    }
 
 
     /// <summary>
@@ -272,7 +328,14 @@ public class PlayerStats : MonoBehaviour
         if (currentStamina >= amount)
         {
             currentStamina -= amount;
-            playerUI?.UpdateStamina(currentStamina, maxStamina); // Update stamina UI
+            smoothStamina = currentStamina; // Sync float to int
+            playerUI?.UpdateStamina(currentStamina, maxStamina);
+
+            // Start smooth regen
+            if (staminaRegenCoroutine != null)
+                StopCoroutine(staminaRegenCoroutine);
+            staminaRegenCoroutine = StartCoroutine(SmoothStaminaRegen());
+
             return true;
         }
         else
@@ -280,6 +343,97 @@ public class PlayerStats : MonoBehaviour
             Debug.Log("Not enough stamina to attack!");
             return false;
         }
+    }
+
+    private IEnumerator SmoothStaminaRegen()
+    {
+        yield return new WaitForSeconds(staminaRegenDelay);
+
+        while (smoothStamina < maxStamina)
+        {
+            // Smoothly move stamina towards max
+            smoothStamina = Mathf.MoveTowards(smoothStamina, maxStamina, staminaRegenRate * Time.deltaTime);
+
+            // Update the UI with the smooth value every frame
+            playerUI?.UpdateStaminaSmooth(smoothStamina, maxStamina);
+
+            // Only update int stamina when we cross an integer value
+            int newStamina = Mathf.FloorToInt(smoothStamina);
+            if (newStamina != currentStamina)
+            {
+                currentStamina = newStamina;
+            }
+
+            yield return null;
+        }
+
+        // At the end, ensure the UI is fully filled and synced
+        currentStamina = maxStamina;
+        playerUI?.UpdateStamina(currentStamina, maxStamina);
+
+        staminaRegenCoroutine = null;
+    }
+
+    public void SavePlayerProgress()
+    {
+        SaveManager.Instance.SaveData(this);
+    }
+
+
+    public void LoadPlayerProgress()
+    {
+        PlayerSaveData data = SaveManager.Instance.LoadData();
+        if (data == null) return;
+
+        // Apply saved fields
+        coins = data.coins;
+        lives = data.lives;
+        shieldUnlocked = data.shieldUnlocked;
+        heavyAttackUnlocked = data.heavyAttackUnlocked;
+        jumpAttackUnlocked = data.jumpAttackUnlocked;
+        rollJumpUnlocked = data.rollJumpUnlocked;
+
+        // Reset health & stamina to max
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
+
+        // Apply unlock visuals/UI if needed
+        if (shieldUnlocked) UnlockShield();
+        else if (shieldObject) shieldObject.SetActive(false);
+
+        playerUI?.UpdateHearts(currentHealth);
+        playerUI?.UpdateLives(lives);
+        playerUI?.UpdateCoins(coins);
+        playerUI?.UpdateStamina(currentStamina, maxStamina);
+
+        Debug.Log("✅ Player progress loaded!");
+    }
+    public void ResetPlayerProgress()
+    {
+        coins = 0;
+        lives = 3;
+
+        shieldUnlocked = false;
+        heavyAttackUnlocked = false;
+        jumpAttackUnlocked = false;
+        rollJumpUnlocked = false;
+
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
+
+        // Update the UI and visuals
+        if (shieldObject) shieldObject.SetActive(false);
+        if (staminaUI) staminaUI.SetActive(false);
+
+        playerUI?.UpdateHearts(currentHealth);
+        playerUI?.UpdateLives(lives);
+        playerUI?.UpdateCoins(coins);
+        playerUI?.UpdateStamina(currentStamina, maxStamina);
+
+        // Save this default state so the file is updated
+        SaveManager.Instance.SaveData(this);
+
+        Debug.Log("🔁 Player progress reset to default and saved!");
     }
 
 }

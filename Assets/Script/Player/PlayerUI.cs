@@ -25,6 +25,7 @@ public class PlayerUI : MonoBehaviour
     [Header("Stamina")]
     public Image[] staminaIcons;      // Array of stamina icons
     public Sprite staminaGem;        // Sprite for full stamina
+    public GameObject staminaShieldUI; // Reference to the stamina/shield UI element
 
     // Example starting values (can be set from another script if needed)
     [Header("Initial UI States")]
@@ -86,6 +87,36 @@ public class PlayerUI : MonoBehaviour
             else
             {
                 staminaIcons[i].gameObject.SetActive(false); // Hide unused icons
+            }
+        }
+    }
+    public void UpdateStaminaSmooth(float smoothStamina, int maxStamina)
+    {
+        for (int i = 0; i < staminaIcons.Length; i++)
+        {
+            if (i < maxStamina)
+            {
+                staminaIcons[i].gameObject.SetActive(true);
+
+                if (i < Mathf.FloorToInt(smoothStamina))
+                {
+                    // Full stamina
+                    staminaIcons[i].fillAmount = 1f;
+                }
+                else if (i == Mathf.FloorToInt(smoothStamina))
+                {
+                    // Partially filled stamina (the one currently refilling)
+                    staminaIcons[i].fillAmount = smoothStamina - Mathf.Floor(smoothStamina);
+                }
+                else
+                {
+                    // Empty
+                    staminaIcons[i].fillAmount = 0f;
+                }
+            }
+            else
+            {
+                staminaIcons[i].gameObject.SetActive(false);
             }
         }
     }

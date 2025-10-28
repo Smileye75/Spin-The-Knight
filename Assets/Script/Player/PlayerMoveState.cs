@@ -121,7 +121,7 @@ public class PlayerMoveState : PlayerBaseMachine
     }
     private void OnShield()
     {
-        if (!stateMachine.shieldUnlocked)
+        if (!stateMachine.playerStats.shieldUnlocked)
             return;
         stateMachine.SwitchState(new PlayerShieldState(stateMachine));
     }

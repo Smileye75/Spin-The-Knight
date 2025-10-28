@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 558c0d8856ee1b74c8e904193a5afe72
+guid: 5e4aa75b64476434c80b1dd85c05c6d3
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable:
@@ -7,28 +7,73 @@ ModelImporter:
       1: 100000
     second: //RootNode
   - first:
+      1: 100002
+    second: SM_Env_Skull_Huge_Horns_01
+  - first:
+      1: 100004
+    second: SM_Env_Skull_Huge_Jaw_01
+  - first:
+      1: 100006
+    second: SM_Env_Skull_Huge_Spikes_01
+  - first:
       4: 400000
     second: //RootNode
+  - first:
+      4: 400002
+    second: SM_Env_Skull_Huge_Horns_01
+  - first:
+      4: 400004
+    second: SM_Env_Skull_Huge_Jaw_01
+  - first:
+      4: 400006
+    second: SM_Env_Skull_Huge_Spikes_01
   - first:
       23: 2300000
     second: //RootNode
   - first:
+      23: 2300002
+    second: SM_Env_Skull_Huge_Horns_01
+  - first:
+      23: 2300004
+    second: SM_Env_Skull_Huge_Jaw_01
+  - first:
+      23: 2300006
+    second: SM_Env_Skull_Huge_Spikes_01
+  - first:
       33: 3300000
     second: //RootNode
   - first:
+      33: 3300002
+    second: SM_Env_Skull_Huge_Horns_01
+  - first:
+      33: 3300004
+    second: SM_Env_Skull_Huge_Jaw_01
+  - first:
+      33: 3300006
+    second: SM_Env_Skull_Huge_Spikes_01
+  - first:
       43: 4300000
-    second: SM_Generic_Mountains_Grass_01
+    second: SM_Env_Skull_Huge_01
+  - first:
+      43: 4300002
+    second: SM_Env_Skull_Huge_Jaw_01
+  - first:
+      43: 4300004
+    second: SM_Env_Skull_Huge_Spikes_01
+  - first:
+      43: 4300006
+    second: SM_Env_Skull_Huge_Horns_01
   - first:
       95: 9500000
     second: //RootNode
   externalObjects: {}
   materials:
     materialImportMode: 0
-    materialName: 0
-    materialSearch: 1
+    materialName: 1
+    materialSearch: 2
     materialLocation: 0
   animations:
-    legacyGenerateAnimations: 4
+    legacyGenerateAnimations: 0
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
@@ -50,7 +95,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 1
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
     globalScale: 1
@@ -88,7 +133,7 @@ ModelImporter:
     useFileScale: 1
     strictVertexDataChecks: 0
   tangentSpace:
-    normalSmoothAngle: 60
+    normalSmoothAngle: 65
     normalImportMode: 1
     tangentImportMode: 3
     normalCalculationMode: 4
