@@ -122,6 +122,11 @@ public class GameManager : MonoBehaviour
         {
             bossSpawner.DespawnBoss();
         }
+        var enemySpawners = FindObjectsOfType<EnemySpawner>();
+        foreach (var spawner in enemySpawners)
+        {
+            spawner.ResetSpawner();
+        }
     }
 
     /// <summary>

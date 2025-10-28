@@ -32,11 +32,17 @@ public class EnemySpawner : MonoBehaviour
     [Header("VFX")]
     [SerializeField] private ParticleSystem rockVFX;
 
+    [SerializeField] private Animation shieldTutorialAnim;
+
+    private bool shieldTutorialPlayed = false;
+
     private float timeUntilSpawn;                            // Countdown timer for next enemy spawn
     private List<GameObject> spawnedEnemies = new List<GameObject>(); // List of currently alive enemies
     private bool spawningActive = false;                     // Whether spawning is currently active
     private int totalSpawned = 0;                            // Total number of enemies spawned so far
-
+    public bool AllEnemiesDefeated => totalSpawned >= maxEnemiesLimit && spawnedEnemies.Count == 0;
+    public bool HasAliveEnemies => spawnedEnemies.Count > 0;
+        
     /// <summary>
     /// Initializes the spawner. Spawning is inactive until triggered.
     /// </summary>
@@ -73,6 +79,11 @@ public class EnemySpawner : MonoBehaviour
         if (totalSpawned >= maxEnemiesLimit && spawnedEnemies.Count == 0 && wallObject != null)
         {
             stateMachine.playerStats.UnlockShield();
+            if (!shieldTutorialPlayed)
+            {
+                shieldTutorialAnim?.Play();
+                shieldTutorialPlayed = true;
+            }
             skullGates.ActivateGate();
 
         }
@@ -133,4 +144,32 @@ public class EnemySpawner : MonoBehaviour
             wallObject = null;
         }
     }
+
+    public void ResetSpawner()
+    {
+        if(AllEnemiesDefeated)
+            return;
+        // Destroy all spawned enemies
+        foreach (var enemy in spawnedEnemies)
+        {
+            if (enemy != null)
+                Destroy(enemy);
+        }
+        spawnedEnemies.Clear();
+
+        // Reset counters and flags
+        totalSpawned = 0;
+        spawningActive = false;
+        timeUntilSpawn = 0f;
+        shieldTutorialPlayed = false;
+
+        // Optionally re-enable the trigger zone and wall
+        if (triggerZone != null)
+            triggerZone.enabled = true;
+        if (wallObject != null)
+            wallObject.SetActive(true);
+
+
+    }
+
 }
