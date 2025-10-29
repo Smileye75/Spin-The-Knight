@@ -286,7 +286,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadGame()
     {
-        // Load data BEFORE scene transition
+        Time.timeScale = 1; // Ensure game is unpaused
         pendingLoadData = SaveManager.Instance.LoadData();
         StartCoroutine(LoadGameRoutine());
     }

@@ -396,14 +396,14 @@ public class GoblinShamanBoss : MonoBehaviour
     public void ResetBoss()
     {
         // If you reuse the object via pooling, reset flags:
+        if (bossPlatforms != null)
+            bossPlatforms.ResetAll();
         isHitTeleporting = false;
         rotated = false;
         atFront = true;
         canShoot = true;
         currentHitPoints = maxHitPoints;
         if (animator) animator.speed = originalAnimatorSpeed;
-        if (bossPlatforms != null)
-            bossPlatforms.ResetAll();
         Destroy(gameObject); // your original behavior
     }
 

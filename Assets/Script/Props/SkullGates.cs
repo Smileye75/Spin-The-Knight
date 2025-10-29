@@ -1,7 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using VHierarchy.Libs;
-
 public class SkullGates : MonoBehaviour
 {
     [Header("Shooting Settings")]
