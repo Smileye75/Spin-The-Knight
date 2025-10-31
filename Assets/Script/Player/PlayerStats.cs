@@ -52,29 +52,32 @@ public class PlayerStats : MonoBehaviour
 
     [Header("Stamina Regen")]
     [SerializeField] private float staminaRegenDelay = 0.5f; // Delay before regen starts
-    [SerializeField] private float staminaRegenRate = 0.2f;    // Stamina points per second
+    [SerializeField] private float staminaRegenRate = 0.2f;  // Stamina points per second (for smooth fill)
 
     private float smoothStamina;
     private Coroutine staminaRegenCoroutine;
+    private Coroutine staminaDrainCoroutine;
 
     // Prevents re-entrant death handling
     private bool isDying = false;
 
+    // Track if we're actively draining (so we don't start regen while draining)
+    private bool isDraining = false;
+
     [Header("Player Movement Rewards")]
     public bool shieldUnlocked = false;
-        
+
     public bool heavyAttackUnlocked = false;
-        
+
     public bool jumpAttackUnlocked = false;
-        
+
     public bool rollJumpUnlocked = false;
 
     public GameObject shieldObject;
-        
+
     public GameObject staminaUI;
 
     public static bool IsLoadingFromSave = false;
-        
 
     /// <summary>
     /// Initializes health and references on Awake.
@@ -85,9 +88,11 @@ public class PlayerStats : MonoBehaviour
         {
             currentHealth = maxHealth;
             currentStamina = maxStamina;
+            // Keep smooth float in sync at start
+            smoothStamina = currentStamina;
             playerUI?.UpdateStamina(currentStamina, maxStamina); // Update stamina UI
         }
-    
+
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
 
@@ -106,7 +111,6 @@ public class PlayerStats : MonoBehaviour
             originalMaterial = playerRenderer.material;
         if (!staminaUI && playerUI != null)
             staminaUI = playerUI.staminaShieldUI;
-
     }
 
     public void Update()
@@ -147,13 +151,13 @@ public class PlayerStats : MonoBehaviour
         if (animator != null)
             animator.SetTrigger("Hit");
 
+        // Shield block: costs stamina, nullifies damage
         if (playerStateMachine.CurrentState is PlayerShieldState && currentStamina > 0)
         {
             ConsumeStamina(staminaCost);
             Debug.Log("Attack blocked by shield!");
             return; // Nullify damage
         }
-    
 
         currentHealth = Mathf.Max(currentHealth - amount, 0);
         playerUI?.UpdateHearts(currentHealth);
@@ -218,7 +222,6 @@ public class PlayerStats : MonoBehaviour
             staminaUI.SetActive(true);
     }
 
-
     /// <summary>
     /// Plays damage feedback and makes the player invulnerable for a short duration.
     /// </summary>
@@ -255,7 +258,8 @@ public class PlayerStats : MonoBehaviour
     {
         currentHealth = maxHealth;
         currentStamina = maxStamina;
-        healEffect.Play();
+        smoothStamina = currentStamina; // keep in sync
+        healEffect?.Play();
         playerUI?.UpdateHearts(currentHealth);
         playerUI?.UpdateStamina(currentStamina, maxStamina);
     }
@@ -299,7 +303,7 @@ public class PlayerStats : MonoBehaviour
 
         OnPlayerLostLife?.Invoke(gameObject);
     }
-    
+
     /// <summary>
     /// Registers the PlayerUI instance to the PlayerStats.
     /// </summary>
@@ -325,16 +329,20 @@ public class PlayerStats : MonoBehaviour
 
     public bool ConsumeStamina(int amount)
     {
-        if (currentStamina >= amount)
+        // Only allow if smoothStamina is greater than 1
+        if (smoothStamina > 1f)
         {
-            currentStamina -= amount;
-            smoothStamina = currentStamina; // Sync float to int
+            smoothStamina -= amount;
+            currentStamina = Mathf.FloorToInt(smoothStamina);
+            playerUI?.UpdateStaminaSmooth(smoothStamina, maxStamina);
             playerUI?.UpdateStamina(currentStamina, maxStamina);
 
-            // Start smooth regen
-            if (staminaRegenCoroutine != null)
-                StopCoroutine(staminaRegenCoroutine);
-            staminaRegenCoroutine = StartCoroutine(SmoothStaminaRegen());
+            // Only start regen if we're not actively draining
+            if (!isDraining)
+            {
+                StopSmoothStaminaRegen();
+                staminaRegenCoroutine = StartCoroutine(SmoothStaminaRegen());
+            }
 
             return true;
         }
@@ -374,11 +382,81 @@ public class PlayerStats : MonoBehaviour
         staminaRegenCoroutine = null;
     }
 
+    // Helper: stop regen safely
+    public void StopSmoothStaminaRegen()
+    {
+        if (staminaRegenCoroutine != null)
+        {
+            StopCoroutine(staminaRegenCoroutine);
+            staminaRegenCoroutine = null;
+        }
+    }
+
+    public void StartSmoothStaminaDrain(float drainRate)
+    {
+        if (isDraining || currentStamina <= 1) return;
+
+        isDraining = true;
+
+        // Stop regen to avoid tug-of-war
+        StopSmoothStaminaRegen();
+        // DO NOT reset smoothStamina here! Let it continue smoothly from its current value.
+
+        if (staminaDrainCoroutine != null)
+            StopCoroutine(staminaDrainCoroutine);
+
+        staminaDrainCoroutine = StartCoroutine(SmoothStaminaDrain(drainRate));
+    }
+
+    public void StopSmoothStaminaDrain()
+    {
+        if (!isDraining) return;
+
+        if (staminaDrainCoroutine != null)
+        {
+            StopCoroutine(staminaDrainCoroutine);
+            staminaDrainCoroutine = null;
+        }
+
+        isDraining = false;
+
+        // Kick off regen (respects delay) if not full
+        if (currentStamina < maxStamina && staminaRegenCoroutine == null)
+        {
+            staminaRegenCoroutine = StartCoroutine(SmoothStaminaRegen());
+        }
+    }
+
+    private IEnumerator SmoothStaminaDrain(float drainRate)
+    {
+        while (smoothStamina > 1f)
+        {
+            smoothStamina = Mathf.MoveTowards(smoothStamina, 1f, drainRate * Time.deltaTime);
+            playerUI?.UpdateStaminaSmooth(smoothStamina, maxStamina);
+
+            int newStamina = Mathf.FloorToInt(smoothStamina);
+            if (newStamina != currentStamina)
+            {
+                currentStamina = newStamina;
+            }
+
+            yield return null;
+        }
+
+        // Clamp & finalize at 1
+        smoothStamina = 1f;
+        currentStamina = 1;
+        playerUI?.UpdateStaminaSmooth(smoothStamina, maxStamina);
+        playerUI?.UpdateStamina(currentStamina, maxStamina);
+
+        // Stop draining and allow regen to start
+        StopSmoothStaminaDrain();
+    }
+
     public void SavePlayerProgress()
     {
         SaveManager.Instance.SaveData(this);
     }
-
 
     public void LoadPlayerProgress()
     {
@@ -396,6 +474,7 @@ public class PlayerStats : MonoBehaviour
         // Reset health & stamina to max
         currentHealth = maxHealth;
         currentStamina = maxStamina;
+        smoothStamina = currentStamina;
 
         // Apply unlock visuals/UI if needed
         if (shieldUnlocked) UnlockShield();
@@ -408,6 +487,7 @@ public class PlayerStats : MonoBehaviour
 
         Debug.Log("✅ Player progress loaded!");
     }
+
     public void ResetPlayerProgress()
     {
         coins = 0;
@@ -420,6 +500,7 @@ public class PlayerStats : MonoBehaviour
 
         currentHealth = maxHealth;
         currentStamina = maxStamina;
+        smoothStamina = currentStamina;
 
         // Update the UI and visuals
         if (shieldObject) shieldObject.SetActive(false);
@@ -436,4 +517,9 @@ public class PlayerStats : MonoBehaviour
         Debug.Log("🔁 Player progress reset to default and saved!");
     }
 
+    public void StartSmoothStaminaRegen()
+    {
+        if (staminaRegenCoroutine != null) return;
+        staminaRegenCoroutine = StartCoroutine(SmoothStaminaRegen());
+    }
 }

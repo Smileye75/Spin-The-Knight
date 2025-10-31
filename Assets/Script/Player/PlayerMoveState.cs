@@ -29,6 +29,9 @@ public class PlayerMoveState : PlayerBaseMachine
         stateMachine.playerStomping?.DisableStompCollider(); // Disable stomp collider while grounded
         stateMachine.playerBlockBump?.DisableBlockBumpCollider(); // Disable block bump collider while grounded
         stateMachine.inputReader.shieldEvent += OnShield; // Ensure shield state is reset
+        if (stateMachine.playerStats.currentStamina < stateMachine.playerStats.maxStamina)
+            stateMachine.playerStats.StartSmoothStaminaRegen();
+        
     }
 
     /// <summary>
