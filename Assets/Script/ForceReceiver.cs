@@ -42,25 +42,41 @@ public class ForceReceiver : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        // Handle vertical velocity based on grounded state and gravity
-        if (characterController.isGrounded && verticalVelocity < 0f)
+        bool grounded = characterController != null && characterController.isGrounded;
+
+        if (grounded)
         {
-            // Reset vertical velocity when grounded
-            verticalVelocity = gravity * Time.deltaTime;
-        }
-        else if (verticalVelocity < 0f)
-        {
-            // Apply stronger gravity when falling
-            verticalVelocity += gravity * fallMultiplier * Time.deltaTime;
+            // When grounded, keep a small downward force so we "stick" to the ground/slope.
+            if (verticalVelocity < 0f)
+            {
+                verticalVelocity = -2f;  // small constant, not frame-dependent
+            }
+
+            // IMPORTANT:
+            // Do NOT keep adding gravity every frame while grounded.
+            // Let jumps / knockback explicitly modify verticalVelocity.
         }
         else
         {
-            // Apply normal gravity when rising or stationary
-            verticalVelocity += gravity * Time.deltaTime;
+            // In the air → apply gravity
+            float currentGravity = gravity;
+
+            // Stronger pull when already falling
+            if (verticalVelocity < 0f)
+            {
+                currentGravity *= fallMultiplier;
+            }
+
+            verticalVelocity += currentGravity * Time.deltaTime;
         }
 
-        // Smoothly dampen knockback impact over time
-        impact = Vector3.SmoothDamp(impact, Vector3.zero, ref dampingVelocity, knockbackSmoothTime);
+        // Smoothly dampen knockback impact over time (unchanged)
+        impact = Vector3.SmoothDamp(
+            impact,
+            Vector3.zero,
+            ref dampingVelocity,
+            knockbackSmoothTime
+        );
     }
 
     /// <summary>
@@ -70,6 +86,20 @@ public class ForceReceiver : MonoBehaviour
     {
         if (verticalVelocity > 0f)
         {
+            // Avoid cancelling jump immediately after a jump input due to input/event timing.
+            // Small grace window (in seconds) to prevent mis-detected "held" behaviour.
+            const float cancelIgnoreWindow = 0.06f;
+
+            var psm = GetComponent<PlayerStateMachine>();
+            if (psm != null)
+            {
+                if (Time.time < psm.lastJumpPressedTime + cancelIgnoreWindow)
+                {
+                    // ignore this cancel as it arrived too soon after jump press
+                    return;
+                }
+            }
+
             // Reduce upward velocity for short jumps
             verticalVelocity *= 0.5f;
         }

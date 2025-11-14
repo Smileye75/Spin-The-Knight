@@ -8,6 +8,14 @@ using UnityEngine;
 /// </summary>
 public class PlayerMoveState : PlayerBaseMachine
 {
+    // NEW: small delay before treating a short leave-ground as a fall
+    private const float airStateDelay = 0.12f; // adjust to taste (seconds)
+    private float notGroundedTimer = 0f;
+
+    // NEW: ignore fall-detection for a short window after jump input so a single press isn't treated as a hold
+    private const float jumpIgnoreWindow = 0.5f;
+    // ...existing code...
+
     /// <summary>
     /// Constructor: passes state machine reference to base class.
     /// </summary>
@@ -48,6 +56,35 @@ public class PlayerMoveState : PlayerBaseMachine
             stateMachine.lastGroundedTime = Time.time;
         }
 
+        // --- NEW: delay-based fall detection (ignore immediately after jump press) ---
+        bool isGrounded = stateMachine.characterController.isGrounded;
+        float vy = stateMachine.characterController.velocity.y;
+
+        // Only accumulate fall timer when we're actually moving downward,
+        // AND we're past the short ignore window that follows a jump press.
+        if (!isGrounded && vy < -0.1f && Time.time > stateMachine.lastJumpPressedTime + jumpIgnoreWindow)
+        {
+            notGroundedTimer += deltaTime;
+            if (notGroundedTimer >= airStateDelay)
+            {
+                notGroundedTimer = 0f;
+                // enter falling AirState without applying jump force
+                stateMachine.SwitchState(new PlayerAirState(
+                    stateMachine,
+                    customJumpForce: -1f,
+                    launchDirection: default,
+                    horizontalSpeed: -1f,
+                    isRollingJump: false,
+                    applyInitialJump: false));
+                return;
+            }
+        }
+        else
+        {
+            // reset timer while grounded, moving up, or inside the jump-ignore window
+            notGroundedTimer = 0f;
+        }
+
         // Move the player using input and movement speed
         Move(movement * stateMachine.movementSpeed, deltaTime);
 
@@ -62,10 +99,8 @@ public class PlayerMoveState : PlayerBaseMachine
         FaceMovementDirection(movement);
 
         // Update attack cooldown timer
-    if (stateMachine.attackCooldownTimer > 0f)
-        stateMachine.attackCooldownTimer -= deltaTime;
-
-
+        if (stateMachine.attackCooldownTimer > 0f)
+            stateMachine.attackCooldownTimer -= deltaTime;
     }
 
     /// <summary>
@@ -86,13 +121,20 @@ public class PlayerMoveState : PlayerBaseMachine
     /// </summary>
     private void OnJump()
     {
+        // Reset fall timer so the new jump isn't misdetected as a fall
+        notGroundedTimer = 0f;
+
+        // ensure jump press time is recorded (InputReader also sets this, but set again for safety)
+        stateMachine.lastJumpPressedTime = Time.time;
+
         // Calculate initial air velocity for a normal jump (no forward boost)
         Vector3 airVelocity = Vector3.up * stateMachine.jumpForce;
 
         stateMachine.SwitchState(
             new PlayerAirState(
                 stateMachine,
-                airVelocity.y // Pass only the Y component if AirState expects a float
+                customJumpForce: airVelocity.y, // keep applying initial jump normally
+                applyInitialJump: true
             )
         );
     }

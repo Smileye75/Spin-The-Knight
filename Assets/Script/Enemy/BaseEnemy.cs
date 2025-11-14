@@ -116,7 +116,8 @@ public class BaseEnemy : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
-        stompFeedback.enabled = false;
+        if(stompFeedback != null) 
+            stompFeedback.enabled = false;
         SetWalkingAnimation(false);
 
         if (enemyAnimator != null)

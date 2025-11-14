@@ -57,51 +57,76 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
 
         bool isAttackHeld = stateMachine.inputReader.IsAttackPressed();
 
-        // Only allow scaling if the button was held from the beginning
-        if (!attackStarted && wasAttackHeld && isAttackHeld)
+        // If heavy attack is LOCKED, start attack immediately on press (ignore hold logic)
+        if (!stateMachine.playerStats.heavyAttackUnlocked && isAttackHeld && !attackStarted)
         {
-            attackHoldTime += deltaTime;
-            if (stateMachine.inputReader.movementValue == Vector2.zero)
-                stateMachine.animator.SetBool("IsMoving", false);
-
-            else
-                stateMachine.animator.SetBool("IsMoving", true);
-
-            FaceMovementDirection(movement);
-        
-            if (attackHoldTime > upscaleDelay)
+            if (stateMachine.weaponDamage != null)
             {
-                if (stateMachine.weaponDamage != null)
-                {
-                    float current = stateMachine.weaponDamage.transform.localScale.x;
-                    float newScale = Mathf.Lerp(current, targetScale, lerpSpeed * deltaTime);
-                    stateMachine.weaponDamage.transform.localScale = Vector3.one * newScale;
-
-                    // Set heavy attack flag if scale is close to or above target
-                    if (newScale >= targetScale - 0.1f)
-                        stateMachine.weaponDamage.SetHeavyAttack(true);
-                    else
-                        stateMachine.weaponDamage.SetHeavyAttack(false);
-                }
-            }
-            else if (stateMachine.weaponDamage != null)
-            {
-                // Keep weapon at original scale during delay
                 stateMachine.weaponDamage.ResetScale();
                 stateMachine.weaponDamage.SetHeavyAttack(false);
             }
+            StartAttack();
         }
-
-        // Start attack if:
-        if (!attackStarted)
+        else
         {
-            if (!wasAttackHeld && isAttackHeld)
+            // Only allow hold attack if heavyAttackUnlocked is true
+            if (stateMachine.playerStats.heavyAttackUnlocked)
             {
-                StartAttack();
+                // Only allow scaling if the button was held from the beginning
+                if (!attackStarted && wasAttackHeld && isAttackHeld)
+                {
+                    attackHoldTime += deltaTime;
+                    if (stateMachine.inputReader.movementValue == Vector2.zero)
+                        stateMachine.animator.SetBool("IsMoving", false);
+                    else
+                        stateMachine.animator.SetBool("IsMoving", true);
+
+                    FaceMovementDirection(movement);
+
+                    if (attackHoldTime > upscaleDelay)
+                    {
+                        if (stateMachine.weaponDamage != null)
+                        {
+                            float current = stateMachine.weaponDamage.transform.localScale.x;
+                            float newScale = Mathf.Lerp(current, targetScale, lerpSpeed * deltaTime);
+                            stateMachine.weaponDamage.transform.localScale = Vector3.one * newScale;
+
+                            // Set heavy attack flag if scale is close to or above target
+                            if (newScale >= targetScale - 0.1f)
+                                stateMachine.weaponDamage.SetHeavyAttack(true);
+                            else
+                                stateMachine.weaponDamage.SetHeavyAttack(false);
+                        }
+                    }
+                    else if (stateMachine.weaponDamage != null)
+                    {
+                        // Keep weapon at original scale during delay
+                        stateMachine.weaponDamage.ResetScale();
+                        stateMachine.weaponDamage.SetHeavyAttack(false);
+                    }
+                }
             }
-            else if (wasAttackHeld && !isAttackHeld)
+            else
             {
-                StartAttack();
+                // If heavy attack is locked, always use normal attack visuals (guard above handles immediate start)
+                if (stateMachine.weaponDamage != null)
+                {
+                    stateMachine.weaponDamage.ResetScale();
+                    stateMachine.weaponDamage.SetHeavyAttack(false);
+                }
+            }
+
+            // Start attack if:
+            if (!attackStarted)
+            {
+                if (!wasAttackHeld && isAttackHeld)
+                {
+                    StartAttack();
+                }
+                else if (wasAttackHeld && !isAttackHeld)
+                {
+                    StartAttack();
+                }
             }
         }
 

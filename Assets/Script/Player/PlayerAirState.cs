@@ -28,6 +28,9 @@ public class PlayerAirState : PlayerBaseMachine
     // Multiplier for jump force if attack is pressed at jump start
     private const float attackJumpMultiplier = 1.2f; // Adjust as needed
 
+    // NEW: whether to apply jump force on Enter
+    private readonly bool applyInitialJump;
+
 
     /// <summary>
     /// Constructor for PlayerAirState. Sets up jump parameters and launch direction.
@@ -37,13 +40,15 @@ public class PlayerAirState : PlayerBaseMachine
         float customJumpForce = -1f,
         Vector3 launchDirection = default,
         float horizontalSpeed = -1f,
-        bool isRollingJump = false
+        bool isRollingJump = false,
+        bool applyInitialJump = true   // NEW param, default true to preserve existing behaviour
     ) : base(stateMachine)
     {
         this.customJumpForce = customJumpForce;
         this.launchDirection = launchDirection;
         this.horizontalSpeed = horizontalSpeed;
         this.isRollingJump = isRollingJump;
+        this.applyInitialJump = applyInitialJump; // store flag
     }
 
     /// <summary>
@@ -53,10 +58,21 @@ public class PlayerAirState : PlayerBaseMachine
     {
         stateMachine.animator.SetBool("IsGrounded", false);
 
-        // Only play SpinJump if not already played and jump buffer has passed
-        if (!stateMachine.hasPlayedSpinJump && 
-            Time.time > stateMachine.lastJumpPressedTime + stateMachine.jumpBufferTime)
+        // mark animator Falling if we entered air state because of a fall (not an applied jump)
+        if (stateMachine.animator != null)
+            stateMachine.animator.SetBool("Falling", !applyInitialJump);
+
+        // Only play SpinJump when this AirState was entered due to a jump.
+        // Accept either a buffered jump (lastJumpPressedTime) OR an immediate jump input.
+        bool shouldPlaySpinJump = applyInitialJump
+                                  && !stateMachine.hasPlayedSpinJump
+                                  && (Time.time <= stateMachine.lastJumpPressedTime + stateMachine.jumpBufferTime
+                                      || stateMachine.inputReader.IsJumpPressed()); // <-- allow immediate press
+
+        if (shouldPlaySpinJump && stateMachine.animator != null)
         {
+            // briefly fake a small positive VelocitySpeed so animator conditions allow the SpinJump
+            stateMachine.animator.SetFloat("VelocitySpeed", 0.1f);
             stateMachine.animator.SetTrigger("SpinJump");
             stateMachine.hasPlayedSpinJump = true;
         }
@@ -66,27 +82,20 @@ public class PlayerAirState : PlayerBaseMachine
         // Apply initial jump force now (normal jump or custom)
         float force = customJumpForce > 0f ? customJumpForce : stateMachine.jumpForce;
 
-        // Check if attack is pressed at jump start for higher jump
         if (stateMachine.inputReader.IsAttackPressed())
         {
             force *= attackJumpMultiplier;
         }
 
-        stateMachine.forceReceiver.Jump(force);
+        if (applyInitialJump)
+        {
+            stateMachine.forceReceiver.Jump(force);
+        }
 
-        // Variable jump height: only for normal jumps
-        if (!isRollingJump)
-            stateMachine.inputReader.jumpCanceled += OnJumpCanceled;
-
-        // Initialize animator with current vertical velocity
         UpdateAnimatorVelocityFloat();
         stateMachine.playerStomping?.EnableStompCollider();
         stateMachine.playerBlockBump?.EnableBlockBumpCollider();
-        
-
-        // Always allow double jump at start of air state
         stateMachine.canDoubleJump = true;
-
     }
 
     /// <summary>
@@ -183,7 +192,11 @@ public class PlayerAirState : PlayerBaseMachine
     {
         if (!isRollingJump)
             stateMachine.inputReader.jumpCanceled -= OnJumpCanceled;
-        // No need to reset a bool; animator uses a float that will change automatically on next state
+
+        // ensure Falling is cleared when leaving air state
+        if (stateMachine.animator != null)
+            stateMachine.animator.SetBool("Falling", false);
+
         stateMachine.animator.ResetTrigger("SpinJump");
     }
 
