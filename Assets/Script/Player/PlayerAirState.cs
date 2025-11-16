@@ -96,6 +96,8 @@ public class PlayerAirState : PlayerBaseMachine
         stateMachine.playerStomping?.EnableStompCollider();
         stateMachine.playerBlockBump?.EnableBlockBumpCollider();
         stateMachine.canDoubleJump = true;
+        stateMachine.inputReader.jumpCanceled += OnJumpCanceled;
+                
     }
 
     /// <summary>
@@ -198,6 +200,7 @@ public class PlayerAirState : PlayerBaseMachine
             stateMachine.animator.SetBool("Falling", false);
 
         stateMachine.animator.ResetTrigger("SpinJump");
+                stateMachine.inputReader.jumpCanceled -= OnJumpCanceled;
     }
 
     /// <summary>
