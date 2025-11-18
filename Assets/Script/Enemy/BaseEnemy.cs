@@ -179,7 +179,13 @@ public class BaseEnemy : MonoBehaviour
             }
 
             // Calculate push direction (from weapon to enemy)
-            Vector3 pushDirection = (transform.position - other.transform.position).normalized;
+            Vector3 pushDirection = transform.position - other.transform.position;
+            // Ignore vertical difference so knockback only affects X/Z (horizontal) axes
+            pushDirection.y = 0f;
+            if (pushDirection.sqrMagnitude <= 0.0001f)
+                pushDirection = transform.forward; // fallback if positions are nearly identical
+            else
+                pushDirection.Normalize();
             float pushForce = 90f; // Adjust this value as needed
 
             // If you have a Rigidbody on the enemy, apply force:

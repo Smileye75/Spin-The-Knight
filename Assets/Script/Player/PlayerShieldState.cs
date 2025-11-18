@@ -23,6 +23,10 @@ public class PlayerShieldState : PlayerBaseMachine
 
     public override void Tick(float deltaTime)
     {
+        // Use same input-driven Move call as PlayerAttackState so movement/physics are consistent
+        Vector3 movement = CalculateMovement();
+        Move(movement * stateMachine.movementSpeed, deltaTime);
+
         // Exit if player releases shield
         if (!stateMachine.inputReader.IsShieldPressed())
         {
@@ -32,54 +36,38 @@ public class PlayerShieldState : PlayerBaseMachine
             return;
         }
 
-        // Read input
+        // Read input to decide animation/stamina behavior
         Vector2 input = stateMachine.inputReader.movementValue;
-
-        // Calculate intended movement
         Vector3 desired = stateMachine.mainCamera.forward * input.y + stateMachine.mainCamera.right * input.x;
         desired.y = 0f;
-        desired.Normalize();
-
-        bool wantsToMove = desired != Vector3.zero;
+        bool wantsToMove = desired.sqrMagnitude > 0.0001f;
 
         // --- Animation update ---
         if (stateMachine.animator != null)
-        {
             stateMachine.animator.SetBool("IsMoving", wantsToMove);
-        }
 
         // --- Movement rules while shielding ---
         if (wantsToMove)
         {
-            // Move and face movement dir
-            stateMachine.characterController.Move(desired * stateMachine.movementSpeed * deltaTime);
+            // Face movement direction using the movement vector (consistent with Move)
+            FaceMovementDirection(movement);
 
-            Quaternion targetRotation = Quaternion.LookRotation(desired);
-            stateMachine.transform.rotation = Quaternion.Slerp(
-                stateMachine.transform.rotation,
-                targetRotation,
-                stateMachine.rotationSpeed * deltaTime
-            );
-        }
-
-        // --- Stamina drain/regen control ---
-        if (wantsToMove)
-        {
+            // Drain stamina while moving with shield up
             stateMachine.playerStats.StopSmoothStaminaRegen();
             stateMachine.playerStats.StartSmoothStaminaDrain(0.25f);
         }
         else
         {
+            // Not moving: stop draining and start regen if not full
             stateMachine.playerStats.StopSmoothStaminaDrain();
-            // Only start regen if not full
             if (stateMachine.playerStats.currentStamina < stateMachine.playerStats.maxStamina)
                 stateMachine.playerStats.StartSmoothStaminaRegen();
         }
+
         wasMoving = wantsToMove;
 
         // IMPORTANT: Do NOT auto-exit when stamina hits 0.
-        // We keep the player in shield state as long as the button is held.
-        // The shield won't block without stamina (your TakeDamage check already handles that).
+        // Shield remains as long as the button is held; blocking logic is handled elsewhere.
     }
 
     public override void Exit()

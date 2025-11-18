@@ -82,7 +82,8 @@ public class PlayerAirState : PlayerBaseMachine
         // Apply initial jump force now (normal jump or custom)
         float force = customJumpForce > 0f ? customJumpForce : stateMachine.jumpForce;
 
-        if (stateMachine.inputReader.IsAttackPressed())
+        if (stateMachine.inputReader.IsAttackPressed() 
+            && (stateMachine.playerStats?.jumpAttackUnlocked ?? false))
         {
             force *= attackJumpMultiplier;
         }
@@ -171,7 +172,8 @@ public class PlayerAirState : PlayerBaseMachine
         // Double jump: allow at any time in air, once per airtime
         if (stateMachine.canDoubleJump 
             && !stateMachine.characterController.isGrounded 
-            && stateMachine.inputReader.IsAttackPressed())
+            && stateMachine.inputReader.IsAttackPressed()
+            && (stateMachine.playerStats?.jumpAttackUnlocked ?? false))
         {
             // Play double jump animation
             stateMachine.animator.SetTrigger("VerticalSpin");

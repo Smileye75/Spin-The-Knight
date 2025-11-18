@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events; // ensure this is present
+using System.Linq;
 
 /// <summary>
 /// EnemySpawner is responsible for spawning a set number of enemies at random spawn points,
@@ -25,24 +27,19 @@ public class EnemySpawner : MonoBehaviour
     [Header("Trigger Zone")]
     [SerializeField] private Collider triggerZone;           // Collider that starts spawning when the player enters
 
-    [Header("Wall Object")]
-    [SerializeField] private GameObject wallObject;          // Wall to deactivate after all enemies are defeated
-    [SerializeField] private SkullGates skullGates;           // Reference to the SkullGates script
-
-    [Header("VFX")]
-    [SerializeField] private ParticleSystem rockVFX;
-
-    [SerializeField] private Animation shieldTutorialAnim;
-
-    private bool shieldTutorialPlayed = false;
-
     private float timeUntilSpawn;                            // Countdown timer for next enemy spawn
     private List<GameObject> spawnedEnemies = new List<GameObject>(); // List of currently alive enemies
     private bool spawningActive = false;                     // Whether spawning is currently active
     private int totalSpawned = 0;                            // Total number of enemies spawned so far
     public bool AllEnemiesDefeated => totalSpawned >= maxEnemiesLimit && spawnedEnemies.Count == 0;
     public bool HasAliveEnemies => spawnedEnemies.Count > 0;
-        
+
+    [Header("Events")]
+    [Tooltip("Invoked once when all enemies have been spawned and then defeated.")]
+    public UnityEvent onAllEnemiesCleared; // assign SkullGates.TriggerSpecialEvent here in the inspector
+
+    private bool specialEventTriggered = false;
+
     /// <summary>
     /// Initializes the spawner. Spawning is inactive until triggered.
     /// </summary>
@@ -69,23 +66,33 @@ public class EnemySpawner : MonoBehaviour
             spawningActive = false;
         }
 
-        // Only check totalSpawned now
         if (spawningActive && timeUntilSpawn <= 0 && totalSpawned < maxEnemiesLimit)
         {
             SpawnEnemy();
             SetTimeUntilSpawn();
         }
 
-        if (totalSpawned >= maxEnemiesLimit && spawnedEnemies.Count == 0 && wallObject != null)
+        // Trigger the assigned special event once when all enemies were spawned and none remain alive
+        if (!specialEventTriggered && totalSpawned >= maxEnemiesLimit && spawnedEnemies.Count == 0)
         {
-            stateMachine.playerStats.UnlockShield();
-            if (!shieldTutorialPlayed)
-            {
-                shieldTutorialAnim?.Play();
-                shieldTutorialPlayed = true;
-            }
-            skullGates.ActivateGate();
+            specialEventTriggered = true;
+            spawningActive = false; // stop spawning for good
 
+            // Invoke inspector-assigned listeners (SkullGates.TriggerSpecialEvent or others)
+            onAllEnemiesCleared?.Invoke();
+
+            // AUTO: find all scene objects implementing ISpawnerListener and call them
+            // (keeps backward compatibility and supports SkullGates, BeeHive, etc.)
+            var listeners = FindObjectsOfType<MonoBehaviour>(true)
+                            .OfType<ISpawnerListener>();
+            foreach (var listener in listeners)
+            {
+                try { listener.OnSpawnerCleared(stateMachine); }
+                catch { /* tolerate errors in scene-specific handlers */ }
+            }
+
+            // Optional: disable the spawner component so it no longer runs
+            enabled = false;
         }
     }
 
@@ -97,7 +104,7 @@ public class EnemySpawner : MonoBehaviour
         timeUntilSpawn = spawnInterval;
     }
 
-    
+
     /// <summary>
     /// Spawns a new enemy at a random assigned spawn point, and reduces spawn interval every 5 enenmy spawns.
     /// </summary>
@@ -133,16 +140,6 @@ public class EnemySpawner : MonoBehaviour
             if (triggerZone != null)
                 triggerZone.enabled = false; // Prevent retriggering
         }
-        if(other.CompareTag("Projectile"))
-        {
-            if (rockVFX != null)
-            {
-                rockVFX.Play();
-            }
-            skullGates.DestroyGate();
-            wallObject.SetActive(false);
-            wallObject = null;
-        }
     }
 
     public void ResetSpawner()
@@ -161,15 +158,14 @@ public class EnemySpawner : MonoBehaviour
         totalSpawned = 0;
         spawningActive = false;
         timeUntilSpawn = 0f;
-        shieldTutorialPlayed = false;
+        
+        // reset special event trigger so spawner can be reused if needed
+        specialEventTriggered = false;
+        enabled = true;
 
         // Optionally re-enable the trigger zone and wall
         if (triggerZone != null)
             triggerZone.enabled = true;
-        if (wallObject != null)
-            wallObject.SetActive(true);
-
-
     }
 
 }

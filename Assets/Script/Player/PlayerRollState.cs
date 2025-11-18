@@ -71,8 +71,10 @@ public class PlayerRollState : PlayerBaseMachine
     {
         elapsed += deltaTime;
 
-        // Allow jump at any time during roll
-        if (stateMachine.inputReader.IsJumpPressed())
+        // Allow jump during roll only if the player has the roll-jump upgrade unlocked
+        if (stateMachine.inputReader.IsJumpPressed()
+            && stateMachine.playerStats != null
+            && stateMachine.playerStats.rollJumpUnlocked)
         {
             stateMachine.SwitchState(
                 new PlayerAirState(

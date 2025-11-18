@@ -64,7 +64,7 @@ public class PlayerStats : MonoBehaviour
     // Track if we're actively draining (so we don't start regen while draining)
     private bool isDraining = false;
 
-    [Header("Player Movement Rewards")]
+    [Header("Player Movement Upgrades")]
     public bool shieldUnlocked = false;
 
     public bool heavyAttackUnlocked = false;

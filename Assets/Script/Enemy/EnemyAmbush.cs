@@ -14,6 +14,9 @@ public class EnemyAmbush : BaseEnemy
     [SerializeField] private float moveCooldown = 1f;   // Cooldown time after attacking before moving again
     private float lastMoveTime = -Mathf.Infinity;        // Last time the enemy moved
 
+    [Header("Projectile")]
+    [SerializeField] private EnemyProjectile enemyProjectile; // NEW: reference to projectile component
+
     /// <summary>
     /// Handles ambush enemy logic: facing the player, attacking when in range, and moving toward the player otherwise.
     /// </summary>
@@ -34,6 +37,12 @@ public class EnemyAmbush : BaseEnemy
                 lastAttackTime = Time.time;
                 isAttacking = true;
                 lastMoveTime = Time.time; // Start move cooldown after attacking
+
+                // NEW: shoot projectile toward current player position (minimal immediate fire)
+                if (enemyProjectile != null)
+                {
+                    enemyProjectile.SetTarget(player.position);
+                }
             }
         }
         else

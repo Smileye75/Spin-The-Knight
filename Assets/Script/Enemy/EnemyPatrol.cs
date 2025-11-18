@@ -19,6 +19,9 @@ public class EnemyPatrol : BaseEnemy
     [SerializeField] private float resumePatrolDelay = 2f; // Delay before resuming patrol after losing player
     private Transform detectedPlayer;                    // Reference to detected player
 
+    [Header("Projectile")]
+    [SerializeField] private EnemyProjectile enemyProjectile; // Reference to projectile component
+
     private int currentIndex = 0;                        // Current patrol point index
     private bool isPatrolling = true;                    // Whether the enemy is currently patrolling
     private Coroutine patrolCoroutine;                   // Reference to the patrol coroutine
@@ -75,17 +78,15 @@ public class EnemyPatrol : BaseEnemy
 
     /// <summary>
     /// Called when another collider stays within the detection collider.
-    /// If the player is detected, stops patrolling and faces the player.
+    /// Updates projectile target and faces player.
     /// </summary>
     private void OnTriggerStay(Collider other)
     {
         if (detectionCollider == null) return;
         Debug.Log("OnTriggerStay: " + other.name);
 
-        // Only react if the collider is tagged "PlayerDetection"
         if (other.CompareTag("PlayerDetection"))
         {
-            // Stop patrolling and face the player detection object
             if (isPatrolling)
             {
                 isPatrolling = false;
@@ -97,23 +98,34 @@ public class EnemyPatrol : BaseEnemy
             enemyAnimator.SetBool("IsWalking", false);
             enemyAnimator.SetBool("PlayerDetected", true);
             detectedPlayer = other.transform;
+
+            // Update projectile target with current player position
+            if (enemyProjectile != null)
+            {
+                enemyProjectile.SetTarget(other.transform.position);
+            }
         }
     }
 
     /// <summary>
     /// Called when another collider exits the detection collider.
-    /// If the player leaves, resumes patrol after a delay.
+    /// Clears projectile target and resumes patrol.
     /// </summary>
     private void OnTriggerExit(Collider other)
     {
         if (detectionCollider == null) return;
         enemyAnimator.SetBool("PlayerDetected", false);
 
-        // If the player detection object leaves, stop focusing
         if (other.CompareTag("PlayerDetection") && detectedPlayer == other.transform)
         {
             detectedPlayer = null;
-            // Start timer before resuming patrol
+            
+            // Clear projectile target
+            if (enemyProjectile != null)
+            {
+                enemyProjectile.ClearTarget();
+            }
+            
             StartCoroutine(ResumePatrolAfterDelay());
         }
     }

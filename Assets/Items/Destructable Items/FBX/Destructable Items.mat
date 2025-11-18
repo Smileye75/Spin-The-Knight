@@ -115,7 +115,7 @@ Material:
     - _OcclusionStrength: 1
     - _OutlineMaxWidth: 1
     - _OutlineMinWidth: 1
-    - _OutlineWidth: 1.5
+    - _OutlineWidth: 1
     - _OutlineZSmooth: 0
     - _Parallax: 0.02
     - _QueueOffset: 0
