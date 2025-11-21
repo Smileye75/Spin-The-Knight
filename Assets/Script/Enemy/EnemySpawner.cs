@@ -38,6 +38,9 @@ public class EnemySpawner : MonoBehaviour
     [Tooltip("Invoked once when all enemies have been spawned and then defeated.")]
     public UnityEvent onAllEnemiesCleared; // assign SkullGates.TriggerSpecialEvent here in the inspector
 
+    [Tooltip("Invoked once if the player dies while enemies are still alive.")]
+    public UnityEvent onPlayerDeath; // assign SkullGates.TriggerSpecialEvent here in the inspector
+
     private bool specialEventTriggered = false;
 
     /// <summary>
@@ -144,6 +147,9 @@ public class EnemySpawner : MonoBehaviour
 
     public void ResetSpawner()
     {
+        if(onPlayerDeath != null)
+                onPlayerDeath?.Invoke();
+
         if(AllEnemiesDefeated)
             return;
         // Destroy all spawned enemies
@@ -153,7 +159,7 @@ public class EnemySpawner : MonoBehaviour
                 Destroy(enemy);
         }
         spawnedEnemies.Clear();
-
+        onPlayerDeath?.Invoke();
         // Reset counters and flags
         totalSpawned = 0;
         spawningActive = false;

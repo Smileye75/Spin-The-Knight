@@ -11,5 +11,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TheVillageOutskirt.unity
     guid: 6646956cf4feb704e9ea26f720e5a6c9
+  - enabled: 1
+    path: Assets/Scenes/MagicalForest.unity
+    guid: ebcbf52dfe7094e4c95194c836639769
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 78caf0fbcee969646957aa0cebd090d5, type: 3}

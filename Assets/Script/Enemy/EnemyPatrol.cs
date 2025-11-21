@@ -161,8 +161,8 @@ public class EnemyPatrol : BaseEnemy
     {
         base.Update();
 
-        // Only rotate towards detected player if not dead
-        if (!isDead && !isPatrolling && detectedPlayer != null)
+        // only rotate toward detected player when facing is enabled
+        if (!isDead && !isPatrolling && detectedPlayer != null && enableFacePlayer)
         {
             FaceDetectedPlayer();
         }
@@ -180,5 +180,15 @@ public class EnemyPatrol : BaseEnemy
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, 10f * Time.deltaTime);
         }
+    }
+
+    public void StopFacingPlayer()
+    {
+        enableFacePlayer = false;
+    }
+
+    public void StartFacingPlayer()
+    {
+        enableFacePlayer = true;
     }
 }

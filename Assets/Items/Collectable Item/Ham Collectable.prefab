@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5374105412027027916}
   - component: {fileID: 7298497510145888456}
   - component: {fileID: 8475857077879013060}
-  - component: {fileID: 5526665136517225346}
   m_Layer: 0
   m_Name: Ham
   m_TagString: Untagged
@@ -106,27 +105,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!65 &5526665136517225346
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5777528369000325955}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 1048511
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: -0.000040777028, y: 0.0010524541, z: -0.098449975}
 --- !u!1 &8091758813614305398
 GameObject:
   m_ObjectHideFlags: 0

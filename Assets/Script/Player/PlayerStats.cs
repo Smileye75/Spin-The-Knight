@@ -66,16 +66,14 @@ public class PlayerStats : MonoBehaviour
 
     [Header("Player Movement Upgrades")]
     public bool shieldUnlocked = false;
-
-    public bool heavyAttackUnlocked = false;
-
+    public GameObject shieldObject;
+    public GameObject staminaUI;
     public bool jumpAttackUnlocked = false;
-
+    public GameObject jumpAttackFeather;
+    public bool heavyAttackUnlocked = false;
     public bool rollJumpUnlocked = false;
 
-    public GameObject shieldObject;
 
-    public GameObject staminaUI;
 
     public static bool IsLoadingFromSave = false;
 
@@ -92,6 +90,9 @@ public class PlayerStats : MonoBehaviour
             smoothStamina = currentStamina;
             playerUI?.UpdateStamina(currentStamina, maxStamina); // Update stamina UI
         }
+
+        if(jumpAttackFeather != null)
+            jumpAttackFeather.SetActive(jumpAttackUnlocked);
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
@@ -220,6 +221,27 @@ public class PlayerStats : MonoBehaviour
             shieldObject.SetActive(true);
         if (staminaUI != null)
             staminaUI.SetActive(true);
+    }
+
+    public void UnlockJumpAttack()
+    {
+        jumpAttackUnlocked = true;
+        if(jumpAttackFeather != null)
+            jumpAttackFeather.SetActive(true);
+    }
+
+    public void UnlockHeavyAttack()
+    {
+        heavyAttackUnlocked = true;
+        // Optional: play VFX / update UI here if you have assets to show the unlock
+        Debug.Log("Heavy Attack unlocked");
+    }
+
+    public void UnlockRollJump()
+    {
+        rollJumpUnlocked = true;
+        // Optional: play VFX / update UI here if you have assets to show the unlock
+        Debug.Log("Roll Jump unlocked");
     }
 
     /// <summary>

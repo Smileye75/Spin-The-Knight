@@ -16,9 +16,7 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
     [SerializeField] private GameObject wallObject;
     [Tooltip("Optional: VFX to play when gate/wall is destroyed by projectile.")]
     [SerializeField] private ParticleSystem rockVFX;
-    [Tooltip("Optional: tutorial animation to play when shield/unlock happens.")]
-    [SerializeField] private Animation shieldTutorialAnim;
-    private bool shieldTutorialPlayed = false;
+
 
     // Call this to start the shooting routine
     public void ActivateGate()
@@ -46,12 +44,6 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
         if (playerStateMachine != null && playerStateMachine.playerStats != null)
         {
             playerStateMachine.playerStats.UnlockShield();
-        }
-
-        if (!shieldTutorialPlayed)
-        {
-            shieldTutorialAnim?.Play();
-            shieldTutorialPlayed = true;
         }
 
         ActivateGate();

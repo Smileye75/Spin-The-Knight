@@ -124,8 +124,10 @@ public class BaseEnemy : MonoBehaviour
         {
             enemyAnimator.SetTrigger("Death");
             enemyAnimator.SetBool("IsDead", true);
-            enemyAnimator.SetBool("PlayerDetected", false);
             enemyAnimator.SetBool("IsWalking", false);
+            if(enableFacePlayer != false)
+                enemyAnimator.SetBool("PlayerDetected", false);
+
         }
 
         if (triggerColliders != null) triggerColliders.enabled = false;
@@ -217,4 +219,5 @@ public class BaseEnemy : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, 10f * Time.deltaTime);
         }
     }
+
 }

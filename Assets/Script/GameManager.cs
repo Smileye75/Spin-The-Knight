@@ -36,6 +36,9 @@ public class GameManager : MonoBehaviour
 
     private PlayerSaveData pendingLoadData; // Add this field to GameManager
 
+    // If true, unlock shield for the player once after the next scene load
+    private bool unlockShieldOnNextLoad = false;
+
     /// <summary>
     /// Ensures only one GameManager exists and persists across scenes.
     /// Assigns references to player and UI.
@@ -163,6 +166,13 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
     }
 
+    public void MagicalForestScene()
+    {
+        Time.timeScale = 1;
+        unlockShieldOnNextLoad = true;
+        StartCoroutine(LoadSceneWithFade("MagicalForest"));
+    }
+
     public IEnumerator SceneTransition()
     {
         if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeIn(1f));
@@ -213,6 +223,14 @@ public class GameManager : MonoBehaviour
                 stats.UpdateUI();
         }
 
+        // Apply scene-start unlocks if requested
+        if (unlockShieldOnNextLoad && player != null)
+        {
+            var ps = player.GetComponent<PlayerStats>();
+            ps?.UnlockShield();
+            unlockShieldOnNextLoad = false;
+        }
+
         // --- UI update logic here ---
         menuUI?.HideAllMenus();
         menuUI?.playerUI?.SetActive(true);
@@ -256,6 +274,14 @@ public class GameManager : MonoBehaviour
 
         AssignReferences();
         SetPlayerToDefaultSpawn();
+
+        // Apply scene-start unlocks if requested (also cover immediate load path)
+        if (unlockShieldOnNextLoad && player != null)
+        {
+            var ps = player.GetComponent<PlayerStats>();
+            ps?.UnlockShield();
+            unlockShieldOnNextLoad = false;
+        }
 
         if (player != null)
         {
