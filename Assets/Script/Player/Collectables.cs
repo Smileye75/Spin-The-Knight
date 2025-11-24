@@ -12,6 +12,9 @@ public class Collectables : MonoBehaviour
     private Transform targetPlayer;         // The player to move towards when attracted
     private bool moveToPlayer = false;      // Whether the collectable should move to the player
     public float moveSpeed = 15f;            // Speed at which the collectable moves to the player
+    [SerializeField] private float speedIncrement = 5f;      // extra speed added each interval
+    [SerializeField] private float incrementInterval = 1f;   // seconds between increments
+    private Coroutine speedIncreaseRoutine;
 
     public int healAmount = 3;              // Amount of health restored by food
     public int coinAmount = 1;              // Amount of coins this collectable gives
@@ -33,6 +36,7 @@ public class Collectables : MonoBehaviour
             {
                 targetPlayer = stats.transform;
                 moveToPlayer = true;
+                StartSpeedIncrease();
             }
         }
         // If touched by the player, apply effect and destroy
@@ -41,13 +45,13 @@ public class Collectables : MonoBehaviour
             if (gameObject.CompareTag("Coins"))
             {
                 stats.AddCoin(coinAmount);
-                Debug.Log("Coins Collected: " + stats.coins);
             }
             if (gameObject.CompareTag("Food"))
             {
                 stats.Rest();
             }
 
+            StopSpeedIncrease();
             Destroy(gameObject);
         }
     }
@@ -63,7 +67,7 @@ public class Collectables : MonoBehaviour
             Vector3 playerPos = targetPlayer.position;
 
             Vector3 nextPos = Vector3.MoveTowards(coinPos, playerPos, moveSpeed * Time.deltaTime);
-            nextPos.y = Mathf.Max(nextPos.y, 0.5f); // Clamp Y to at least 0.5
+            nextPos.y = Mathf.Max(nextPos.y, 1f); // Clamp Y to at least 0.5
 
             transform.position = nextPos;
         }
@@ -77,5 +81,31 @@ public class Collectables : MonoBehaviour
     {
         targetPlayer = player;
         moveToPlayer = true;
+        StartSpeedIncrease();
+    }
+
+    private void StartSpeedIncrease()
+    {
+        if (speedIncreaseRoutine != null) return;
+        speedIncreaseRoutine = StartCoroutine(SpeedIncreaseLoop());
+    }
+
+    private void StopSpeedIncrease()
+    {
+        if (speedIncreaseRoutine != null)
+        {
+            StopCoroutine(speedIncreaseRoutine);
+            speedIncreaseRoutine = null;
+        }
+    }
+
+    private IEnumerator SpeedIncreaseLoop()
+    {
+        while (moveToPlayer)
+        {
+            yield return new WaitForSeconds(incrementInterval);
+            moveSpeed += speedIncrement;
+        }
+        speedIncreaseRoutine = null;
     }
 }

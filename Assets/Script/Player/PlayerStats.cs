@@ -24,6 +24,7 @@ public class PlayerStats : MonoBehaviour
 
     [Header("Feedback")]
     public MMF_Player damageFeedback;                  // Feedback to play when taking damage
+    public MMF_Player cameraShakeFeedback;            // Camera shake feedback on damage
 
     private bool isInvulnerable = false;               // Prevents taking damage repeatedly
 
@@ -151,7 +152,7 @@ public class PlayerStats : MonoBehaviour
         if (isInvulnerable || isDying) return;
         if (animator != null)
             animator.SetTrigger("Hit");
-
+        cameraShakeFeedback?.PlayFeedbacks();
         // Shield block: costs stamina, nullifies damage
         if (playerStateMachine.CurrentState is PlayerShieldState && currentStamina > 0)
         {

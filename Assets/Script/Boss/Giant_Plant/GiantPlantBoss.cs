@@ -7,232 +7,179 @@ public class GiantPlantBoss : MonoBehaviour
     [SerializeField] private Animator bossAnimator;
     [SerializeField] private Transform[] minionSpawnPoints;
     [SerializeField] private GameObject[] minionPrefabs;
-    [SerializeField] private Animator[] vineAnimators;
 
     [Header("Detection")]
     [SerializeField] private Collider awakeCollider;
     [SerializeField] private Collider detectionCollider;
+    [SerializeField] private BoxCollider hitboxCollider;
+    [SerializeField] private SphereCollider damageCollider;
     private Transform detectedPlayer;
 
     [Header("Attack")]
     [Tooltip("Minimum seconds between PlayerInRange triggers.")]
     [SerializeField] private float attackCooldown = 3f;
     private float lastAttackTime = -Mathf.Infinity;
-    private bool isAttacking = false;
-
     private int damageAmount = 1;
 
-    // --- NEW: Phase system (template) ---
     private enum Phase { Phase1, Phase2, Phase3 }
 
-    [Header("Phase Settings (template)")]
-    [Tooltip("Total HP for the boss. Phase thresholds use relative HP (you can change logic).")]
+    [Header("Phase Settings")]
     [SerializeField] private int maxHitPoints = 3;
     private int currentHitPoints;
-
-    // runtime tracking
     private Phase currentPhase = Phase.Phase1;
     private Phase lastPhase = Phase.Phase1;
     private Coroutine activePhaseRoutine;
-
-    // ensure we only start phases once when boss awakens
     private bool hasAwoken = false;
 
-    [Header("Minion Spawning (per-phase)")]
-    [Tooltip("Number of minions to spawn for each phase (index 0 = Phase1, 1 = Phase2, 2 = Phase3)")]
+    [Header("Minion Spawning")]
     [SerializeField] private int[] phaseMinionCounts = new int[] { 2, 4, 6 };
-    [Tooltip("Spawn interval (seconds) for each phase (index aligned with phaseMinionCounts)")]
     [SerializeField] private float[] phaseSpawnIntervals = new float[] { 3f, 2f, 1f };
 
-    // runtime tracking of spawned minions for cleanup / checks
-    private List<GameObject> spawnedMinions = new List<GameObject>();
+    [Header("Resting")]
+    [SerializeField] private float restDuration = 5f;
 
-    // hold a reference to the active spawn coroutine so it can be stopped on phase changes
+    private List<GameObject> spawnedMinions = new List<GameObject>();
     private Coroutine phaseSpawnRoutine;
+    private Coroutine restRoutine;
 
     private void Awake()
     {
-        // initialize HP / phase
         currentHitPoints = maxHitPoints;
         currentPhase = DeterminePhase();
         lastPhase = currentPhase;
-    }
-
-    private void Start()
-    {
-        // existing start logic can remain; phases will begin when the boss is triggered (OnTriggerEnter)
+        if (hitboxCollider != null) hitboxCollider.enabled = false;
     }
 
     private void Update()
     {
-        // detection existing logic...
-        // keep current behavior but ensure phase changes are handled
         Phase newPhase = DeterminePhase();
         if (newPhase != currentPhase)
         {
-            // phase changed
-            ExitPhase(currentPhase);
-            currentPhase = newPhase;
-            EnterPhase(currentPhase);
-        }
-
-        // existing per-frame behavior (face player, etc.) can run here
-    }
-
-    // Call to reduce HP and potentially change phase
-    public void TakeDamage(int amount)
-    {
-        if (amount <= 0) return;
-        currentHitPoints = Mathf.Max(0, currentHitPoints - amount);
-
-        // optional: play hit animation/state
-        if (bossAnimator != null) bossAnimator.SetTrigger("Hit");
-
-        // check death
-        if (currentHitPoints <= 0)
-        {
-            Die();
-            return;
-        }
-
-        // check for teleport/hit reaction etc. (existing logic can go here)
-
-        // phase change handled in Update, but you can call it immediately:
-        Phase newPhase = DeterminePhase();
-        if (newPhase != currentPhase)
-        {
-            ExitPhase(currentPhase);
-            currentPhase = newPhase;
-            EnterPhase(currentPhase);
+            ChangePhase(newPhase);
         }
     }
 
     private Phase DeterminePhase()
     {
-        // Simple template: phases by remaining HP percentage/thresholds
-        if (currentHitPoints <= Mathf.Max(1, maxHitPoints / 3))
-            return Phase.Phase3;
-        if (currentHitPoints <= Mathf.Max(1, (maxHitPoints * 2) / 3))
-            return Phase.Phase2;
+        if (currentHitPoints <= Mathf.Max(1, maxHitPoints / 3)) return Phase.Phase3;
+        if (currentHitPoints <= Mathf.Max(1, (maxHitPoints * 2) / 3)) return Phase.Phase2;
         return Phase.Phase1;
+    }
+
+    private void ChangePhase(Phase newPhase)
+    {
+        ExitPhase(currentPhase);
+        currentPhase = newPhase;
+        EnterPhase(currentPhase);
     }
 
     private void EnterPhase(Phase p)
     {
-        // stop any existing phase routine
         StopActivePhaseRoutine();
-
-        // start phase behaviour coroutine (template)
-        switch (p)
-        {
-            case Phase.Phase1:
-                activePhaseRoutine = StartCoroutine(PhaseRoutine_Template("Phase1"));
-                break;
-            case Phase.Phase2:
-                activePhaseRoutine = StartCoroutine(PhaseRoutine_Template("Phase2"));
-                break;
-            case Phase.Phase3:
-                activePhaseRoutine = StartCoroutine(PhaseRoutine_Template("Phase3"));
-                break;
-        }
-
-        // start minion spawning for this phase (separate coroutine)
-        if (phaseSpawnRoutine != null) StopCoroutine(phaseSpawnRoutine);
-        phaseSpawnRoutine = StartCoroutine(SpawnMinionsForPhase(p));
-
-        // Trigger vine animators according to phase (first 2 for phase1, first 4 for phase2, etc.)
-        TriggerVinesForPhase(p);
-
+        SetHitbox(false);
+        StartMinionSpawning(p);
         lastPhase = p;
-        // optional: notify animator or VFX about phase entry
-        // bossAnimator?.SetInteger("Phase", (int)p);
     }
 
     private void ExitPhase(Phase p)
     {
-        // Clean up anything specific to a phase (stop effects, reset timers)
         StopActivePhaseRoutine();
-
-        // stop minion spawner for this phase if running
-        if (phaseSpawnRoutine != null)
-        {
-            StopCoroutine(phaseSpawnRoutine);
-            phaseSpawnRoutine = null;
-        }
+        StopCoroutineSafe(ref phaseSpawnRoutine);
+        StopCoroutineSafe(ref restRoutine);
     }
 
     private void StopActivePhaseRoutine()
     {
-        if (activePhaseRoutine != null)
-        {
-            StopCoroutine(activePhaseRoutine);
-            activePhaseRoutine = null;
-        }
+        StopCoroutineSafe(ref activePhaseRoutine);
     }
 
-    // Minimal template coroutine that you can replace with real behavior for each phase
-    private IEnumerator PhaseRoutine_Template(string phaseName)
+    private void StartMinionSpawning(Phase p)
     {
-        // Example loop: run while boss alive and in this phase
-        while (DeterminePhase().ToString() == phaseName && currentHitPoints > 0)
-        {
-            // placeholder: you can call phase-specific methods here,
-            // spawn minions, change shoot intervals, enable new attacks, etc.
-            // e.g. SpawnMinion(), StartVineAttack(), ChangeFireRate(), etc.
-
-            // For template, just wait a short time so coroutine yields control
-            yield return new WaitForSeconds(0.5f);
-        }
+        StopCoroutineSafe(ref phaseSpawnRoutine);
+        phaseSpawnRoutine = StartCoroutine(SpawnMinionsForPhase(p));
     }
 
     private IEnumerator SpawnMinionsForPhase(Phase p)
     {
         int idx = (int)p;
-        int count = (phaseMinionCounts != null && phaseMinionCounts.Length > idx) ? phaseMinionCounts[idx] : 0;
-        float interval = (phaseSpawnIntervals != null && phaseSpawnIntervals.Length > idx) ? phaseSpawnIntervals[idx] : 2f;
+        int count = GetPhaseValue(phaseMinionCounts, idx, 0);
+        float interval = GetPhaseValue(phaseSpawnIntervals, idx, 2f);
 
-        // Guard: nothing to spawn or missing spawn points/prefabs
         if (count <= 0 || minionPrefabs == null || minionPrefabs.Length == 0 || minionSpawnPoints == null || minionSpawnPoints.Length == 0)
             yield break;
-        yield return new WaitForSeconds(2f);
+
+        yield return new WaitForSeconds(1f);
+
         for (int i = 0; i < count; i++)
         {
-            // if phase changed while spawning, stop spawning for this (old) phase
             if (currentPhase != p) yield break;
-
-            // choose spawn point and prefab (round-robin spawn point, random prefab)
             Transform spawnPoint = minionSpawnPoints[i % minionSpawnPoints.Length];
             GameObject prefab = minionPrefabs[Random.Range(0, minionPrefabs.Length)];
-
             GameObject minion = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation);
             spawnedMinions.Add(minion);
-
-            // wait interval before next spawn
             yield return new WaitForSeconds(interval);
         }
 
         phaseSpawnRoutine = null;
+        yield return StartCoroutine(WaitForMinionsAndRest(p));
     }
 
-    // Optional helper to purge null entries and optionally destroy remaining minions
-    private void CleanupSpawnedMinions(bool destroyAll = false)
+    private IEnumerator WaitForMinionsAndRest(Phase p)
     {
-        spawnedMinions.RemoveAll(x => x == null);
-        if (destroyAll)
+        
+        while (true)
         {
-            foreach (var go in spawnedMinions)
-                if (go != null) Destroy(go);
-            spawnedMinions.Clear();
+            spawnedMinions.RemoveAll(x => x == null);
+            if (spawnedMinions.Count == 0) break;
+            yield return new WaitForSeconds(0.5f);
         }
+        bossAnimator?.ResetTrigger("Awake");
+        bossAnimator?.SetBool("Sleep", true);
+        SetDetection(false);
+        SetHitbox(true);
+        SetDamageCollider(false);
+        StartRestRoutine(p);
+    }
+
+    private void StartRestRoutine(Phase p)
+    {
+        StopCoroutineSafe(ref restRoutine);
+        restRoutine = StartCoroutine(RestRoutine(p));
+    }
+
+    private IEnumerator RestRoutine(Phase p)
+    {
+        float elapsed = 0f;
+        while (elapsed < restDuration)
+        {
+            if (DeterminePhase() != p)
+            {
+                SetHitbox(false);
+                SetDetection(true);
+                restRoutine = null;
+                yield break;
+            }
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        SetHitbox(false);
+        SetDetection(true);
+        SetDamageCollider(true);
+        bossAnimator?.SetBool("Sleep", false);
+        bossAnimator?.SetTrigger("Awake");
+        yield return new WaitForSeconds(2.5f);
+        StartMinionSpawning(p);
+        restRoutine = null;
     }
 
     private void Die()
     {
-        // existing death logic
-        if (bossAnimator != null) bossAnimator.SetTrigger("Dead");
-        // stop routines
+        bossAnimator?.SetTrigger("Dead");
         StopActivePhaseRoutine();
-        // destroy or play final death sequence
+        StopCoroutineSafe(ref phaseSpawnRoutine);
+        StopCoroutineSafe(ref restRoutine);
+        SetHitbox(false);
+        SetDetection(false);
         Destroy(gameObject, 2f);
     }
 
@@ -240,7 +187,7 @@ public class GiantPlantBoss : MonoBehaviour
     {
         if (detectedPlayer == null) return;
         Vector3 direction = detectedPlayer.position - transform.position;
-        direction.y = 0f; // Only rotate horizontally
+        direction.y = 0f;
         if (direction != Vector3.zero)
         {
             Quaternion lookRotation = Quaternion.LookRotation(direction);
@@ -252,7 +199,6 @@ public class GiantPlantBoss : MonoBehaviour
     {
         if (awakeCollider == null) return;
 
-        // Wake / start phases when the detection trigger is hit (PlayerDetection tag)
         if (other.CompareTag("PlayerDetection"))
         {
             if (!hasAwoken)
@@ -260,44 +206,39 @@ public class GiantPlantBoss : MonoBehaviour
                 hasAwoken = true;
                 EnterPhase(currentPhase);
             }
-
             bossAnimator?.SetTrigger("Awake");
-            awakeCollider.enabled = false;
+            if (awakeCollider != null) awakeCollider.enabled = false;
+            SetHitbox(false);
         }
 
-        // Only apply damage / knockback if the collider's tag is exactly "Player"
         if (!other.CompareTag("Player")) return;
 
-        // Robust: get PlayerStats / ForceReceiver from the collider or its parents
         var playerStats = other.GetComponentInParent<PlayerStats>();
         if (playerStats != null)
         {
             playerStats.TakeDamage(damageAmount);
-
             var receiver = other.GetComponentInParent<ForceReceiver>();
             if (receiver != null)
                 receiver.ApplyKnockback(transform.position);
         }
-
-        // no player found or not tagged "Player" -> nothing else to do
+        if (other.CompareTag("Weapon"))
+        {
+            TakeDamage(1);
+        }
     }
 
     private void OnTriggerStay(Collider other)
     {
         if (detectionCollider == null) return;
-
         if (!other.CompareTag("PlayerDetection")) return;
 
         detectedPlayer = other.transform;
-
         FaceDetectedPlayer();
 
-        // Trigger attack animation (PlayerInRange) with cooldown
         if (bossAnimator != null && Time.time >= lastAttackTime + attackCooldown)
         {
             bossAnimator.SetTrigger("PlayerInRange");
             lastAttackTime = Time.time;
-            isAttacking = true;
         }
     }
 
@@ -307,7 +248,6 @@ public class GiantPlantBoss : MonoBehaviour
         if (!other.CompareTag("PlayerDetection")) return;
         if (detectedPlayer != other.transform) return;
         detectedPlayer = null;
-        isAttacking = false;
     }
 
     public void ResetBoss()
@@ -317,22 +257,56 @@ public class GiantPlantBoss : MonoBehaviour
         lastPhase = currentPhase;
         StopActivePhaseRoutine();
         EnterPhase(currentPhase);
-
-        // Destroy any spawned minions and clear list
         CleanupSpawnedMinions(true);
+        SetDamageCollider(false);
+    }
+    
+    public void TakeDamage(int amount)
+    {
+        currentHitPoints -= amount;
+        if (currentHitPoints <= 0)
+        {
+            Die();
+        }
     }
 
-    // Triggers 'Rise' on a subset of vineAnimators depending on the phase:
-    // Phase1 => indices [0,1], Phase2 => [0..3], Phase3 => [0..5] (bounded by array length)
-    private void TriggerVinesForPhase(Phase p)
+    private void CleanupSpawnedMinions(bool destroyAll = false)
     {
-        if (vineAnimators == null || vineAnimators.Length == 0) return;
-        int countToTrigger = Mathf.Min(vineAnimators.Length, ((int)p + 1) * 2);
-        for (int i = 0; i < countToTrigger; i++)
+        spawnedMinions.RemoveAll(x => x == null);
+        if (destroyAll)
         {
-            var a = vineAnimators[i];
-            if (a != null)
-                a.SetTrigger("Rise");
+            foreach (var go in spawnedMinions)
+                if (go != null) Destroy(go);
+            spawnedMinions.Clear();
         }
+    }
+
+    // Utility methods
+    private void SetHitbox(bool enabled)
+    {
+        if (hitboxCollider != null) hitboxCollider.enabled = enabled;
+    }
+
+    private void SetDetection(bool enabled)
+    {
+        if (detectionCollider != null) detectionCollider.enabled = enabled;
+    }
+    private void SetDamageCollider(bool enabled)
+    {
+        if (damageCollider != null) damageCollider.enabled = enabled;
+    }
+
+    private void StopCoroutineSafe(ref Coroutine routine)
+    {
+        if (routine != null)
+        {
+            StopCoroutine(routine);
+            routine = null;
+        }
+    }
+
+    private T GetPhaseValue<T>(T[] array, int idx, T fallback)
+    {
+        return (array != null && array.Length > idx) ? array[idx] : fallback;
     }
 }

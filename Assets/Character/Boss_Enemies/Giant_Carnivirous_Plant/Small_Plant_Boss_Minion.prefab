@@ -43,7 +43,6 @@ GameObject:
   - component: {fileID: 5334470057198739461}
   - component: {fileID: 6497668130840709382}
   - component: {fileID: 6021893771752152005}
-  - component: {fileID: 6642189632425006589}
   - component: {fileID: 2354054567414029643}
   - component: {fileID: 1361462489499126583}
   - component: {fileID: 5155986762896818203}
@@ -121,40 +120,6 @@ MonoBehaviour:
   armored: 0
   moveSpeed: 5
   moveCooldown: 1
-  enemyProjectile: {fileID: 0}
---- !u!114 &6642189632425006589
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690592618951776836}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cea658dd3da6cc418ac6353c82526b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyAnimator: {fileID: 6497668130840709382}
-  coinPrefab: {fileID: 5928777775714429725, guid: e8e9f6cdcb30c6d4db6e978b210dfcbe, type: 3}
-  enemyPrefab: {fileID: 9048385914137831542}
-  triggerColliders: {fileID: 5155986762896818203}
-  attackCollider: {fileID: 1788664525743044662}
-  weaponCollider: {fileID: 0}
-  stompFeedback: {fileID: 8042164397974654408}
-  bounceForce: 16
-  jumpBoostMultiplier: 1.5
-  attackRange: 4
-  attackCooldown: 1.5
-  damageAmount: 1
-  enableFacePlayer: 1
-  armored: 0
-  patrolPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  speed: 2
-  waitTime: 2
-  detectionCollider: {fileID: 0}
-  resumePatrolDelay: 2
   enemyProjectile: {fileID: 0}
 --- !u!54 &2354054567414029643
 Rigidbody:

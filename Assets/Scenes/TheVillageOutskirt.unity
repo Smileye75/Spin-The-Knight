@@ -975,9 +975,9 @@ GameObject:
   - component: {fileID: 36354084}
   - component: {fileID: 36354083}
   - component: {fileID: 36354082}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: DeathZone (1)
-  m_TagString: Untagged
+  m_TagString: DeadZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1010,7 +1010,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2096895
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -3960,9 +3960,9 @@ GameObject:
   - component: {fileID: 162274653}
   - component: {fileID: 162274652}
   - component: {fileID: 162274651}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: DeathZone (2)
-  m_TagString: Untagged
+  m_TagString: DeadZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3976,11 +3976,11 @@ Transform:
   m_GameObject: {fileID: 162274649}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.8900223, y: -5.47, z: 39.379997}
+  m_LocalPosition: {x: 7.8899727, y: -5.71, z: 55.629997}
   m_LocalScale: {x: 30.163605, y: 9.306488, z: 19.846197}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 713633195}
+  m_Father: {fileID: 1770949459}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &162274651
 BoxCollider:
@@ -3995,7 +3995,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2096895
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -14208,9 +14208,9 @@ GameObject:
   - component: {fileID: 372740311}
   - component: {fileID: 372740310}
   - component: {fileID: 372740309}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: DeathZone (1)
-  m_TagString: Untagged
+  m_TagString: DeadZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14243,7 +14243,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2096895
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -25074,38 +25074,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
   m_IsActive: 1
---- !u!1 &713633194
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 713633195}
-  m_Layer: 0
-  m_Name: Boss Left Pitfalls
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &713633195
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 713633194}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.70710576, z: -0, w: 0.70710784}
-  m_LocalPosition: {x: 175.51521, y: 2.75, z: 333.65756}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 162274650}
-  m_Father: {fileID: 896450808}
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &718639277
 GameObject:
   m_ObjectHideFlags: 0
@@ -25164,7 +25132,7 @@ Transform:
   m_GameObject: {fileID: 721786863}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -227.19, y: -4.74, z: 241.96}
+  m_LocalPosition: {x: -227.19, y: -5.16, z: 241.96}
   m_LocalScale: {x: 10.489758, y: 1, z: 2.170456}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -29763,7 +29731,6 @@ Transform:
   m_Children:
   - {fileID: 244193006}
   - {fileID: 929709144}
-  - {fileID: 713633195}
   - {fileID: 1770949459}
   - {fileID: 961965900}
   - {fileID: 1509926663}
@@ -62950,9 +62917,9 @@ GameObject:
   - component: {fileID: 1594119141}
   - component: {fileID: 1594119140}
   - component: {fileID: 1594119139}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: DeathZone (1)
-  m_TagString: Untagged
+  m_TagString: DeadZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -62985,7 +62952,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2096895
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -69477,7 +69444,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1770949459}
   m_Layer: 0
-  m_Name: Boss Right Pitfalls
+  m_Name: Boss Pitfalls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69496,6 +69463,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 162274650}
   - {fileID: 2120993771}
   - {fileID: 1516330110}
   - {fileID: 998773819}
@@ -80855,9 +80823,9 @@ GameObject:
   - component: {fileID: 2111554474}
   - component: {fileID: 2111554473}
   - component: {fileID: 2111554472}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: DeathZone (1)
-  m_TagString: Untagged
+  m_TagString: DeadZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -80890,7 +80858,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2096895
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -82296,7 +82264,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2096895
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -83167,9 +83135,9 @@ GameObject:
   - component: {fileID: 8109927945084561558}
   - component: {fileID: 9108944459991131308}
   - component: {fileID: 2092002096050259435}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: DeathZone (1)
-  m_TagString: Untagged
+  m_TagString: DeadZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -84080,9 +84048,9 @@ GameObject:
   - component: {fileID: 480013281670196637}
   - component: {fileID: 8228486785710296853}
   - component: {fileID: 8683976274513352817}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: DeathZone
-  m_TagString: Untagged
+  m_TagString: DeadZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -86511,7 +86479,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2096895
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0

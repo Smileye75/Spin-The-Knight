@@ -1056,7 +1056,7 @@ MonoBehaviour:
   stompFeedback: {fileID: 1390648182149437673}
   bounceForce: 16
   jumpBoostMultiplier: 1.5
-  attackRange: 7
+  attackRange: 9
   attackCooldown: 2
   damageAmount: 1
   enableFacePlayer: 1
