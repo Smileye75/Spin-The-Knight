@@ -23,7 +23,7 @@ public class DeathZone : MonoBehaviour
             // Trigger life loss by dealing max health as damage
             if (other.TryGetComponent<PlayerStats>(out var stats))
             {
-                stats.TakeDamage(stats.maxHealth); // Force death
+                stats.DeadZoneDeath(); // Force death
             }
         }
     }

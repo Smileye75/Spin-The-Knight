@@ -127,12 +127,15 @@ public class BaseEnemy : MonoBehaviour
             enemyAnimator.SetBool("IsWalking", false);
             if(enableFacePlayer != false)
                 enemyAnimator.SetBool("PlayerDetected", false);
-
         }
 
         if (triggerColliders != null) triggerColliders.enabled = false;
         if (attackCollider != null) attackCollider.enabled = false;
         if (weaponCollider != null) weaponCollider.enabled = false;
+
+        // Disable projectile shooting if present
+        var projectile = GetComponent<EnemyProjectile>();
+        if (projectile != null) projectile.enabled = false;
 
         if (coinPrefab != null)
         {

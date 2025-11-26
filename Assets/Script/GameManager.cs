@@ -39,6 +39,9 @@ public class GameManager : MonoBehaviour
     // If true, unlock shield for the player once after the next scene load
     private bool unlockShieldOnNextLoad = false;
 
+    private bool canPause = true;
+    private bool allowReset = false;
+
     /// <summary>
     /// Ensures only one GameManager exists and persists across scenes.
     /// Assigns references to player and UI.
@@ -69,10 +72,24 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void TogglePause()
     {
+        if (!canPause) return;
         bool pause = CurrentState != GameState.Paused;
         CurrentState = pause ? GameState.Paused : GameState.Playing;
-        Time.timeScale = pause ? 0 : 1; // Freezes/unfreezes game
+        Time.timeScale = pause ? 0 : 1;
         OnPauseToggled?.Invoke(pause);
+
+        // Pause/unpause player using PausingState
+        if (player != null)
+        {
+            var stateMachine = player.GetComponent<PlayerStateMachine>();
+            if (stateMachine != null)
+            {
+                if (pause)
+                    stateMachine.SwitchState(stateMachine.PausingState);
+                else
+                    stateMachine.SwitchState(new PlayerMoveState(stateMachine)); // or your default state
+            }
+        }
     }
 
     /// <summary>
@@ -81,6 +98,7 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         TogglePause();
+        canPause = false;
         CurrentState = GameState.GameOver;
         OnGameOver?.Invoke();
         menuUI?.ShowGameOverUI();
@@ -92,6 +110,7 @@ public class GameManager : MonoBehaviour
     public void Victory()
     {
         TogglePause();
+        canPause = false;
         CurrentState = GameState.Victory;
         OnVictory?.Invoke();
         menuUI?.ShowVictoryUI();
@@ -106,6 +125,10 @@ public class GameManager : MonoBehaviour
     {
         if (player != null)
         {
+            var stateMachine = player.GetComponent<PlayerStateMachine>();
+            if (stateMachine != null)
+                stateMachine.SwitchState(stateMachine.PausingState);
+
             CharacterController cc = player.GetComponent<CharacterController>();
             if (cc != null) cc.enabled = false;
 
@@ -116,6 +139,9 @@ public class GameManager : MonoBehaviour
             player.transform.position = spawnPos;
 
             if (cc != null) cc.enabled = true;
+
+            // After respawn, switch back to normal state
+            StartCoroutine(ResumePlayerAfterRespawn(stateMachine));
         }
         OnRespawn?.Invoke(position);
 
@@ -130,6 +156,13 @@ public class GameManager : MonoBehaviour
         {
             spawner.ResetSpawner();
         }
+    }
+
+    private IEnumerator ResumePlayerAfterRespawn(PlayerStateMachine stateMachine)
+    {
+        yield return new WaitForSeconds(1.5f); // Adjust as needed
+        if (stateMachine != null)
+            stateMachine.SwitchState(new PlayerMoveState(stateMachine)); // or your default state
     }
 
     /// <summary>
@@ -151,9 +184,37 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ReloadScene()
     {
-        Time.timeScale = 1; // Ensure game is unpaused
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Time.timeScale = 1;
+        canPause = true;
+        StartCoroutine(ReloadSceneRoutine());
+    }
+
+    private IEnumerator ReloadSceneRoutine()
+    {
+        // Fade in before reload (optional)
+        if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeIn(1f));
+ 
+        // Reload the scene
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+        asyncLoad.allowSceneActivation = false;
+
+        while (!asyncLoad.isDone)
+        {
+            if (asyncLoad.progress >= 0.9f)
+            {
+                asyncLoad.allowSceneActivation = true;
+            }
+            yield return null;
+        }
+
+        // Wait one frame for scene to finish loading
+        yield return null;
+
+        canPause = true;
         StartCoroutine(WaitAndSetDefaultSpawn());
+
+        // Fade out after reload
+        if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeOut(1f));
     }
 
     /// <summary>
@@ -163,6 +224,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         ResetGameData();
+        canPause = true;
         StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
     }
 
@@ -193,6 +255,7 @@ public class GameManager : MonoBehaviour
     public void LoadMainMenu()
     {
         Time.timeScale = 1;
+        canPause = true;
         StartCoroutine(LoadSceneWithFade("StartMenu"));
         menuUI?.HideAllMenus();
     }
@@ -315,11 +378,19 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1; // Ensure game is unpaused
         pendingLoadData = SaveManager.Instance.LoadData();
         StartCoroutine(LoadGameRoutine());
+        canPause = true;
+    }
+
+    public void ResetartLevel()
+    {
+        Time.timeScale = 1;
+        canPause = true;
+        StartCoroutine(LoadSceneWithFade(SceneManager.GetActiveScene().name));
     }
 
     private IEnumerator LoadGameRoutine()
     {
-        yield return StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
+        yield return StartCoroutine(LoadSceneWithFade(SceneManager.GetActiveScene().name));
 
         PlayerStats stats = null;
         float timeout = 5f;
@@ -364,10 +435,23 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(loadingScreen.FadeOut(1f));
     }
 
+    public void ConfirmReset()
+    {
+        allowReset = true;
+        // Optionally show a UI confirmation dialog here
+    }
+
     public void ResetGameData()
     {
-        SaveManager.Instance.DeleteSave();
+        if (!allowReset)
+        {
+            Debug.LogWarning("ResetGameData called without confirmation!");
+            return;
+        }
+        allowReset = false; // Reset flag after use
 
+        SaveManager.Instance.DeleteSave();
+        canPause = true;
         if (player == null) player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
 
@@ -375,7 +459,6 @@ public class GameManager : MonoBehaviour
         if (stats != null)
             stats.ResetPlayerProgress();
 
-        // Optionally fade out if loading screen is active
         if (loadingScreen) StartCoroutine(loadingScreen.FadeOut(1f));
     }
 

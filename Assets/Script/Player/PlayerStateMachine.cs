@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement; // Added for scene management
 /// It holds references and settings for movement, combat, jumping, rolling, and feedbacks.
 /// This class manages state switching, player stats, animation, and relays animation events for attacks.
 /// </summary>
-public class PlayerStateMachine : StateMachine
+public class PlayerStateMachine : MonoBehaviour
 {
     // ========== Spin event relay ==========
     // The active attack state will set this when it enters, and clear it on exit.
@@ -47,7 +47,7 @@ public class PlayerStateMachine : StateMachine
 
     [Tooltip("Reference to the main camera transform.")]
     public Transform mainCamera; // Used for movement direction
-
+ 
     [Tooltip("Handles external forces like gravity.")]
     public ForceReceiver forceReceiver; // Applies gravity and knockback
 
@@ -118,6 +118,7 @@ public class PlayerStateMachine : StateMachine
     /// The current player state (move, attack, air, roll, etc.).
     /// </summary>
     public PlayerBaseMachine CurrentState { get; private set; }
+    public PlayerPausingState PausingState { get; private set; }
 
     /// <summary>
     /// Initializes player components, calculates gravity/jump force, and starts in move state.
@@ -158,6 +159,9 @@ public class PlayerStateMachine : StateMachine
 
     private void Awake()
     {
+        animator = GetComponentInChildren<Animator>();
+        inputReader = GetComponent<InputReader>();
+        PausingState = new PlayerPausingState(this);
 
         if (animator != null)
             animator.SetFloat("AttackSpeed", attackAnimSpeed);
@@ -169,8 +173,9 @@ public class PlayerStateMachine : StateMachine
     /// <param name="newState">The new player state to switch to.</param>
     public void SwitchState(PlayerBaseMachine newState)
     {
+        if (CurrentState != null) CurrentState.Exit();
         CurrentState = newState;
-        base.SwitchState(newState); // Call base logic if needed
+        CurrentState.Enter();
     }
 
     private void Update()

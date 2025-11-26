@@ -121,22 +121,25 @@ public class PlayerMoveState : PlayerBaseMachine
     /// </summary>
     private void OnJump()
     {
-        // Reset fall timer so the new jump isn't misdetected as a fall
         notGroundedTimer = 0f;
-
-        // ensure jump press time is recorded (InputReader also sets this, but set again for safety)
         stateMachine.lastJumpPressedTime = Time.time;
 
-        // Calculate initial air velocity for a normal jump (no forward boost)
-        Vector3 airVelocity = Vector3.up * stateMachine.jumpForce;
+        bool canCoyoteJump = !stateMachine.characterController.isGrounded &&
+                             (Time.time - stateMachine.lastGroundedTime < stateMachine.coyoteTime);
 
-        stateMachine.SwitchState(
-            new PlayerAirState(
-                stateMachine,
-                customJumpForce: airVelocity.y, // keep applying initial jump normally
-                applyInitialJump: true
-            )
-        );
+        // If grounded or within coyote time, allow jump
+        if (stateMachine.characterController.isGrounded || canCoyoteJump)
+        {
+            Vector3 airVelocity = Vector3.up * stateMachine.jumpForce;
+            stateMachine.SwitchState(
+                new PlayerAirState(
+                    stateMachine,
+                    customJumpForce: airVelocity.y,
+                    applyInitialJump: true
+                )
+            );
+        }
+        // else: ignore jump if not allowed
     }
 
     /// <summary>

@@ -1343,6 +1343,7 @@ MonoBehaviour:
   waitTime: 2
   detectionCollider: {fileID: 0}
   resumePatrolDelay: 2
+  enemyProjectile: {fileID: 0}
 --- !u!54 &5164885569488461628
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1389,8 +1390,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.26795593, y: 0.10264376, z: 0.9916239}
-  m_Center: {x: 0.004731893, y: 0.18823412, z: -0.17395733}
+  m_Size: {x: 0.26795593, y: 0.10264376, z: 0.5968279}
+  m_Center: {x: 0.0047318935, y: 0.18823412, z: 0.02344175}
 --- !u!65 &3021295653147683101
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1410,8 +1411,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.41668123, y: 0.1382135, z: 1.0927364}
-  m_Center: {x: 0.0020557244, y: 0.07042264, z: -0.18125974}
+  m_Size: {x: 0.41668123, y: 0.1382135, z: 0.64938194}
+  m_Center: {x: 0.0020557244, y: 0.070422634, z: 0.040418413}
 --- !u!65 &2697896137905016868
 BoxCollider:
   m_ObjectHideFlags: 0

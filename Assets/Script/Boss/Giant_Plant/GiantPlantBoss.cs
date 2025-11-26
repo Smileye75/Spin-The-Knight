@@ -21,6 +21,10 @@ public class GiantPlantBoss : MonoBehaviour
     private float lastAttackTime = -Mathf.Infinity;
     private int damageAmount = 1;
 
+    [Header("Boss Attack Settings")]
+    [SerializeField] private float attackRange = 5f; // Range to start attacking the player
+    private bool isAttacking = false;
+
     private enum Phase { Phase1, Phase2, Phase3 }
 
     [Header("Phase Settings")]
@@ -35,8 +39,13 @@ public class GiantPlantBoss : MonoBehaviour
     [SerializeField] private int[] phaseMinionCounts = new int[] { 2, 4, 6 };
     [SerializeField] private float[] phaseSpawnIntervals = new float[] { 3f, 2f, 1f };
 
+    [Header("Boss Vines")]
+    [SerializeField] private Animator[] bossVinesAnimator;
+    [SerializeField] private EnemyPatrol[] bossVinesPatrol;
+
     [Header("Resting")]
     [SerializeField] private float restDuration = 5f;
+    private bool isResting = false;
 
     private List<GameObject> spawnedMinions = new List<GameObject>();
     private Coroutine phaseSpawnRoutine;
@@ -48,6 +57,13 @@ public class GiantPlantBoss : MonoBehaviour
         currentPhase = DeterminePhase();
         lastPhase = currentPhase;
         if (hitboxCollider != null) hitboxCollider.enabled = false;
+        SetDetection(false);
+        SetDamageCollider(false);
+        foreach (var vine in bossVinesPatrol)
+        {
+            if (vine != null)
+                vine.enabled = false;
+        }
     }
 
     private void Update()
@@ -56,6 +72,29 @@ public class GiantPlantBoss : MonoBehaviour
         if (newPhase != currentPhase)
         {
             ChangePhase(newPhase);
+        }
+
+        // --- Boss faces player and attacks when close ---
+        if (detectedPlayer != null)
+        {
+            if (isResting) return;
+            float distanceToPlayer = Vector3.Distance(transform.position, detectedPlayer.position);
+
+            if (distanceToPlayer <= attackRange)
+            {
+                FaceDetectedPlayer();
+
+                if (Time.time >= lastAttackTime + attackCooldown)
+                {
+                    bossAnimator?.SetTrigger("PlayerInRange");
+                    lastAttackTime = Time.time;
+                    isAttacking = true;
+                }
+            }
+            else
+            {
+                isAttacking = false;
+            }
         }
     }
 
@@ -77,6 +116,7 @@ public class GiantPlantBoss : MonoBehaviour
     {
         StopActivePhaseRoutine();
         SetHitbox(false);
+        ActivateVinesForPhase(p);
         StartMinionSpawning(p);
         lastPhase = p;
     }
@@ -135,9 +175,11 @@ public class GiantPlantBoss : MonoBehaviour
         }
         bossAnimator?.ResetTrigger("Awake");
         bossAnimator?.SetBool("Sleep", true);
+        SetVinesSleepTrigger(true); // <-- Add this line
         SetDetection(false);
         SetHitbox(true);
         SetDamageCollider(false);
+        isResting = true;
         StartRestRoutine(p);
     }
 
@@ -156,7 +198,10 @@ public class GiantPlantBoss : MonoBehaviour
             {
                 SetHitbox(false);
                 SetDetection(true);
+                SetDamageCollider(true);
                 restRoutine = null;
+                isResting = false;
+                SetVinesSleepTrigger(false); // <-- Add this line
                 yield break;
             }
             elapsed += Time.deltaTime;
@@ -165,8 +210,10 @@ public class GiantPlantBoss : MonoBehaviour
         SetHitbox(false);
         SetDetection(true);
         SetDamageCollider(true);
+        isResting = false;
         bossAnimator?.SetBool("Sleep", false);
         bossAnimator?.SetTrigger("Awake");
+        SetVinesSleepTrigger(false); // <-- Add this line
         yield return new WaitForSeconds(2.5f);
         StartMinionSpawning(p);
         restRoutine = null;
@@ -174,13 +221,8 @@ public class GiantPlantBoss : MonoBehaviour
 
     private void Die()
     {
-        bossAnimator?.SetTrigger("Dead");
-        StopActivePhaseRoutine();
-        StopCoroutineSafe(ref phaseSpawnRoutine);
-        StopCoroutineSafe(ref restRoutine);
-        SetHitbox(false);
-        SetDetection(false);
-        Destroy(gameObject, 2f);
+
+        GameManager.Instance.BossDefeated();
     }
 
     private void FaceDetectedPlayer()
@@ -209,6 +251,15 @@ public class GiantPlantBoss : MonoBehaviour
             bossAnimator?.SetTrigger("Awake");
             if (awakeCollider != null) awakeCollider.enabled = false;
             SetHitbox(false);
+            SetDetection(true);
+            SetDamageCollider(true);
+            return;
+        }
+        
+        if (other.CompareTag("Weapon"))
+        {
+            TakeDamage(1);
+            Debug.Log("Giant Plant Boss took damage! Current HP: " + currentHitPoints);
         }
 
         if (!other.CompareTag("Player")) return;
@@ -221,10 +272,7 @@ public class GiantPlantBoss : MonoBehaviour
             if (receiver != null)
                 receiver.ApplyKnockback(transform.position);
         }
-        if (other.CompareTag("Weapon"))
-        {
-            TakeDamage(1);
-        }
+
     }
 
     private void OnTriggerStay(Collider other)
@@ -235,11 +283,6 @@ public class GiantPlantBoss : MonoBehaviour
         detectedPlayer = other.transform;
         FaceDetectedPlayer();
 
-        if (bossAnimator != null && Time.time >= lastAttackTime + attackCooldown)
-        {
-            bossAnimator.SetTrigger("PlayerInRange");
-            lastAttackTime = Time.time;
-        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -256,6 +299,7 @@ public class GiantPlantBoss : MonoBehaviour
         currentPhase = DeterminePhase();
         lastPhase = currentPhase;
         StopActivePhaseRoutine();
+        ActivateVinesForPhase(currentPhase);
         EnterPhase(currentPhase);
         CleanupSpawnedMinions(true);
         SetDamageCollider(false);
@@ -264,10 +308,47 @@ public class GiantPlantBoss : MonoBehaviour
     public void TakeDamage(int amount)
     {
         currentHitPoints -= amount;
+
         if (currentHitPoints <= 0)
         {
-            Die();
+            bossAnimator?.SetTrigger("Dead");
+            StopActivePhaseRoutine();
+            StopCoroutineSafe(ref phaseSpawnRoutine);
+            StopCoroutineSafe(ref restRoutine);
+            SetHitbox(false);
+            SetDetection(false);
+            StartCoroutine(DieWithDelay(2f));
+            return;
         }
+
+        // Apply knockback to player if detected
+        if (detectedPlayer != null)
+        {
+            var receiver = detectedPlayer.GetComponentInParent<ForceReceiver>();
+            if (receiver != null)
+                receiver.ApplyKnockback(transform.position);
+        }
+
+        // Play awake animation and respawn enemies after a short delay
+        StartCoroutine(InterruptRestAndAwake());
+
+    }
+
+    private IEnumerator DieWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Die();
+    }
+
+    private IEnumerator InterruptRestAndAwake()
+    {
+        bossAnimator?.SetBool("Sleep", false);
+        bossAnimator?.SetTrigger("Awake");
+        SetHitbox(false);
+        SetDetection(true);
+        SetDamageCollider(true); // Ensure damage collider is enabled after waking
+        yield return new WaitForSeconds(2.5f); // Adjust duration as needed
+        StartMinionSpawning(currentPhase);
     }
 
     private void CleanupSpawnedMinions(bool destroyAll = false)
@@ -308,5 +389,39 @@ public class GiantPlantBoss : MonoBehaviour
     private T GetPhaseValue<T>(T[] array, int idx, T fallback)
     {
         return (array != null && array.Length > idx) ? array[idx] : fallback;
+    }
+
+    private void ActivateVinesForPhase(Phase phase)
+    {
+        int vinesToActivate = Mathf.Min(bossVinesAnimator.Length, ((int)phase + 1) * 2);
+        for (int i = 0; i < bossVinesAnimator.Length; i++)
+        {
+            bool shouldActivate = i < vinesToActivate;
+            if (bossVinesAnimator[i] != null)
+            {
+                bossVinesAnimator[i].gameObject.SetActive(shouldActivate);
+                if (shouldActivate)
+                    bossVinesAnimator[i].SetTrigger("Rise");
+            }
+            if (bossVinesPatrol != null && i < bossVinesPatrol.Length && bossVinesPatrol[i] != null)
+            {
+                bossVinesPatrol[i].enabled = shouldActivate;
+            }
+        }
+    }
+
+    private void SetVinesSleepTrigger(bool sleeping)
+    {
+        if (bossVinesAnimator == null) return;
+        for (int i = 0; i < bossVinesAnimator.Length; i++)
+        {
+            if (bossVinesAnimator[i] != null && bossVinesAnimator[i].gameObject.activeSelf)
+            {
+                if (sleeping)
+                    bossVinesAnimator[i].SetTrigger("Resting");
+                else
+                    bossVinesAnimator[i].ResetTrigger("Resting");
+            }
+        }
     }
 }

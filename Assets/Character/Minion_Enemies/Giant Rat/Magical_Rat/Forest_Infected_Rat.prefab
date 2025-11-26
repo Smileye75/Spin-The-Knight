@@ -1935,7 +1935,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.5, y: 3.5, z: 3.5}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4690395204940756027}
@@ -1996,6 +1996,7 @@ MonoBehaviour:
   waitTime: 2
   detectionCollider: {fileID: 0}
   resumePatrolDelay: 2
+  enemyProjectile: {fileID: 0}
 --- !u!54 &7930325401719643758
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2042,8 +2043,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.41668123, y: 0.3574883, z: 0.8423008}
-  m_Center: {x: 0.0020557244, y: 0.18005998, z: -0.05604193}
+  m_Size: {x: 0.41668126, y: 0.3574883, z: 0.63217133}
+  m_Center: {x: 0.00205573, y: 0.18005998, z: 0.049022783}
 --- !u!65 &1585959489574626618
 BoxCollider:
   m_ObjectHideFlags: 0

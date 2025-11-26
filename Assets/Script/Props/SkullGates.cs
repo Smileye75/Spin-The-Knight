@@ -9,6 +9,7 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
     public GameObject fireballPrefab;
     public ParticleSystem[] CastingEffect;
 
+
     private bool isActive = false;
 
     [Header("Spawner / Scene Integration")]
@@ -16,6 +17,7 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
     [SerializeField] private GameObject wallObject;
     [Tooltip("Optional: VFX to play when gate/wall is destroyed by projectile.")]
     [SerializeField] private ParticleSystem rockVFX;
+    [SerializeField] private Animation shieldReflectionAnim;
 
 
     // Call this to start the shooting routine
@@ -23,6 +25,7 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
     {
         if (!isActive)
         {
+            shieldReflectionAnim?.Play();
             isActive = true;
             StartCoroutine(ShootRoutine());
         }

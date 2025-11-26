@@ -178,6 +178,16 @@ public class PlayerStats : MonoBehaviour
             StartCoroutine(HandleDeathAndRespawn());
         }
     }
+    
+    public void DeadZoneDeath()
+    {
+        if (isDying) return;
+
+        if (playerStateMachine != null)
+            playerStateMachine.EndAttack();
+
+        StartCoroutine(HandleDeathAndRespawn());
+    }
 
     /// <summary>
     /// Handles player death, disables controls, waits, then respawns or triggers game over.
@@ -188,10 +198,16 @@ public class PlayerStats : MonoBehaviour
         isDying = true;
 
         playerStateMachine?.EndAttack();
+
+        // Switch to PausingState first to freeze movement/input/animation
+        if (playerStateMachine != null)
+            playerStateMachine.SwitchState(playerStateMachine.PausingState);
+
+        // Play death animation
         if (animator) animator.SetBool(deathBoolName, true);
-        if (playerStateMachine) playerStateMachine.enabled = false;
-        if (playerController) playerController.enabled = false;
-        if (inputReader) inputReader.enabled = false; // Disable input
+
+        // Wait for the death animation to finish (adjust duration as needed)
+        yield return new WaitForSecondsRealtime(1.0f);
 
         yield return new WaitForSecondsRealtime(deathDelay);
 
@@ -207,12 +223,12 @@ public class PlayerStats : MonoBehaviour
         if (animator) animator.SetBool(deathBoolName, false);
         yield return new WaitForSeconds(2f);
         if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeOut(1f));
-        if (playerStateMachine) playerStateMachine.enabled = true;
-        if (playerController) playerController.enabled = true;
-        if (inputReader) inputReader.enabled = true; // Re-enable input
+
+        // Resume normal state after respawn
+        if (playerStateMachine != null)
+            playerStateMachine.SwitchState(new PlayerMoveState(playerStateMachine)); // or your default state
 
         isDying = false;
-
     }
 
     public void UnlockShield()
@@ -296,7 +312,7 @@ public class PlayerStats : MonoBehaviour
         coins += amount;
         if (coins >= 100)
         {
-            coins = 0; // Reset coins after reaching 100
+            coins = coins - 100;
             lives += 1;
             playerUI?.UpdateLives(lives);
             Debug.Log("Extra Life Gained! Total Lives: " + lives);
