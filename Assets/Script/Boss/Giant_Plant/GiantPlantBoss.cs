@@ -23,7 +23,6 @@ public class GiantPlantBoss : MonoBehaviour
 
     [Header("Boss Attack Settings")]
     [SerializeField] private float attackRange = 5f; // Range to start attacking the player
-    private bool isAttacking = false;
 
     private enum Phase { Phase1, Phase2, Phase3 }
 
@@ -88,12 +87,7 @@ public class GiantPlantBoss : MonoBehaviour
                 {
                     bossAnimator?.SetTrigger("PlayerInRange");
                     lastAttackTime = Time.time;
-                    isAttacking = true;
                 }
-            }
-            else
-            {
-                isAttacking = false;
             }
         }
     }
@@ -248,6 +242,7 @@ public class GiantPlantBoss : MonoBehaviour
                 hasAwoken = true;
                 EnterPhase(currentPhase);
             }
+            bossAnimator?.SetBool("Sleep", false);
             bossAnimator?.SetTrigger("Awake");
             if (awakeCollider != null) awakeCollider.enabled = false;
             SetHitbox(false);
@@ -295,14 +290,50 @@ public class GiantPlantBoss : MonoBehaviour
 
     public void ResetBoss()
     {
-        currentHitPoints = maxHitPoints;
-        currentPhase = DeterminePhase();
-        lastPhase = currentPhase;
+        // Stop all boss routines
         StopActivePhaseRoutine();
-        ActivateVinesForPhase(currentPhase);
-        EnterPhase(currentPhase);
-        CleanupSpawnedMinions(true);
+        StopCoroutineSafe(ref phaseSpawnRoutine);
+        StopCoroutineSafe(ref restRoutine);
+
+        // Reset stats and phase
+        currentHitPoints = maxHitPoints;
+        currentPhase = Phase.Phase1;
+        lastPhase = Phase.Phase1;
+        isResting = true;
+        hasAwoken = false;
+
+        // Reset colliders and flags to initial state
+        if (awakeCollider != null) awakeCollider.enabled = true;
+        SetDetection(false);
+        SetHitbox(false);
         SetDamageCollider(false);
+
+        // Reset animator to sleep/rest
+        bossAnimator?.SetBool("Sleep", true);
+        bossAnimator?.ResetTrigger("Awake");
+        bossAnimator?.ResetTrigger("PlayerInRange");
+        bossAnimator?.ResetTrigger("Dead");
+
+        // Set all vines to inactive, patrols disabled, and "Resting" trigger
+        if (bossVinesAnimator != null)
+        {
+            for (int i = 0; i < bossVinesAnimator.Length; i++)
+            {
+                if (bossVinesAnimator[i] != null)
+                {
+                    bossVinesAnimator[i].gameObject.SetActive(false);
+                    bossVinesAnimator[i].ResetTrigger("Rise");
+                    bossVinesAnimator[i].SetTrigger("Resting");
+                }
+                if (bossVinesPatrol != null && i < bossVinesPatrol.Length && bossVinesPatrol[i] != null)
+                {
+                    bossVinesPatrol[i].enabled = false;
+                }
+            }
+        }
+
+        // Remove all minions
+        CleanupSpawnedMinions(true);
     }
     
     public void TakeDamage(int amount)

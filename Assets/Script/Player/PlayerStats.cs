@@ -74,9 +74,13 @@ public class PlayerStats : MonoBehaviour
     public bool heavyAttackUnlocked = false;
     public bool rollJumpUnlocked = false;
 
-
+    public string lastCheckpointSceneName;
 
     public static bool IsLoadingFromSave = false;
+
+    // Add to PlayerStats fields:
+    [HideInInspector]public bool shieldStaminaCooldownActive = false;
+    private Coroutine shieldStaminaCooldownCoroutine;
 
     /// <summary>
     /// Initializes health and references on Awake.
@@ -153,10 +157,12 @@ public class PlayerStats : MonoBehaviour
         if (animator != null)
             animator.SetTrigger("Hit");
         cameraShakeFeedback?.PlayFeedbacks();
-        // Shield block: costs stamina, nullifies damage
+
+        // Shield block: costs stamina, nullifies damage, starts cooldown
         if (playerStateMachine.CurrentState is PlayerShieldState && currentStamina > 0)
         {
             ConsumeStamina(staminaCost);
+            StartShieldStaminaCooldown(1.5f); // 1.5 seconds cooldown, adjust as needed
             Debug.Log("Attack blocked by shield!");
             return; // Nullify damage
         }
@@ -368,6 +374,13 @@ public class PlayerStats : MonoBehaviour
 
     public bool ConsumeStamina(int amount)
     {
+        // Prevent stamina consumption if shield cooldown is active
+        if (shieldStaminaCooldownActive)
+        {
+            Debug.Log("Shield stamina cooldown active, cannot consume stamina!");
+            return false;
+        }
+
         // Only allow if smoothStamina is greater than 1
         if (smoothStamina > 1f)
         {
@@ -560,5 +573,21 @@ public class PlayerStats : MonoBehaviour
     {
         if (staminaRegenCoroutine != null) return;
         staminaRegenCoroutine = StartCoroutine(SmoothStaminaRegen());
+    }
+
+    // Call this to start the cooldown
+    public void StartShieldStaminaCooldown(float duration)
+    {
+        if (shieldStaminaCooldownCoroutine != null)
+            StopCoroutine(shieldStaminaCooldownCoroutine);
+        shieldStaminaCooldownCoroutine = StartCoroutine(ShieldStaminaCooldown(duration));
+    }
+
+    private IEnumerator ShieldStaminaCooldown(float duration)
+    {
+        shieldStaminaCooldownActive = true;
+        yield return new WaitForSeconds(duration);
+        shieldStaminaCooldownActive = false;
+        shieldStaminaCooldownCoroutine = null;
     }
 }

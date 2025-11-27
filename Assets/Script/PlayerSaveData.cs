@@ -10,4 +10,6 @@ public class PlayerSaveData
     public bool heavyAttackUnlocked;
     public bool jumpAttackUnlocked;
     public bool rollJumpUnlocked;
+
+    public string lastCheckpointSceneName;
 }

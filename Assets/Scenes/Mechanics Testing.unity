@@ -25933,6 +25933,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.030822925
       objectReference: {fileID: 0}
+    - target: {fileID: 1836395580238637971, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 384895
+      objectReference: {fileID: 0}
     - target: {fileID: 1920958059031606896, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.0032496229
@@ -26440,6 +26444,10 @@ PrefabInstance:
     - target: {fileID: 4259716248544113969, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.6302444
+      objectReference: {fileID: 0}
+    - target: {fileID: 4328376877549727386, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 1712256
       objectReference: {fileID: 0}
     - target: {fileID: 4518712500413786699, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -29138,6 +29146,10 @@ PrefabInstance:
       value: 0.012762918
       objectReference: {fileID: 0}
     - target: {fileID: 6565753603677489317, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
+      propertyPath: shieldUnlocked
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565753603677489317, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
       propertyPath: leftFootFeedback
       value: 
       objectReference: {fileID: 0}
@@ -29146,13 +29158,29 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6565753603677489317, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
+      propertyPath: rollJumpUnlocked
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565753603677489317, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
       propertyPath: rightFootFeedback
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565753603677489317, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
+      propertyPath: jumpAttackUnlocked
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6565753603677489317, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
       propertyPath: cameraShakeFeedback
       value: 
       objectReference: {fileID: 202399454}
+    - target: {fileID: 6565753603677489317, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
+      propertyPath: heavyAttackUnlocked
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565753603677489317, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
+      propertyPath: shieldStaminaCooldownActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6598759917927190600, guid: 606f8d0712bf3d74ca8f807d253f4dfd, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.0133135

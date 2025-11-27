@@ -52,9 +52,16 @@ public class PlayerShieldState : PlayerBaseMachine
             // Face movement direction using the movement vector (consistent with Move)
             FaceMovementDirection(movement);
 
-            // Drain stamina while moving with shield up
-            stateMachine.playerStats.StopSmoothStaminaRegen();
-            stateMachine.playerStats.StartSmoothStaminaDrain(0.25f);
+            // Only drain stamina if cooldown is NOT active
+            if (!stateMachine.playerStats.shieldStaminaCooldownActive)
+            {
+                stateMachine.playerStats.StopSmoothStaminaRegen();
+                stateMachine.playerStats.StartSmoothStaminaDrain(0.25f);
+            }
+            else
+            {
+                stateMachine.playerStats.StopSmoothStaminaDrain();
+            }
         }
         else
         {

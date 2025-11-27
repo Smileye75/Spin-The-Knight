@@ -30,7 +30,8 @@ public class SaveManager : MonoBehaviour
             shieldUnlocked = stats.shieldUnlocked,
             heavyAttackUnlocked = stats.heavyAttackUnlocked,
             jumpAttackUnlocked = stats.jumpAttackUnlocked,
-            rollJumpUnlocked = stats.rollJumpUnlocked
+            rollJumpUnlocked = stats.rollJumpUnlocked,
+            lastCheckpointSceneName = stats.lastCheckpointSceneName
         };
 
         string json = JsonUtility.ToJson(data, true);

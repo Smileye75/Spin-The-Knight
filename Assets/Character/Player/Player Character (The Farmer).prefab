@@ -6803,7 +6803,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 0.4144877, y: 0.60956234, z: 1.4904213}
+  m_Size: {x: 1.5, y: 1.5, z: 1.4904213}
   m_Center: {x: -0.0519074, y: -0.039851774, z: 0.5169544}
 --- !u!54 &1906917476465284015
 Rigidbody:
@@ -11945,6 +11945,7 @@ MonoBehaviour:
   jumpAttackFeather: {fileID: 7210285712908220396}
   heavyAttackUnlocked: 0
   rollJumpUnlocked: 0
+  lastCheckpointSceneName: 
 --- !u!114 &3064733659860585907
 MonoBehaviour:
   m_ObjectHideFlags: 0

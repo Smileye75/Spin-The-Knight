@@ -17,6 +17,7 @@ public class MenuUI : MonoBehaviour
     [SerializeField] private GameObject gameOverUI;     // Game over screen panel
     [SerializeField] private GameObject mainMenuUI;      // Main menu screen panel
     [SerializeField] private GameObject loadButton;       // Load button in main menu
+    [SerializeField] private GameObject levelSelectorUI;  // Level selector UI panel
 
     private InputReader inputReader;                    // Reference to input handler
 
@@ -71,6 +72,10 @@ public class MenuUI : MonoBehaviour
         // Always hide player UI in main menu, show only if not in main menu
         if (playerUI != null)
             playerUI.SetActive(!isMainMenu);
+
+        // Always hide level selector unless explicitly shown
+        if (levelSelectorUI != null)
+            levelSelectorUI.SetActive(false);
     }
 
     /// <summary>
@@ -205,5 +210,23 @@ public class MenuUI : MonoBehaviour
                 loadButton.SetActive(false);
             }
         }
+    }
+
+    /// <summary>
+    /// Shows the level selector UI.
+    /// </summary>
+    public void ShowLevelSelector()
+    {
+        if (levelSelectorUI != null)
+            levelSelectorUI.SetActive(true);
+    }
+
+    /// <summary>
+    /// Hides the level selector UI.
+    /// </summary>
+    public void HideLevelSelector()
+    {
+        if (levelSelectorUI != null)
+            levelSelectorUI.SetActive(false);
     }
 }

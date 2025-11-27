@@ -96,6 +96,11 @@ public class Checkpoint : MonoBehaviour
         s_active = this;
         s_respawn = respawnLocation;
 
+        // Save the current scene name to PlayerSaveData
+        var stats = GameManager.Instance?.player?.GetComponent<PlayerStats>();
+        if (stats != null)
+            stats.lastCheckpointSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
         if (checkpointTrigger) checkpointTrigger.enabled = false;
         if (activatedFeedback != null)
             activatedFeedback.PlayFeedbacks();

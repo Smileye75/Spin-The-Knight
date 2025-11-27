@@ -40,7 +40,6 @@ public class GameManager : MonoBehaviour
     private bool unlockShieldOnNextLoad = false;
 
     private bool canPause = true;
-    private bool allowReset = false;
 
     /// <summary>
     /// Ensures only one GameManager exists and persists across scenes.
@@ -146,6 +145,13 @@ public class GameManager : MonoBehaviour
         OnRespawn?.Invoke(position);
 
         // --- Add this: ---
+        var boss = FindObjectOfType<GiantPlantBoss>();
+        if (boss != null)
+        {
+            boss.ResetBoss();
+            Debug.Log("Boss has been reset upon player respawn.");
+        }
+
         var bossSpawner = FindObjectOfType<BossSpawner>();
         if (bossSpawner != null)
         {
@@ -226,13 +232,6 @@ public class GameManager : MonoBehaviour
         ResetGameData();
         canPause = true;
         StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
-    }
-
-    public void MagicalForestScene()
-    {
-        Time.timeScale = 1;
-        unlockShieldOnNextLoad = true;
-        StartCoroutine(LoadSceneWithFade("MagicalForest"));
     }
 
     public IEnumerator SceneTransition()
@@ -323,7 +322,6 @@ public class GameManager : MonoBehaviour
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         asyncLoad.allowSceneActivation = false;
-
         while (!asyncLoad.isDone)
         {
             if (asyncLoad.progress >= 0.9f)
@@ -372,13 +370,18 @@ public class GameManager : MonoBehaviour
             SaveManager.Instance.SaveData(stats);
     }
 
-
-    public void LoadGame()
+        public void LoadVillageOutskirt()
     {
-        Time.timeScale = 1; // Ensure game is unpaused
-        pendingLoadData = SaveManager.Instance.LoadData();
-        StartCoroutine(LoadGameRoutine());
+        Time.timeScale = 1;
         canPause = true;
+        StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
+    }
+
+    public void LoadMagicalForest()
+    {
+        Time.timeScale = 1;
+        canPause = true;
+        StartCoroutine(LoadSceneWithFade("MagicalForest"));
     }
 
     public void ResetartLevel()
@@ -388,9 +391,23 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadSceneWithFade(SceneManager.GetActiveScene().name));
     }
 
-    private IEnumerator LoadGameRoutine()
+    public void LoadGame()
     {
-        yield return StartCoroutine(LoadSceneWithFade(SceneManager.GetActiveScene().name));
+        Time.timeScale = 1; // Ensure game is unpaused
+        pendingLoadData = SaveManager.Instance.LoadData();
+        canPause = true;
+
+        // Use saved checkpoint scene name if available
+        string sceneToLoad = SceneManager.GetActiveScene().name;
+        if (pendingLoadData != null && !string.IsNullOrEmpty(pendingLoadData.lastCheckpointSceneName))
+            sceneToLoad = pendingLoadData.lastCheckpointSceneName;
+
+        StartCoroutine(LoadGameRoutine(sceneToLoad));
+    }
+
+    private IEnumerator LoadGameRoutine(string sceneName)
+    {
+        yield return StartCoroutine(LoadSceneWithFade(sceneName));
 
         PlayerStats stats = null;
         float timeout = 5f;
@@ -414,6 +431,7 @@ public class GameManager : MonoBehaviour
             stats.heavyAttackUnlocked = pendingLoadData.heavyAttackUnlocked;
             stats.jumpAttackUnlocked = pendingLoadData.jumpAttackUnlocked;
             stats.rollJumpUnlocked = pendingLoadData.rollJumpUnlocked;
+            stats.lastCheckpointSceneName = pendingLoadData.lastCheckpointSceneName;
 
             stats.currentHealth = stats.maxHealth;
             stats.currentStamina = stats.maxStamina;
@@ -430,25 +448,13 @@ public class GameManager : MonoBehaviour
             loadedData = true;
         }
 
-        // If no data was loaded, or after reset, ensure fade out
         if (!loadedData && loadingScreen)
             yield return StartCoroutine(loadingScreen.FadeOut(1f));
     }
 
-    public void ConfirmReset()
-    {
-        allowReset = true;
-        // Optionally show a UI confirmation dialog here
-    }
 
     public void ResetGameData()
     {
-        if (!allowReset)
-        {
-            Debug.LogWarning("ResetGameData called without confirmation!");
-            return;
-        }
-        allowReset = false; // Reset flag after use
 
         SaveManager.Instance.DeleteSave();
         canPause = true;
