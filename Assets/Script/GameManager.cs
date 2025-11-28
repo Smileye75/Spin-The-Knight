@@ -112,7 +112,27 @@ public class GameManager : MonoBehaviour
         canPause = false;
         CurrentState = GameState.Victory;
         OnVictory?.Invoke();
-        menuUI?.ShowVictoryUI();
+
+        // Check if there is a next scene after the current one
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int totalScenes = SceneManager.sceneCountInBuildSettings;
+        bool hasNextScene = (currentSceneIndex + 1 < totalScenes);
+
+        if (hasNextScene)
+        {
+            menuUI?.ShowLevelCompleteUI();
+        }
+        else
+        {
+            menuUI?.ShowVictoryUI();
+        }
+    }
+
+    public void PlayAgain()
+    {
+        Time.timeScale = 1;
+        canPause = true;
+        StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
     }
 
     /// <summary>
@@ -259,6 +279,24 @@ public class GameManager : MonoBehaviour
         menuUI?.HideAllMenus();
     }
 
+    public void PlayNextLevel()
+    {
+        Time.timeScale = 1;
+        canPause = true;
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;
+        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+        {
+            string nextSceneName = System.IO.Path.GetFileNameWithoutExtension(
+                SceneUtility.GetScenePathByBuildIndex(nextSceneIndex));
+            StartCoroutine(LoadSceneWithFade(nextSceneName));
+        }
+        else
+        {
+            Debug.LogWarning("No next level to load.");
+        }
+    }
+
     /// <summary>
     /// Handles boss defeat logic, triggers victory, and notifies listeners.
     /// </summary>
@@ -370,7 +408,7 @@ public class GameManager : MonoBehaviour
             SaveManager.Instance.SaveData(stats);
     }
 
-        public void LoadVillageOutskirt()
+    public void LoadVillageOutskirt()
     {
         Time.timeScale = 1;
         canPause = true;

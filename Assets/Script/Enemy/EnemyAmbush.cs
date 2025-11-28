@@ -72,4 +72,14 @@ public class EnemyAmbush : BaseEnemy
         Vector3 direction = (targetPosition - transform.position).normalized;
         transform.position += direction * moveSpeed * Time.deltaTime;
     }
+    public void StopFacingPlayer()
+    {
+        enableFacePlayer = false;
+    }
+
+    public void StartFacingPlayer()
+    {
+        enableFacePlayer = true;
+    }
 }
+ 

@@ -18,6 +18,8 @@ public class MenuUI : MonoBehaviour
     [SerializeField] private GameObject mainMenuUI;      // Main menu screen panel
     [SerializeField] private GameObject loadButton;       // Load button in main menu
     [SerializeField] private GameObject levelSelectorUI;  // Level selector UI panel
+    [SerializeField] private GameObject levelCompleteUI;  // Play again button in victory/game over UI
+    [SerializeField] private GameObject newGameWarningUI;   // New game warning UI panel
 
     private InputReader inputReader;                    // Reference to input handler
 
@@ -68,6 +70,7 @@ public class MenuUI : MonoBehaviour
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
         if (victoryUI != null) victoryUI.SetActive(false);
         if (gameOverUI != null) gameOverUI.SetActive(false);
+        if (levelCompleteUI != null) levelCompleteUI.SetActive(false);
 
         // Always hide player UI in main menu, show only if not in main menu
         if (playerUI != null)
@@ -107,12 +110,32 @@ public class MenuUI : MonoBehaviour
         Cursor.lockState = paused ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
+    public void ShowNewGameWarningUI()
+    {
+        if (newGameWarningUI != null)
+            newGameWarningUI.SetActive(true);
+        mainMenuUI.SetActive(false);
+    }
+    
+    public void HideNewGameWarningUI()
+    {
+        if (newGameWarningUI != null)
+            newGameWarningUI.SetActive(false);
+        mainMenuUI.SetActive(true);
+    }
+
     /// <summary>
     /// Shows the victory UI and hides the pause menu.
     /// </summary>
     public void ShowVictoryUI()
     {
         if (victoryUI != null) victoryUI.SetActive(true);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+    }
+
+    public void ShowLevelCompleteUI()
+    {
+        if (levelCompleteUI != null) levelCompleteUI.SetActive(true);
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
     }
 
@@ -228,5 +251,23 @@ public class MenuUI : MonoBehaviour
     {
         if (levelSelectorUI != null)
             levelSelectorUI.SetActive(false);
+    }
+
+    public void OnNewGamePressed()
+    {
+        if (GameManager.Instance.HasSaveData())
+        {
+            ShowNewGameWarningUI(); // Show warning if save data exists
+        }
+        else
+        {
+            GameManager.Instance.NewGame(); // Start new game immediately if no save data
+        }
+    }
+
+    public void OnConfirmNewGame()
+    {
+        HideNewGameWarningUI(); // Hide the warning UI
+        GameManager.Instance.NewGame(); // Start new game and overwrite save
     }
 }

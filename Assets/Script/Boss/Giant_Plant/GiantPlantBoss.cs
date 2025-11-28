@@ -13,6 +13,7 @@ public class GiantPlantBoss : MonoBehaviour
     [SerializeField] private Collider detectionCollider;
     [SerializeField] private BoxCollider hitboxCollider;
     [SerializeField] private SphereCollider damageCollider;
+    [SerializeField] private GameObject cameraTriggerZone;
     private Transform detectedPlayer;
 
     [Header("Attack")]
@@ -41,6 +42,8 @@ public class GiantPlantBoss : MonoBehaviour
     [Header("Boss Vines")]
     [SerializeField] private Animator[] bossVinesAnimator;
     [SerializeField] private EnemyPatrol[] bossVinesPatrol;
+    [SerializeField] private Animator[] rootAnimator;
+    [SerializeField] private BoxCollider blockerCollider;
 
     [Header("Resting")]
     [SerializeField] private float restDuration = 5f;
@@ -58,6 +61,7 @@ public class GiantPlantBoss : MonoBehaviour
         if (hitboxCollider != null) hitboxCollider.enabled = false;
         SetDetection(false);
         SetDamageCollider(false);
+        if (cameraTriggerZone != null) cameraTriggerZone.SetActive(false);
         foreach (var vine in bossVinesPatrol)
         {
             if (vine != null)
@@ -242,6 +246,12 @@ public class GiantPlantBoss : MonoBehaviour
                 hasAwoken = true;
                 EnterPhase(currentPhase);
             }
+            if (cameraTriggerZone != null) cameraTriggerZone.SetActive(true);
+            foreach (Animator animator in rootAnimator)
+            {
+                animator.SetTrigger("Rise");
+            }
+            blockerCollider.enabled = true;
             bossAnimator?.SetBool("Sleep", false);
             bossAnimator?.SetTrigger("Awake");
             if (awakeCollider != null) awakeCollider.enabled = false;
@@ -294,7 +304,7 @@ public class GiantPlantBoss : MonoBehaviour
         StopActivePhaseRoutine();
         StopCoroutineSafe(ref phaseSpawnRoutine);
         StopCoroutineSafe(ref restRoutine);
-
+    
         // Reset stats and phase
         currentHitPoints = maxHitPoints;
         currentPhase = Phase.Phase1;
@@ -307,12 +317,23 @@ public class GiantPlantBoss : MonoBehaviour
         SetDetection(false);
         SetHitbox(false);
         SetDamageCollider(false);
-
+        if (cameraTriggerZone != null) cameraTriggerZone.SetActive(false);
         // Reset animator to sleep/rest
         bossAnimator?.SetBool("Sleep", true);
         bossAnimator?.ResetTrigger("Awake");
         bossAnimator?.ResetTrigger("PlayerInRange");
         bossAnimator?.ResetTrigger("Dead");
+
+        if (rootAnimator != null)
+        {
+            foreach (Animator animator in rootAnimator)
+            {
+                if (animator != null) animator.ResetTrigger("Rise");
+                if (animator != null) animator.SetTrigger("Down");
+            }
+        }
+        
+        blockerCollider.enabled = false;
 
         // Set all vines to inactive, patrols disabled, and "Resting" trigger
         if (bossVinesAnimator != null)
@@ -424,7 +445,7 @@ public class GiantPlantBoss : MonoBehaviour
 
     private void ActivateVinesForPhase(Phase phase)
     {
-        int vinesToActivate = Mathf.Min(bossVinesAnimator.Length, ((int)phase + 1) * 2);
+        int vinesToActivate = Mathf.Min(bossVinesAnimator.Length, ((int)phase + 1) * 1);
         for (int i = 0; i < bossVinesAnimator.Length; i++)
         {
             bool shouldActivate = i < vinesToActivate;
