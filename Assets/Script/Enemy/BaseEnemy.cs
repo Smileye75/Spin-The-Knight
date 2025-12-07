@@ -42,6 +42,10 @@ public class BaseEnemy : MonoBehaviour
     [Header("Special Settings")]
     public bool armored = false; // Only heavy attacks can kill if true
 
+    [Header("Stomp Settings")]
+    [Tooltip("If true, normal stomps will kill armored enemies. If false, armored enemies require heavy attack or explosion.")]
+    [SerializeField] private bool stompIgnoresArmored = false;
+
     protected Transform player;                             // Reference to the player
 
     /// <summary>
@@ -99,9 +103,13 @@ public class BaseEnemy : MonoBehaviour
     {
         if (armored && !isHeavyAttack && !isExplosion)
         {
-            Debug.Log($"{name} is armored! Only heavy attack or explosion can kill.");
-            stompFeedback?.PlayFeedbacks();
-            return; // Do not kill
+            if (!stompIgnoresArmored)
+            {
+                Debug.Log($"{name} is armored! Only heavy attack or explosion can kill.");
+                stompFeedback?.PlayFeedbacks();
+                return; // Do not kill
+            }
+            // If stompIgnoresArmored == true, fall through and allow stomp to kill
         }
 
         Debug.Log($"{name} was stomped!");
@@ -175,7 +183,7 @@ public class BaseEnemy : MonoBehaviour
             if (weaponDamage != null)
                 isHeavyAttack = weaponDamage.isHeavyAttack;
 
-            // If armored and not a heavy attack, ignore
+            // Only kill if not armored, or if heavy attack
             if (armored && !isHeavyAttack)
             {
                 Debug.Log($"{name} is armored! Only heavy attack can kill.");
@@ -183,27 +191,22 @@ public class BaseEnemy : MonoBehaviour
                 return;
             }
 
-            // Calculate push direction (from weapon to enemy)
+            // Weapon hit logic (do NOT call OnStomped here)
             Vector3 pushDirection = transform.position - other.transform.position;
-            // Ignore vertical difference so knockback only affects X/Z (horizontal) axes
             pushDirection.y = 0f;
             if (pushDirection.sqrMagnitude <= 0.0001f)
-                pushDirection = transform.forward; // fallback if positions are nearly identical
+                pushDirection = transform.forward;
             else
                 pushDirection.Normalize();
-            float pushForce = 90f; // Adjust this value as needed
+            float pushForce = 90f;
 
-            // If you have a Rigidbody on the enemy, apply force:
             Rigidbody rb = GetComponent<Rigidbody>();
             if (rb != null)
             {
                 rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
-
-                // Freeze Y position after being attacked
                 rb.constraints |= RigidbodyConstraints.FreezePositionY;
             }
 
-            // Only kill if not armored, or if heavy attack
             PlayDead();
         }
     }

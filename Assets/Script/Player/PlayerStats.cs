@@ -212,9 +212,6 @@ public class PlayerStats : MonoBehaviour
         // Play death animation
         if (animator) animator.SetBool(deathBoolName, true);
 
-        // Wait for the death animation to finish (adjust duration as needed)
-        yield return new WaitForSecondsRealtime(1.0f);
-
         yield return new WaitForSecondsRealtime(deathDelay);
 
         if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeIn(1f));

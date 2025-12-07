@@ -157,7 +157,7 @@ Material:
     - _LOD_FADE_CROSSFADE_out: 0
     - _LeafBigNoiseAmount: 0.144
     - _LeafBigNoiseScale: 4.05
-    - _LeafFlatColourSwitch: 0
+    - _LeafFlatColourSwitch: 1
     - _LeafMetallic: 0
     - _LeafNormalAmount: 0.241
     - _LeafSmoothness: 0.07
@@ -191,9 +191,9 @@ Material:
     - _EmissiveColour: {r: 0, g: 0, b: 0, a: 0}
     - _FrostingColour: {r: 0, g: 0.18588394, b: 0.35849056, a: 1}
     - _GustHighlight: {r: 0.09950189, g: 0.1509434, b: 0.08664151, a: 0}
-    - _LeafBaseColour: {r: 0.078431346, g: 0.02015968, b: 0, a: 0}
-    - _LeafNoiseColour: {r: 0.078431346, g: 0.02015968, b: 0, a: 0}
-    - _LeafNoiseLargeColour: {r: 0.078431346, g: 0.02015968, b: 0, a: 0}
+    - _LeafBaseColour: {r: 0.29063714, g: 1, b: 0, a: 0}
+    - _LeafNoiseColour: {r: 0.0080562765, g: 0, b: 0.8207547, a: 0}
+    - _LeafNoiseLargeColour: {r: 0.009334597, g: 0.3679245, b: 0, a: 0}
     - _TrunkBaseColour: {r: 0.078431346, g: 0.02015968, b: 0, a: 0}
     - _TrunkEmissiveColour: {r: 0, g: 0, b: 0, a: 0}
     - _TrunkNoiseColour: {r: 0.078431346, g: 0.02015968, b: 0, a: 0}

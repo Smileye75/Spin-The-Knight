@@ -173,7 +173,6 @@ public class GiantPlantBoss : MonoBehaviour
         }
         bossAnimator?.ResetTrigger("Awake");
         bossAnimator?.SetBool("Sleep", true);
-        SetVinesSleepTrigger(true); // <-- Add this line
         SetDetection(false);
         SetHitbox(true);
         SetDamageCollider(false);
@@ -199,7 +198,6 @@ public class GiantPlantBoss : MonoBehaviour
                 SetDamageCollider(true);
                 restRoutine = null;
                 isResting = false;
-                SetVinesSleepTrigger(false); // <-- Add this line
                 yield break;
             }
             elapsed += Time.deltaTime;
@@ -211,7 +209,6 @@ public class GiantPlantBoss : MonoBehaviour
         isResting = false;
         bossAnimator?.SetBool("Sleep", false);
         bossAnimator?.SetTrigger("Awake");
-        SetVinesSleepTrigger(false); // <-- Add this line
         yield return new WaitForSeconds(2.5f);
         StartMinionSpawning(p);
         restRoutine = null;
@@ -445,7 +442,7 @@ public class GiantPlantBoss : MonoBehaviour
 
     private void ActivateVinesForPhase(Phase phase)
     {
-        int vinesToActivate = Mathf.Min(bossVinesAnimator.Length, ((int)phase + 1) * 1);
+        int vinesToActivate = Mathf.Min(bossVinesAnimator.Length, ((int)phase + 1) * 2);
         for (int i = 0; i < bossVinesAnimator.Length; i++)
         {
             bool shouldActivate = i < vinesToActivate;
@@ -462,18 +459,4 @@ public class GiantPlantBoss : MonoBehaviour
         }
     }
 
-    private void SetVinesSleepTrigger(bool sleeping)
-    {
-        if (bossVinesAnimator == null) return;
-        for (int i = 0; i < bossVinesAnimator.Length; i++)
-        {
-            if (bossVinesAnimator[i] != null && bossVinesAnimator[i].gameObject.activeSelf)
-            {
-                if (sleeping)
-                    bossVinesAnimator[i].SetTrigger("Resting");
-                else
-                    bossVinesAnimator[i].ResetTrigger("Resting");
-            }
-        }
-    }
 }

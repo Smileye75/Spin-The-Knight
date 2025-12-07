@@ -289,6 +289,7 @@ public class GameManager : MonoBehaviour
         {
             string nextSceneName = System.IO.Path.GetFileNameWithoutExtension(
                 SceneUtility.GetScenePathByBuildIndex(nextSceneIndex));
+            pendingLoadData = SaveManager.Instance.LoadData();
             StartCoroutine(LoadSceneWithFade(nextSceneName));
         }
         else
@@ -412,6 +413,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         canPause = true;
+        pendingLoadData = SaveManager.Instance.LoadData();
         StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
     }
 
@@ -419,6 +421,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         canPause = true;
+        pendingLoadData = SaveManager.Instance.LoadData();
         StartCoroutine(LoadSceneWithFade("MagicalForest"));
     }
 

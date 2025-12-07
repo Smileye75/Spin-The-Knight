@@ -84,7 +84,17 @@ public class WeaponDamage : MonoBehaviour
             var baseEnemy = other.GetComponent<BaseEnemy>();
             if (baseEnemy != null)
             {
-                baseEnemy.OnStomped(isHeavyAttack, false); // Pass heavy attack info
+                // Only call OnStomped if this is a stomp (not a weapon hit)
+                // For weapon hits, use PlayDead logic:
+                if (isHeavyAttack || !baseEnemy.armored)
+                {
+                    baseEnemy.PlayDead();
+                }
+                else
+                {
+                    baseEnemy.stompFeedback?.PlayFeedbacks();
+                    Debug.Log($"{baseEnemy.name} is armored! Only heavy attack can kill.");
+                }
             }
             else
             {
