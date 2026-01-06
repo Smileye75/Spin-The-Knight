@@ -59,6 +59,10 @@ public class PlayerRollState : PlayerBaseMachine
         {
             stateMachine.animator.SetBool("IsRolling", true);
         }
+            if (stateMachine.playerStats != null)
+            {
+                stateMachine.playerStats.StartCoroutine(stateMachine.playerStats.Invulnerability(0.5f));
+            }
 
         elapsed = 0f;
     }

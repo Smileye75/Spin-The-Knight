@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4095272009484238540}
   - component: {fileID: 6797191237975289497}
   - component: {fileID: 7749737598938416362}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 5202038733716615101}
   - component: {fileID: 8954140179574984491}
   - component: {fileID: 2465841297985475557}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.014
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 5916155813798065059}
   - component: {fileID: 3359712862002169246}
   - component: {fileID: 2858239327911344251}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 5171513504943788635}
   - component: {fileID: 495613423115113524}
   - component: {fileID: 3374427817955959347}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -343,7 +343,7 @@ GameObject:
   - component: {fileID: 7469275081141587817}
   - component: {fileID: 1788637200170013386}
   - component: {fileID: 3616437236723687401}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -426,7 +426,7 @@ GameObject:
   - component: {fileID: 5819116728356787545}
   - component: {fileID: 4008060197758489537}
   - component: {fileID: 8675119956754768491}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.013
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -509,7 +509,7 @@ GameObject:
   - component: {fileID: 8267301001699799068}
   - component: {fileID: 167315682951418742}
   - component: {fileID: 1147095213681381429}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.019
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -591,7 +591,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2913508178801723336}
   - component: {fileID: 1103879375915486368}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: Stomping Feedback
   m_TagString: Explosives
   m_Icon: {fileID: 0}
@@ -848,7 +848,7 @@ GameObject:
   - component: {fileID: 5548990583094179665}
   - component: {fileID: 4416321055409145416}
   - component: {fileID: 3148833384764569375}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.023
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -931,7 +931,7 @@ GameObject:
   - component: {fileID: 7240124000131387096}
   - component: {fileID: 4459382088554678744}
   - component: {fileID: 5654007359550045412}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.022
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1019,7 +1019,7 @@ GameObject:
   - component: {fileID: 3813388381155226460}
   - component: {fileID: 5646316329655931239}
   - component: {fileID: 3387939338087657328}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: Exploding Crate
   m_TagString: Explosives
   m_Icon: {fileID: 0}
@@ -1129,7 +1129,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 16384
+    m_Bits: 16640
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -1150,7 +1150,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 507647
+    m_Bits: 2072319
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -1203,7 +1203,7 @@ GameObject:
   - component: {fileID: 3027601317294325183}
   - component: {fileID: 3726230574881722648}
   - component: {fileID: 3175917657646745776}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1286,7 +1286,7 @@ GameObject:
   - component: {fileID: 7050510751367232989}
   - component: {fileID: 5413904567484196005}
   - component: {fileID: 155932203543707662}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.018
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1368,7 +1368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1079696918976399664}
   - component: {fileID: 6904938473908357950}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: Exploding Feedback
   m_TagString: Explosives
   m_Icon: {fileID: 0}
@@ -1833,7 +1833,7 @@ GameObject:
   - component: {fileID: 1561554650732238373}
   - component: {fileID: 9069360013438195109}
   - component: {fileID: 4499250070384170444}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1916,7 +1916,7 @@ GameObject:
   - component: {fileID: 8591545459562762655}
   - component: {fileID: 4603704904242369859}
   - component: {fileID: 2407616037449427100}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.012
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1999,7 +1999,7 @@ GameObject:
   - component: {fileID: 7791012760827779264}
   - component: {fileID: 7938492664249469551}
   - component: {fileID: 4417470535237347261}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.016
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2082,7 +2082,7 @@ GameObject:
   - component: {fileID: 5395308509022000169}
   - component: {fileID: 6360045481924383820}
   - component: {fileID: 927904377145564916}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.017
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2164,7 +2164,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7688568552715895208}
   - component: {fileID: 2285839373856017125}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: Shattered Exploding Crates
   m_TagString: Explosives
   m_Icon: {fileID: 0}
@@ -2237,7 +2237,7 @@ GameObject:
   - component: {fileID: 1028103264324507883}
   - component: {fileID: 1222781623207951348}
   - component: {fileID: 5418409688449596266}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.009
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2320,7 +2320,7 @@ GameObject:
   - component: {fileID: 3174538471577589574}
   - component: {fileID: 6919781968391678251}
   - component: {fileID: 8664676116748582627}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: ExplodingParticles
   m_TagString: Explosives
   m_Icon: {fileID: 0}
@@ -7222,7 +7222,7 @@ GameObject:
   - component: {fileID: 6923635230070263924}
   - component: {fileID: 9118271158555515228}
   - component: {fileID: 1634897332068680868}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.006
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7305,7 +7305,7 @@ GameObject:
   - component: {fileID: 945568781062007727}
   - component: {fileID: 8619630815861679386}
   - component: {fileID: 2104452691833204616}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7388,7 +7388,7 @@ GameObject:
   - component: {fileID: 750355688364874543}
   - component: {fileID: 2866552203341904798}
   - component: {fileID: 6235023362882559658}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7471,7 +7471,7 @@ GameObject:
   - component: {fileID: 8118151177908098809}
   - component: {fileID: 8830010307540231968}
   - component: {fileID: 7228463446503882009}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.024
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7554,7 +7554,7 @@ GameObject:
   - component: {fileID: 4481985021077011915}
   - component: {fileID: 7697341704255062214}
   - component: {fileID: 5428507465728198275}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.025
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7637,7 +7637,7 @@ GameObject:
   - component: {fileID: 1397481855170004953}
   - component: {fileID: 7036867398941426069}
   - component: {fileID: 8677746044999713878}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: Intact Exploding Crates
   m_TagString: Explosives
   m_Icon: {fileID: 0}
@@ -7720,7 +7720,7 @@ GameObject:
   - component: {fileID: 1888902234154038365}
   - component: {fileID: 7494335819182854954}
   - component: {fileID: 2750725955966112170}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.011
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7803,7 +7803,7 @@ GameObject:
   - component: {fileID: 5667480027113821246}
   - component: {fileID: 3520065427227092422}
   - component: {fileID: 6459956643073168185}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: FX_Explosion_Fire_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12712,7 +12712,7 @@ GameObject:
   - component: {fileID: 5273797258806338164}
   - component: {fileID: 6070560620180634635}
   - component: {fileID: 4825908892428902328}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12795,7 +12795,7 @@ GameObject:
   - component: {fileID: 2050252073261808565}
   - component: {fileID: 2216855624008323858}
   - component: {fileID: 5768210350846595047}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.015
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12878,7 +12878,7 @@ GameObject:
   - component: {fileID: 2643124283235974467}
   - component: {fileID: 203340792726286862}
   - component: {fileID: 8083775908907776831}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.021
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12961,7 +12961,7 @@ GameObject:
   - component: {fileID: 5204212014194579330}
   - component: {fileID: 7647645378165327050}
   - component: {fileID: 6165549041069096024}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: FX_Explosion_Sparks_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17861,7 +17861,7 @@ GameObject:
   - component: {fileID: 5926372649456042188}
   - component: {fileID: 8613725466827158917}
   - component: {fileID: 1570346531972641484}
-  m_Layer: 14
+  m_Layer: 21
   m_Name: SM_Prop_Crate_Wood_04.020
   m_TagString: Untagged
   m_Icon: {fileID: 0}

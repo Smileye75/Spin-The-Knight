@@ -194,6 +194,7 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
     private void StartAttack()
     {
         attackStarted = true;
+        stateMachine.playerStats.StartCoroutine(stateMachine.playerStats.Invulnerability(1f));
         stateMachine.animator.SetTrigger(HashStartAttack);
         stateMachine.animator.SetBool(HashSpinning, true);
     }

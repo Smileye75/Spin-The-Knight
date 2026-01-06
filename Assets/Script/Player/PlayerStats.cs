@@ -265,6 +265,21 @@ public class PlayerStats : MonoBehaviour
     }
 
     /// <summary>
+    /// Makes the player invulnerable for a short duration WITHOUT playing damage feedback.
+    /// </summary>
+    /// <param name="duration">Total invulnerability duration.</param>
+    public IEnumerator Invulnerability(float duration)
+    {
+        isInvulnerable = true;
+        yield return new WaitForSeconds(duration);
+        isInvulnerable = false;
+
+        // Restore original material if needed
+        if (playerRenderer != null && originalMaterial != null)
+            playerRenderer.material = originalMaterial;
+    }
+
+    /// <summary>
     /// Plays damage feedback and makes the player invulnerable for a short duration.
     /// </summary>
     /// <param name="duration">Total invulnerability duration.</param>

@@ -185,6 +185,12 @@ public class PlayerAirState : PlayerBaseMachine
             // Apply double jump force (same as normal jump)
             stateMachine.forceReceiver.Jump(stateMachine.jumpForce);
 
+            // Add invulnerability for a short duration (e.g., 1 second)
+            if (stateMachine.playerStats != null)
+            {
+                stateMachine.playerStats.StartCoroutine(stateMachine.playerStats.Invulnerability(1f));
+            }
+
             stateMachine.canDoubleJump = false; // Only allow once per airtime
         }
     }
