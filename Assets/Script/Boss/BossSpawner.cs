@@ -7,6 +7,7 @@ public class BossSpawner : MonoBehaviour
     [Header("Boss Settings")]
     [SerializeField] private GameObject bossPrefab;
     [SerializeField] private Transform bossSpawnPoint; // Assign this in the Inspector
+    [SerializeField] private BoxCollider [] blockingZone;
 
     private GameObject spawnedBoss;
     private bool bossSpawned = false;
@@ -19,6 +20,10 @@ public class BossSpawner : MonoBehaviour
             bossSpawned = true;
             // Optionally, disable the trigger so it can't be used again
             GetComponent<Collider>().enabled = false;
+            foreach (BoxCollider box in blockingZone)
+            {
+                box.enabled = true;
+            }
         }
     }
 

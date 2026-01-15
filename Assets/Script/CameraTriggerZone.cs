@@ -12,6 +12,10 @@ public class CameraTriggerZone : MonoBehaviour
     [Tooltip("Camera to activate when player enters.")]
     [SerializeField] private CinemachineVirtualCamera targetCamera;
 
+    [Header("Axis Focus")]
+    [SerializeField] private FixedCameraFocus fixedCameraFocus;
+    [SerializeField] private bool changeToXAxis;
+    [SerializeField] private float newFixedAxisValue;
     private static CameraTriggerZone activeZone = null;
 
     private int activePriority = 30;    // Priority when this camera should be active
@@ -25,13 +29,28 @@ public class CameraTriggerZone : MonoBehaviour
     {
         if (other.CompareTag("Player") || other.CompareTag("Boss"))
         {
-            // Revert previous zone if any
             if (activeZone != null && activeZone != this)
                 activeZone.SetInactive();
 
-            // Activate this zone
             SetActive();
             activeZone = this;
+
+            // Set axis mode based on inspector value
+            if (fixedCameraFocus != null)
+            {
+                if(changeToXAxis)
+                {
+                    fixedCameraFocus.fixedZ = newFixedAxisValue;
+                    fixedCameraFocus.fixedX = 0f;
+                } 
+                else
+                {
+                    fixedCameraFocus.fixedX = newFixedAxisValue;
+                    fixedCameraFocus.fixedZ = 0f;
+                }   
+
+                fixedCameraFocus.ChangeFixedAxis(changeToXAxis);
+            }
         }
     }
 
