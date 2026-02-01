@@ -27,7 +27,6 @@ public class SaveManager : MonoBehaviour
         {
             coins = stats.coins,
             lives = stats.lives,
-            shieldUnlocked = stats.shieldUnlocked,
             heavyAttackUnlocked = stats.heavyAttackUnlocked,
             jumpAttackUnlocked = stats.jumpAttackUnlocked,
             rollJumpUnlocked = stats.rollJumpUnlocked,

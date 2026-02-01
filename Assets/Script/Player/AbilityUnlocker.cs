@@ -6,7 +6,6 @@ public class AbilityUnlocker : MonoBehaviour
 {
     public enum Ability
     {
-        Shield,
         JumpAttack,
         HeavyAttack,
         RollJump
@@ -16,7 +15,7 @@ public class AbilityUnlocker : MonoBehaviour
     [SerializeField] private BoxCollider [] otherCollider;
 
     [Header("Ability")]
-    [SerializeField] private Ability abilityToUnlock = Ability.Shield;
+    [SerializeField] private Ability abilityToUnlock;
 
     [SerializeField] private Animation upgradeTutorialAnim;
     private bool upgradeTutorialPlayed = false;
@@ -29,16 +28,11 @@ public class AbilityUnlocker : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // robust detection: handle child colliders
         var playerStats = other.GetComponentInParent<PlayerStats>();
         if (playerStats == null) return;
 
-        // Perform the unlock
         switch (abilityToUnlock)
         {
-            case Ability.Shield:
-                playerStats.UnlockShield();
-                break;
             case Ability.JumpAttack:
                 playerStats.UnlockJumpAttack();
                 break;
@@ -62,7 +56,6 @@ public class AbilityUnlocker : MonoBehaviour
             collider.enabled = true;
         }
 
-        // optional VFX / SFX
         if (pickupVFX != null)
             Instantiate(pickupVFX, transform.position, Quaternion.identity);
         if (pickupSFX != null)

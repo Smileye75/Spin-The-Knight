@@ -151,10 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d56b828b9445f47a0289a911c07405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 8
-  healAmount: 3
-  coinAmount: 5
-  staminaAmount: 1
+  collectableType: 1
 --- !u!65 &5963116500195242490
 BoxCollider:
   m_ObjectHideFlags: 0

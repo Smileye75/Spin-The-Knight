@@ -2,33 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Collectables handles the behavior of collectible items such as coins and food.
-/// Coins and food can be attracted to the player when hit by a weapon,
-/// and are collected when the player touches them, applying their effect.
-/// </summary>
 public class Collectables : MonoBehaviour
 {
-    private Transform targetPlayer;         // The player to move towards when attracted
-    private bool moveToPlayer = false;      // Whether the collectable should move to the player
-    public float moveSpeed = 15f;            // Speed at which the collectable moves to the player
-    [SerializeField] private float speedIncrement = 5f;      // extra speed added each interval
-    [SerializeField] private float incrementInterval = 1f;   // seconds between increments
-    private Coroutine speedIncreaseRoutine;
 
-    public int healAmount = 3;              // Amount of health restored by food
-    public int coinAmount = 1;              // Amount of coins this collectable gives
-    public int staminaAmount = 1;          // Amount of stamina restored by this collectable
+    public enum CollectableType
+    {
+        BronzeCoins,
+        SilverCoins,
+        GoldCoins,
+        Food,
+        Shield,
+    }
 
-    /// <summary>
-    /// Handles collision with weapon or player.
-    /// If hit by a weapon, starts moving toward the player.
-    /// If touched by the player, applies effect and destroys itself.
-    /// </summary>
-    /// <param name="other">The collider that entered the trigger.</param>
+    public CollectableType collectableType;
+    private Transform targetPlayer;         
+    private bool moveToPlayer = false;      
+    private float moveSpeed = 15f;
+    private float speedIncrement = 5f;
+    private float incrementInterval = 1f;  
+    private Coroutine speedIncreaseRoutine;      
+
     private void OnTriggerEnter(Collider other)
     {
-        // If hit by a weapon, start moving toward the player who owns the weapon
         if (other.CompareTag("Weapon"))
         {
             PlayerStats stats = other.GetComponentInParent<PlayerStats>();
@@ -39,26 +34,34 @@ public class Collectables : MonoBehaviour
                 StartSpeedIncrease();
             }
         }
-        // If touched by the player, apply effect and destroy
+
         else if (other.TryGetComponent<PlayerStats>(out PlayerStats stats))
         {
-            if (gameObject.CompareTag("Coins"))
+
+            switch (collectableType)
             {
-                stats.AddCoin(coinAmount);
-            }
-            if (gameObject.CompareTag("Food"))
-            {
-                stats.Rest();
-            }
+                case CollectableType.BronzeCoins:
+                    stats.AddCoin(1);
+                    break;
+                case CollectableType.SilverCoins:
+                    stats.AddCoin(5);
+                    break;
+                case CollectableType.GoldCoins:
+                    stats.AddCoin(10);
+                    break;
+                case CollectableType.Food:
+                    stats.Rest();
+                    break;
+                case CollectableType.Shield:
+                    stats.UnlockShield();
+                    break;
+        }
 
             StopSpeedIncrease();
             Destroy(gameObject);
         }
     }
 
-    /// <summary>
-    /// Moves the collectable toward the player if attracted by weapon hit.
-    /// </summary>
     private void Update()
     {
         if (moveToPlayer && targetPlayer != null)
@@ -67,16 +70,12 @@ public class Collectables : MonoBehaviour
             Vector3 playerPos = targetPlayer.position;
 
             Vector3 nextPos = Vector3.MoveTowards(coinPos, playerPos, moveSpeed * Time.deltaTime);
-            nextPos.y = Mathf.Max(nextPos.y, 1f); // Clamp Y to at least 0.5
+            nextPos.y = Mathf.Max(nextPos.y, 1f);
 
             transform.position = nextPos;
         }
     }
 
-    /// <summary>
-    /// Attracts the collectable to the specified player.
-    /// </summary>
-    /// <param name="player">The player to attract the collectable to.</param>
     public void AttractToPlayer(Transform player)
     {
         targetPlayer = player;

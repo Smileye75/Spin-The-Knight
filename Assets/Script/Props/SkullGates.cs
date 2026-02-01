@@ -20,7 +20,6 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
     [SerializeField] private Animation shieldReflectionAnim;
 
 
-    // Call this to start the shooting routine
     public void ActivateGate()
     {
         if (!isActive)
@@ -31,30 +30,17 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
         }
     }
 
-    // Call this to stop the shooting routine
     public void DestroyGate()
     {
         gameObject.SetActive(false);
         isActive = false;
     }
 
-    /// <summary>
-    /// Called by EnemySpawner when all enemies are defeated in the scene.
-    /// Handles unlocking player shield, playing tutorial VFX/anim and activating the gate.
-    /// </summary>
     public void OnSpawnerCleared(PlayerStateMachine playerStateMachine)
     {
-        if (playerStateMachine != null && playerStateMachine.playerStats != null)
-        {
-            playerStateMachine.playerStats.UnlockShield();
-        }
-
         ActivateGate();
     }
 
-    /// <summary>
-    /// Called by EnemySpawner when the spawner trigger is hit by a projectile (scene-specific destruction).
-    /// </summary>
     public void OnProjectileHitTrigger()
     {
         rockVFX?.Play();
@@ -74,13 +60,9 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
         }
     }
 
-    /// <summary>
-    /// Parameterless entry point so this can be used as a UnityEvent target.
-    /// Calls the scene-specific OnSpawnerCleared behaviour.
-    /// </summary>
+
     public void TriggerSpecialEvent()
     {
-        // Try to find the player state machine to pass along.
         var psm = FindObjectOfType<PlayerStateMachine>();
         OnSpawnerCleared(psm);
     }
@@ -90,7 +72,6 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
         while (isActive)
         {
 
-            // Play all casting effects
             if (CastingEffect != null)
             {
                 foreach (var ps in CastingEffect)
@@ -99,8 +80,7 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
                         ps.Play();
                 }
             }
-            yield return new WaitForSeconds(2f); // Wait for casting effect duration
-            // Spawn fireball at the only spawn point
+            yield return new WaitForSeconds(2f);
             if (fireballPrefab != null && fireballSpawnPoints != null)
             {
                 Instantiate(fireballPrefab, fireballSpawnPoints.position, fireballSpawnPoints.rotation);

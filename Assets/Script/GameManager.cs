@@ -4,47 +4,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// GameManager is a singleton that manages the overall game state, including pausing, game over, victory,
-/// player respawn, scene transitions, and boss events. It provides global access to important references,
-/// handles UI menu logic, and broadcasts events for other systems to respond to changes in game state.
-/// </summary>
 public class GameManager : MonoBehaviour
 {
-    // Singleton instance for global access
+
     public static GameManager Instance { get; private set; }
 
-    // Enum for tracking the current game state
     public enum GameState { Playing, Paused, GameOver, Victory }
     public GameState CurrentState { get; private set; } = GameState.Playing;
 
     [Header("References")]
-    public GameObject player; // Assign your player GameObject here
-    public MenuUI menuUI;     // Assign your MenuUI script here
+    public GameObject player; 
+    public MenuUI menuUI;     
 
     [Header("Default Spawn")]
-    [SerializeField] private Transform defaultSpawnPoint; // Assign in Inspector
+    [SerializeField] private Transform defaultSpawnPoint;
 
-    public LoadingScreen loadingScreen; // Reference to loading screen
+    public LoadingScreen loadingScreen;
 
-    // Events for UI and other systems to subscribe to
     public event Action OnGameOver;
     public event Action OnVictory;
     public event Action<bool> OnPauseToggled;
     public event Action<Vector3> OnRespawn;
     public event Action OnBossDefeated;
 
-    private PlayerSaveData pendingLoadData; // Add this field to GameManager
-
-    // If true, unlock shield for the player once after the next scene load
-    private bool unlockShieldOnNextLoad = false;
+    private PlayerSaveData pendingLoadData;
 
     private bool canPause = true;
 
-    /// <summary>
-    /// Ensures only one GameManager exists and persists across scenes.
-    /// Assigns references to player and UI.
-    /// </summary>
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -58,17 +44,11 @@ public class GameManager : MonoBehaviour
         AssignReferences();
     }
 
-    /// <summary>
-    /// Sets the player to the default spawn point at game start.
-    /// </summary>
     private void Start()
     {
         SetPlayerToDefaultSpawn();
     }
 
-    /// <summary>
-    /// Toggles the pause state and notifies listeners.
-    /// </summary>
     public void TogglePause()
     {
         if (!canPause) return;
@@ -86,14 +66,11 @@ public class GameManager : MonoBehaviour
                 if (pause)
                     stateMachine.SwitchState(stateMachine.PausingState);
                 else
-                    stateMachine.SwitchState(new PlayerMoveState(stateMachine)); // or your default state
+                    stateMachine.SwitchState(new PlayerMoveState(stateMachine));
             }
         }
     }
 
-    /// <summary>
-    /// Handles game over logic, pauses the game, shows UI, and notifies listeners.
-    /// </summary>
     public void GameOver()
     {
         TogglePause();
@@ -103,9 +80,6 @@ public class GameManager : MonoBehaviour
         menuUI?.ShowGameOverUI();
     }
 
-    /// <summary>
-    /// Handles victory logic, pauses the game, shows UI, and notifies listeners.
-    /// </summary>
     public void Victory()
     {
         TogglePause();
@@ -113,7 +87,6 @@ public class GameManager : MonoBehaviour
         CurrentState = GameState.Victory;
         OnVictory?.Invoke();
 
-        // Check if there is a next scene after the current one
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int totalScenes = SceneManager.sceneCountInBuildSettings;
         bool hasNextScene = (currentSceneIndex + 1 < totalScenes);
@@ -135,11 +108,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadSceneWithFade("TheVillageOutskirt"));
     }
 
-    /// <summary>
-    /// Respawns the player at a given position, or at the default spawn if position is Vector3.zero.
-    /// Notifies listeners of the respawn event.
-    /// </summary>
-    /// <param name="position">The position to respawn the player at.</param>
     public void RespawnPlayer(Vector3 position)
     {
         if (player != null)
@@ -159,12 +127,10 @@ public class GameManager : MonoBehaviour
 
             if (cc != null) cc.enabled = true;
 
-            // After respawn, switch back to normal state
             StartCoroutine(ResumePlayerAfterRespawn(stateMachine));
         }
         OnRespawn?.Invoke(position);
 
-        // --- Add this: ---
         var boss = FindObjectOfType<GiantPlantBoss>();
         if (boss != null)
         {
@@ -186,14 +152,10 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ResumePlayerAfterRespawn(PlayerStateMachine stateMachine)
     {
-        yield return new WaitForSeconds(1.5f); // Adjust as needed
+        yield return new WaitForSeconds(1.5f);
         if (stateMachine != null)
-            stateMachine.SwitchState(new PlayerMoveState(stateMachine)); // or your default state
+            stateMachine.SwitchState(new PlayerMoveState(stateMachine));
     }
-
-    /// <summary>
-    /// Sets the player to the default spawn point.
-    /// </summary>
     private void SetPlayerToDefaultSpawn()
     {
         if (defaultSpawnPoint != null && player != null)
@@ -205,9 +167,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Reloads the current scene and resets UI and player spawn.
-    /// </summary>
     public void ReloadScene()
     {
         Time.timeScale = 1;
@@ -217,10 +176,8 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ReloadSceneRoutine()
     {
-        // Fade in before reload (optional)
         if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeIn(1f));
  
-        // Reload the scene
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
         asyncLoad.allowSceneActivation = false;
 
@@ -233,19 +190,14 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        // Wait one frame for scene to finish loading
         yield return null;
 
         canPause = true;
         StartCoroutine(WaitAndSetDefaultSpawn());
 
-        // Fade out after reload
         if (loadingScreen) yield return StartCoroutine(loadingScreen.FadeOut(1f));
     }
 
-    /// <summary>
-    /// Loads the main game scene ("TheVillageOutskirt") and resets spawn.
-    /// </summary>
     public void NewGame()
     {
         Time.timeScale = 1;
@@ -260,17 +212,11 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
     }
 
-    /// <summary>
-    /// Exits the application.
-    /// </summary>
     public void ExitGame()
     {
         Application.Quit();
     }
 
-    /// <summary>
-    /// Loads the main menu scene and resets spawn/UI.
-    /// </summary>
     public void LoadMainMenu()
     {
         Time.timeScale = 1;
@@ -298,23 +244,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Handles boss defeat logic, triggers victory, and notifies listeners.
-    /// </summary>
     public void BossDefeated()
     {
         Debug.Log("Boss defeated!");
         SaveGame();
         OnBossDefeated?.Invoke();
-        Victory(); // Triggers victory flow
+        Victory(); 
     }
 
-    /// <summary>
-    /// Waits for the scene to load, then assigns references and sets player spawn/UI.
-    /// </summary>
     private IEnumerator WaitAndSetDefaultSpawn()
     {
-        yield return null; // Wait one frame for scene to load
+        yield return null; 
         AssignReferences();
         SetPlayerToDefaultSpawn();
         if (player != null)
@@ -324,28 +264,15 @@ public class GameManager : MonoBehaviour
                 stats.UpdateUI();
         }
 
-        // Apply scene-start unlocks if requested
-        if (unlockShieldOnNextLoad && player != null)
-        {
-            var ps = player.GetComponent<PlayerStats>();
-            ps?.UnlockShield();
-            unlockShieldOnNextLoad = false;
-        }
-
-        // --- UI update logic here ---
         menuUI?.HideAllMenus();
         menuUI?.playerUI?.SetActive(true);
         menuUI?.ReSubscribeEvents();
 
-        // Enable/disable pause action based on scene
         string sceneName = SceneManager.GetActiveScene().name;
         bool enablePause = sceneName != "StartMenu";
         menuUI?.SetPauseActionEnabled(enablePause);
     }
 
-    /// <summary>
-    /// Finds and assigns references to player and menu UI if not already set.
-    /// </summary>
     private void AssignReferences()
     {
         if (player == null)
@@ -375,14 +302,6 @@ public class GameManager : MonoBehaviour
         AssignReferences();
         SetPlayerToDefaultSpawn();
 
-        // Apply scene-start unlocks if requested (also cover immediate load path)
-        if (unlockShieldOnNextLoad && player != null)
-        {
-            var ps = player.GetComponent<PlayerStats>();
-            ps?.UnlockShield();
-            unlockShieldOnNextLoad = false;
-        }
-
         if (player != null)
         {
             var stats = player.GetComponent<PlayerStats>();
@@ -390,11 +309,9 @@ public class GameManager : MonoBehaviour
                 stats.UpdateUI();
         }
 
-        // Always fade out if no save data or after reset
         if (!HasSaveData() && loadingScreen)
             yield return StartCoroutine(loadingScreen.FadeOut(fadeDuration));
 
-        // Always fade out at the end
         if (loadingScreen)
             yield return StartCoroutine(loadingScreen.FadeOut(1.5f));
     }
@@ -434,11 +351,10 @@ public class GameManager : MonoBehaviour
 
     public void LoadGame()
     {
-        Time.timeScale = 1; // Ensure game is unpaused
+        Time.timeScale = 1; 
         pendingLoadData = SaveManager.Instance.LoadData();
         canPause = true;
 
-        // Use saved checkpoint scene name if available
         string sceneToLoad = SceneManager.GetActiveScene().name;
         if (pendingLoadData != null && !string.IsNullOrEmpty(pendingLoadData.lastCheckpointSceneName))
             sceneToLoad = pendingLoadData.lastCheckpointSceneName;
@@ -468,24 +384,17 @@ public class GameManager : MonoBehaviour
         {
             stats.coins = pendingLoadData.coins;
             stats.lives = pendingLoadData.lives;
-            stats.shieldUnlocked = pendingLoadData.shieldUnlocked;
             stats.heavyAttackUnlocked = pendingLoadData.heavyAttackUnlocked;
             stats.jumpAttackUnlocked = pendingLoadData.jumpAttackUnlocked;
             stats.rollJumpUnlocked = pendingLoadData.rollJumpUnlocked;
             stats.lastCheckpointSceneName = pendingLoadData.lastCheckpointSceneName;
 
             stats.currentHealth = stats.maxHealth;
-            stats.currentStamina = stats.maxStamina;
-
-            if (stats.shieldUnlocked) stats.UnlockShield();
-            else if (stats.shieldObject) stats.shieldObject.SetActive(false);
 
             stats.playerUI?.UpdateHearts(stats.currentHealth);
             stats.playerUI?.UpdateLives(stats.lives);
             stats.playerUI?.UpdateCoins(stats.coins);
-            stats.playerUI?.UpdateStamina(stats.currentStamina, stats.maxStamina);
 
-            Debug.Log("✅ Player progress loaded after scene transition!");
             loadedData = true;
         }
 
