@@ -7,7 +7,9 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
     public float shootInterval = 2f;
     public Transform fireballSpawnPoints;
     public GameObject fireballPrefab;
-    public ParticleSystem[] CastingEffect;
+    public GameObject castingEffect;
+    public ParticleSystem[] eyesEffect;
+    public Animation openingJaw;
 
 
     private bool isActive = false;
@@ -25,6 +27,7 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
         if (!isActive)
         {
             shieldReflectionAnim?.Play();
+            openingJaw?.Play();
             isActive = true;
             StartCoroutine(ShootRoutine());
         }
@@ -57,6 +60,7 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
         if (other.CompareTag("Projectile"))
         {
             OnProjectileHitTrigger();
+            Destroy(other.gameObject);
         }
     }
 
@@ -66,25 +70,36 @@ public class SkullGates : MonoBehaviour, ISpawnerListener
         var psm = FindObjectOfType<PlayerStateMachine>();
         OnSpawnerCleared(psm);
     }
+    private void ShootAtPlayer()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null && fireballPrefab != null && fireballSpawnPoints != null)
+        {
+            Vector3 direction = player.transform.position - fireballSpawnPoints.position;
+            direction.y = 0;
+            direction = direction.normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            Instantiate(fireballPrefab, fireballSpawnPoints.position, lookRotation);
+        }
+    }
+
 
     private IEnumerator ShootRoutine()
     {
         while (isActive)
         {
-
-            if (CastingEffect != null)
+            if (eyesEffect != null)
             {
-                foreach (var ps in CastingEffect)
+                foreach (var ps in eyesEffect)
                 {
                     if (ps != null)
                         ps.Play();
                 }
             }
-            yield return new WaitForSeconds(2f);
-            if (fireballPrefab != null && fireballSpawnPoints != null)
-            {
-                Instantiate(fireballPrefab, fireballSpawnPoints.position, fireballSpawnPoints.rotation);
-            }
+            Instantiate(castingEffect, fireballSpawnPoints.position, fireballSpawnPoints.rotation);
+            
+            yield return new WaitForSeconds(2.9f);
+            ShootAtPlayer();
 
             yield return new WaitForSeconds(shootInterval);
         }

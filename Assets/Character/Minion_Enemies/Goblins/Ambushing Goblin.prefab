@@ -529,7 +529,7 @@ GameObject:
   - component: {fileID: 3690004966758988877}
   m_Layer: 7
   m_Name: Axe Weapon
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -616,10 +616,10 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 0.120143004, y: 1.1369009, z: 0.44405112}
-  m_Center: {x: -0.0032212648, y: 0.19234027, z: 0.08657684}
+  m_Size: {x: 0.43198538, y: 1.3200662, z: 0.5345625}
+  m_Center: {x: 0.0028526771, y: 0.28321564, z: 0.043119453}
 --- !u!1 &1231709511973889762
 GameObject:
   m_ObjectHideFlags: 0
@@ -738,8 +738,10 @@ MonoBehaviour:
   damageAmount: 1
   enableFacePlayer: 1
   armored: 0
+  stompIgnoresArmored: 0
   moveSpeed: 5
   moveCooldown: 2
+  enemyProjectile: {fileID: 0}
 --- !u!54 &7071355186224056327
 Rigidbody:
   m_ObjectHideFlags: 0

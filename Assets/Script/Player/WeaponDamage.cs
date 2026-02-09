@@ -100,6 +100,7 @@ public class WeaponDamage : MonoBehaviour
             {
                 other.GetComponent<EnemyPatrol>()?.PlayDead();
             }
+            return;
         }
 
         // Handle explosives (trigger explosion, do not destroy weapon)
@@ -126,7 +127,9 @@ public class WeaponDamage : MonoBehaviour
         if (other.CompareTag("Checkpoint"))
         {
             playerStats?.Rest();
+            return;
         }
+
     }
 
     public void SetHeavyAttack(bool value)

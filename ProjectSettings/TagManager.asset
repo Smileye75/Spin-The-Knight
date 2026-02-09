@@ -24,6 +24,7 @@ TagManager:
   - Boss
   - Projectile
   - DeadZone
+  - BigProjectile
   layers:
   - Default
   - TransparentFX

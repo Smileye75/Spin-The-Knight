@@ -6,12 +6,14 @@ public class AbilityUnlocker : MonoBehaviour
 {
     public enum Ability
     {
+        None,
         JumpAttack,
         HeavyAttack,
         RollJump
     }
 
     [SerializeField] private BoxCollider ambushCollider;
+    [SerializeField] private BoxCollider camCollider;
     [SerializeField] private BoxCollider [] otherCollider;
 
     [Header("Ability")]
@@ -33,6 +35,8 @@ public class AbilityUnlocker : MonoBehaviour
 
         switch (abilityToUnlock)
         {
+            case Ability.None:
+                break;
             case Ability.JumpAttack:
                 playerStats.UnlockJumpAttack();
                 break;
@@ -51,6 +55,7 @@ public class AbilityUnlocker : MonoBehaviour
         }
 
         ambushCollider.enabled = true;
+        camCollider.enabled = false;
         foreach (BoxCollider collider in otherCollider)
         {
             collider.enabled = true;

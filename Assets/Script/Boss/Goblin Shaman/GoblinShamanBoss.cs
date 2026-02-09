@@ -13,15 +13,14 @@ public class GoblinShamanBoss : MonoBehaviour
     [SerializeField] private int maxHitPoints = 3;
     [SerializeField] private Transform teleportFront;
     [SerializeField] private Transform teleportBack;
-    [SerializeField] private Transform teleportLeft;
-    [SerializeField] private Transform teleportCenter;
-    [SerializeField] private Transform teleportRight;
     [SerializeField] private BoxCollider hitboxCollider;
     [SerializeField] private BoxCollider damageCollider;
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] private string shootTriggerName = "Shoot";
+    public bool playerDetected = false;
+    public bool isShooting = false;
 
     [Header("Magic Circle Settings")]
     [SerializeField] private GameObject magicCirclePrefab;
@@ -43,7 +42,6 @@ public class GoblinShamanBoss : MonoBehaviour
 
     private int currentSpawnIndex = 0;
     private GameObject activeMagicCircle;
-    private int lastSpawnIndex = -1;
 
     private float originalAnimatorSpeed = 1f;
 
@@ -51,27 +49,17 @@ public class GoblinShamanBoss : MonoBehaviour
     [SerializeField] private float restDuration = 0.5f;
     private int shotsFired = 0;
 
-    // --- Lane teleport data (Left/Center/Right) ---
-    [Header("Lane Teleport (Left/Center/Right)")]
-    [SerializeField] private float phase1LaneTeleportInterval = 4f;
-    [SerializeField] private float phase2LaneTeleportInterval = 2.5f;
-    [SerializeField] private float phase3LaneTeleportInterval = 1.5f;
-    // Per-phase lane sequences (0=Left, 1=Center, 2=Right)
-    [SerializeField] private int[] phase1LaneOrder = { 0, 1, 0, 2 };
-    [SerializeField] private int[] phase2LaneOrder = { 0, 1, 2, 1, 0, 1 };
-    [SerializeField] private int[] phase3LaneOrder = { 2, 1, 0, 1, 2, 1, 0 };
-    private Transform[] teleportPoints;
-    private int laneOrderIndex = -1;
-    private bool isHitTeleporting = false;   // guards conflict with damage-teleport    
+
+    [SerializeField] private int[] phase1ShootingOrder = { 0, 1, 0, 2 };
+    [SerializeField] private int[] phase2ShootingOrder = { 0, 1, 2, 1, 0, 1 };
+    [SerializeField] private int[] phase3ShootingOrder = { 2, 1, 0, 1, 2, 1, 0 };
+
     [SerializeField] private float phase2ShootInterval = 1.2f;
     [SerializeField] private float phase3ShootInterval = 0.5f;
-
     [SerializeField] private Transform fireballPointsRoot;
-    [SerializeField] private Transform sideTeleportPointsRoot;
-
     private bool isDizzy = false;
     private float dizzyTimer = 0f;
-    [SerializeField] public float dizzyDuration = 2f; // How long the boss stays dizzy
+    [SerializeField] public float dizzyDuration = 10f; // How long the boss stays dizzy
 
     private enum Phase { Phase1, Phase2, Phase3 }
     private Phase CurrentPhase =>
@@ -84,11 +72,6 @@ public class GoblinShamanBoss : MonoBehaviour
         currentHitPoints = maxHitPoints;
         originalRotation = transform.rotation;
         if (animator != null) originalAnimatorSpeed = animator.speed;
-        teleportPoints = new Transform[] { teleportLeft, teleportCenter, teleportRight };
-        // Start in Center lane if assigned
-        if (teleportCenter != null) transform.position = teleportCenter.position;
-        StartCoroutine(ShootRoutine());
-        StartCoroutine(LaneTeleportRoutine());
         if(!bossPlatforms)
             bossPlatforms = FindObjectOfType<BossPlatformsSimple>();
 
@@ -96,6 +79,12 @@ public class GoblinShamanBoss : MonoBehaviour
 
     void Update()
     {
+        if(playerDetected && !isShooting)
+        {
+            isShooting = true;
+            animator.SetBool("PlayerDetected", true);
+            StartCoroutine(ShootRoutine());
+        }
         if (isDizzy)
         {
             dizzyTimer -= Time.deltaTime;
@@ -123,14 +112,21 @@ public class GoblinShamanBoss : MonoBehaviour
 
     IEnumerator ShootRoutine()
     {
+        int orderIndex = 0;
         while (currentHitPoints > 0)
         {
-            // Adjust shoot interval by phase (optional)
             float wait = shootInterval;
+            int[] shootingOrder = phase1ShootingOrder;
             switch (CurrentPhase)
             {
-                case Phase.Phase2: wait = phase2ShootInterval; break;
-                case Phase.Phase3: wait = phase3ShootInterval; break;
+                case Phase.Phase2:
+                    wait = phase2ShootInterval;
+                    shootingOrder = phase2ShootingOrder;
+                    break;
+                case Phase.Phase3:
+                    wait = phase3ShootInterval;
+                    shootingOrder = phase3ShootingOrder;
+                    break;
             }
 
             if (canShoot)
@@ -141,18 +137,10 @@ public class GoblinShamanBoss : MonoBehaviour
                     animator.speed = Mathf.Clamp(2f / wait, 0.5f, 2f);
                 }
 
-                // choose spawn (random, avoiding immediate repeats)
-                int newIndex, attempts = 0;
-                do
-                {
-                    newIndex = Random.Range(0, fireballSpawnPoints.Length);
-                    attempts++;
-                } while (fireballSpawnPoints.Length > 1 && newIndex == lastSpawnIndex && attempts < 10);
+                // Use phase shooting order
+                currentSpawnIndex = shootingOrder[orderIndex % shootingOrder.Length];
+                orderIndex++;
 
-                lastSpawnIndex = newIndex;
-                currentSpawnIndex = newIndex;
-
-                // Only rest on 1 HP (your original)
                 if (currentHitPoints == 1)
                 {
                     shotsFired++;
@@ -169,53 +157,6 @@ public class GoblinShamanBoss : MonoBehaviour
             yield return new WaitForSeconds(wait);
         }
     }
-
-
-    private IEnumerator LaneTeleportRoutine()
-    {
-        yield return new WaitForSeconds(0.5f);
-
-        while (currentHitPoints > 0)
-        {
-            // Wait while boss is dizzy
-            while (isDizzy)
-                yield return null;
-
-            float interval = phase1LaneTeleportInterval;
-            switch (CurrentPhase)
-            {
-                case Phase.Phase2: interval = phase2LaneTeleportInterval; break;
-                case Phase.Phase3: interval = phase3LaneTeleportInterval; break;
-                case Phase.Phase1: default: interval = phase1LaneTeleportInterval; break;
-            }
-
-            yield return new WaitForSeconds(interval);
-
-            if (isHitTeleporting) continue;
-            if (teleportLeft == null || teleportCenter == null || teleportRight == null) continue;
-
-            int[] order = GetCurrentLaneOrder();
-            if (order == null || order.Length == 0) continue;
-
-            laneOrderIndex = (laneOrderIndex + 1) % order.Length;
-            int lane = Mathf.Clamp(order[laneOrderIndex], 0, 2);
-            Transform target = teleportPoints[lane];
-
-            yield return StartCoroutine(TeleportToPoint(target.position, flipYRotation: false));
-        }
-    }
-
-    private int[] GetCurrentLaneOrder()
-    {
-        switch (CurrentPhase)
-        {
-            case Phase.Phase1: return phase1LaneOrder;
-            case Phase.Phase2: return phase2LaneOrder;
-            case Phase.Phase3: return phase3LaneOrder;
-            default: return phase1LaneOrder;
-        }
-    }
-
 
     public void CastFireballWithMagicCircle()
     {
@@ -302,7 +243,6 @@ public class GoblinShamanBoss : MonoBehaviour
     void Teleport()
     {
         canShoot = false;
-        isHitTeleporting = true;
 
         Transform target = atFront ? teleportBack : teleportFront;
 
@@ -345,12 +285,6 @@ public class GoblinShamanBoss : MonoBehaviour
         // Move boss
         transform.position = targetPosition;
 
-
-
-        // Move side teleport points to match boss position (if needed)
-        if (sideTeleportPointsRoot != null)
-            sideTeleportPointsRoot.position = targetPosition;
-
         // Flip facing each damage-teleport
         if (!rotated)
         {
@@ -378,9 +312,8 @@ public class GoblinShamanBoss : MonoBehaviour
 
     IEnumerator TeleportCooldown()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         canShoot = true;
-        isHitTeleporting = false;
 
         if (hitboxCollider) hitboxCollider.enabled = true;
         if (damageCollider) damageCollider.enabled = true;
@@ -398,13 +331,23 @@ public class GoblinShamanBoss : MonoBehaviour
         // If you reuse the object via pooling, reset flags:
         if (bossPlatforms != null)
             bossPlatforms.ResetAll();
-        isHitTeleporting = false;
         rotated = false;
-        atFront = true;
+
+        // Move boss to front teleport if currently at back
+        if (!atFront && teleportFront != null)
+        {
+            transform.position = teleportFront.position;
+            transform.rotation = originalRotation;
+            atFront = true;
+        }
+
         canShoot = true;
         currentHitPoints = maxHitPoints;
         if (animator) animator.speed = originalAnimatorSpeed;
-        Destroy(gameObject); // your original behavior
+        playerDetected = false;
+        isShooting = false;
+        if (animator) animator.SetBool("PlayerDetected", false);
+        if (animator) animator.SetBool("IsDizzy", false);
     }
 
     public void PlayTeleportEffect(Vector3 position)
@@ -422,7 +365,6 @@ public class GoblinShamanBoss : MonoBehaviour
         Die();
     }
 
-    // Shared helper for lateral lane hops (no collider disable; optional flip)
     private IEnumerator TeleportToPoint(Vector3 targetPosition, bool flipYRotation)
     {
         PlayTeleportEffect(transform.position);

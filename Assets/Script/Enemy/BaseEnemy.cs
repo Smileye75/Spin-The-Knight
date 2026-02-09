@@ -124,8 +124,7 @@ public class BaseEnemy : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
-        if(stompFeedback != null) 
-            stompFeedback.enabled = false;
+        stompFeedback = null;
         SetWalkingAnimation(false);
 
         if (enemyAnimator != null)
@@ -224,6 +223,14 @@ public class BaseEnemy : MonoBehaviour
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, 10f * Time.deltaTime);
         }
+    }
+    public void EnableWeapon()
+    {
+        weaponCollider.enabled = true;
+    }
+        public void DisableWeapon()
+    {
+        weaponCollider.enabled = false;
     }
 
 }

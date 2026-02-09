@@ -41,6 +41,7 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
         currentScale = stateMachine.weaponDamage.transform.localScale.x;
         targetScale = stateMachine.targetScale; // Max scale
         lerpSpeed = stateMachine.lerpSpeed;  // Adjust for how quickly it scales up
+        stateMachine.spinningParticles?.Play();
 
     }
 
@@ -194,7 +195,7 @@ public class PlayerAttackState : PlayerBaseMachine, ISpinCounter
     private void StartAttack()
     {
         attackStarted = true;
-        stateMachine.playerStats.StartCoroutine(stateMachine.playerStats.Invulnerability(1f));
+        stateMachine.playerStats.StartCoroutine(stateMachine.playerStats.Invulnerability(0.5f));
         stateMachine.animator.SetTrigger(HashStartAttack);
         stateMachine.animator.SetBool(HashSpinning, true);
     }

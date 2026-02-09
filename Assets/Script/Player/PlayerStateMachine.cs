@@ -60,6 +60,7 @@ public class PlayerStateMachine : MonoBehaviour
     public float attackAnimSpeed = 1.5f;
     public float attackCooldown = 0.5f;
     public float attackCooldownTimer = 0f;
+    public ParticleSystem spinningParticles; 
 
 
     [Header("Movement Settings")]

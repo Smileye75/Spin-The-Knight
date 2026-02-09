@@ -191,4 +191,5 @@ public class EnemyPatrol : BaseEnemy
     {
         enableFacePlayer = true;
     }
+    
 }

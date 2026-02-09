@@ -30,8 +30,8 @@ Transform:
   m_GameObject: {fileID: 3800864110370926544}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalPosition: {x: 1.47, y: 0, z: -0.56}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3800864110802284985}
@@ -4882,7 +4882,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 392446
+    m_Bits: 392438
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -4905,6 +4905,7 @@ MonoBehaviour:
   speed: 10
   explosionEffect: {fileID: 8211207519893372180, guid: 75934a7eb9b3f9b4b954a65b3b543dc0, type: 3}
   damage: 1
+  bigProjectile: 0
 --- !u!1 &3800864110802284986
 GameObject:
   m_ObjectHideFlags: 0
@@ -4932,7 +4933,7 @@ Transform:
   m_GameObject: {fileID: 3800864110802284986}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.083, y: 0, z: 0.022}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -9767,7 +9768,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8717527027636457236
 Transform:
   m_ObjectHideFlags: 0
@@ -9840,7 +9841,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 41, z: 13, w: 0}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 2.7e-44, z: 6.5816e-41, w: 2.8704834}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -14737,7 +14738,7 @@ Transform:
   m_GameObject: {fileID: 7555561724215026212}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.116, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
